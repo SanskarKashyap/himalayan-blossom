@@ -1186,6 +1186,18 @@ section,
   color: var(--accent-color);
 }
 
+.menu .btn-primary {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.menu .btn-primary:hover {
+  background-color: color-mix(in srgb, var(--accent-color), transparent 15%);
+  border-color: color-mix(in srgb, var(--accent-color), transparent 15%);
+  color: var(--contrast-color);
+}
+
 /*--------------------------------------------------------------
 # Testimonials Section
 --------------------------------------------------------------*/
