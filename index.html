@@ -512,17 +512,17 @@
           <div class="col-lg-4 reservation-img" style="background-image: url(assets/img/reservation.jpg);"></div>
 
           <div class="col-lg-8 d-flex align-items-center reservation-form-bg" data-aos="fade-up" data-aos-delay="200">
-            <form action="forms/book-a-table.php" method="post" role="form" class="php-email-form">
+            <form onsubmit="sendToWhatsAppPrebooking(); return false;" class="php-email-form">
               <div class="row gy-4">
                 <div class="col-lg-6 col-md-6">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-placeholder-en="Your Name" data-placeholder-hi="आपका नाम" required="">
+                  <input type="text" id="prename" class="form-control" id="name" placeholder="Your Name" data-placeholder-en="Your Name" data-placeholder-hi="आपका नाम" required="">
                 </div>
                 <div class="col-lg-6 col-md-6">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-placeholder-en="Your Email" data-placeholder-hi="आपका ईमेल" required="">
+                  <input type="email" class="form-control" id="preemail" id="email" placeholder="Your Email" data-placeholder-en="Your Email" data-placeholder-hi="आपका ईमेल" required="">
                 </div>
 
                 <div class="col-lg-6 col-md-6">
-                  <select class="form-control" name="product" required="">
+                  <select class="form-control" name="product" required="" id="honeyvariant">
                     <option value="" data-en="Select Honey Variant" data-hi="शहद का प्रकार चुनें">Select Honey Variant</option>
                     <option>Van Amrit — Wild Honey</option>
                     <option>Shila Madhu — Honey Dew</option>
@@ -541,17 +541,17 @@
                 </div>
 
                 <div class="col-lg-6 col-md-6">
-                  <input type="tel" class="form-control" name="phone" id="phone" placeholder="Phone" data-placeholder-en="Phone" data-placeholder-hi="फोन" required="">
+                  <input type="tel" class="form-control" name="phone" id="prephone" placeholder="Phone" data-placeholder-en="Phone" data-placeholder-hi="फोन" required="">
                 </div>
 
                 <div class="col-lg-6 col-md-6">
-                  <input type="text" class="form-control" name="city" id="city" placeholder="City / State" data-placeholder-en="City / State" data-placeholder-hi="शहर / राज्य" required="">
+                  <input type="text" class="form-control" name="city" id="precity" placeholder="City / State" data-placeholder-en="City / State" data-placeholder-hi="शहर / राज्य" required="">
                 </div>
 
               </div>
 
               <div class="form-group mt-3">
-                <textarea class="form-control" name="message" rows="4" placeholder="Any special instructions or gifting notes" data-placeholder-en="Any special instructions or gifting notes" data-placeholder-hi="कोई विशेष निर्देश या उपहार नोट्स"></textarea>
+                <textarea class="form-control" id="premessage" rows="4" placeholder="Any special instructions or gifting notes" data-placeholder-en="Any special instructions or gifting notes" data-placeholder-hi="कोई विशेष निर्देश या उपहार नोट्स"></textarea>
               </div>
 
               <div class="text-center mt-3">
@@ -692,23 +692,23 @@
 
         </div>
 
-        <form action="http://127.0.0.1:5000/contact" method="post" class="contact-form">
+        <form class="contact-form" onsubmit="sendToWhatsApp(); return false;">
           <div class="row gy-4">
 
             <div class="col-md-6">
-              <input type="text" name="name" class="form-control" placeholder="Your Name" data-placeholder-en="Your Name" data-placeholder-hi="आपका नाम" required>
+              <input type="text" id="name" class="form-control" placeholder="Your Name" data-placeholder-en="Your Name" data-placeholder-hi="आपका नाम" required>
             </div>
 
             <div class="col-md-6">
-              <input type="email" class="form-control" name="email" placeholder="Your Email" data-placeholder-en="Your Email" data-placeholder-hi="आपका ईमेल" required>
+              <input type="email" class="form-control" id="email" placeholder="Your Email" data-placeholder-en="Your Email" data-placeholder-hi="आपका ईमेल" required>
             </div>
 
             <div class="col-md-12">
-              <input type="text" class="form-control" name="subject" placeholder="Subject" data-placeholder-en="Subject" data-placeholder-hi="विषय" required>
+              <input type="text" class="form-control" id="subject" placeholder="Subject" data-placeholder-en="Subject" data-placeholder-hi="विषय" required>
             </div>
 
             <div class="col-md-12">
-              <textarea class="form-control" name="message" rows="6" placeholder="Message" data-placeholder-en="Message" data-placeholder-hi="संदेश" required></textarea>
+              <textarea class="form-control" id="message" rows="6" placeholder="Message" data-placeholder-en="Message" data-placeholder-hi="संदेश" required></textarea>
             </div>
 
             <div class="col-md-12 text-center">
@@ -928,7 +928,47 @@ document.querySelectorAll('.menu-item a[href="#preorder"]').forEach(function(but
     }
   });
 });
+// Contact on whatsapp logic
+  function sendToWhatsApp() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const subject = document.getElementById("subject").value.trim();
+    const message = document.getElementById("message").value.trim();
 
+    const phone = "919876543210"; // replace with your WhatsApp number (no + or spaces)
+
+    const whatsappMessage = `Hello Himalayan Blossom, my name is ${name}.
+Email: ${email}
+Subject: ${subject}
+Message: ${message}`;
+
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`;
+    window.open(url, '_blank');
+  }
+
+
+//prebooking logic 
+function sendToWhatsAppPrebooking() {
+    const name = document.getElementById("prename").value.trim();
+    const email = document.getElementById("preemail").value.trim();
+    const honeyVariant = document.getElementById("honeyvariant").value.trim();
+    const message = document.getElementById("premessage").value.trim();
+    const prePhone = document.getElementById("prephone").value.trim();
+    const city = document.getElementById("precity").value.trim();
+
+    const phone = "919876543210"; // replace with your WhatsApp number (no + or spaces)
+
+    const whatsappMessage = `Hello Himalayan Blossom, my name is ${name}.
+Email: ${email}
+Honey Variant: ${honeyVariant}
+Quantity (kg): ${quantity}
+Phone: ${prePhone}
+City/State: ${city}
+Message: ${message}`;
+
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`;
+    window.open(url, '_blank');
+  }
 // Update reservation image when dropdown selection changes
 document.querySelector('#preorder select[name="product"]').addEventListener('change', function() {
     const selectedProductTitle = this.value;
