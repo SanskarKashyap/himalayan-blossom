@@ -20,3 +20,6 @@ preorder.html
 gallery.html
 contact.html
 
+When i lick on a product, a popup/modal opens showing more detailed information about that product.
+
+i lready have a color theme toggle (e.g., dark/light or custom theme) and a language toggle (English/Hindi) implemented for the site, but those settings are not being applied inside the modal — meaning the modal still shows the old colors and text instead of reflecting the current theme or language.
