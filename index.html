@@ -60,10 +60,13 @@
     </nav>
 
     <div class="header-buttons d-flex align-items-center">
+      <a id="lang-toggle" class="btn-lang-toggle ms-3" href="#">
+        <span>हिं</span>
+      </a>
       <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
         <i class="bi bi-sun"></i>
       </a>
-      <a class="btn-getstarted ms-3" href="#preorder">Pre-order Now</a>
+      <a class="btn-getstarted ms-3" href="#preorder" data-en="Pre-order Now" data-hi="अभी ऑर्डर करें">Pre-order Now</a>
     </div>
 
   </div>
@@ -514,15 +517,15 @@
             <form action="forms/book-a-table.php" method="post" role="form" class="php-email-form">
               <div class="row gy-4">
                 <div class="col-lg-6 col-md-6">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
+                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-placeholder-en="Your Name" data-placeholder-hi="आपका नाम" required="">
                 </div>
                 <div class="col-lg-6 col-md-6">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
+                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-placeholder-en="Your Email" data-placeholder-hi="आपका ईमेल" required="">
                 </div>
 
                 <div class="col-lg-6 col-md-6">
                   <select class="form-control" name="product" required="">
-                    <option value="">Select Honey Variant</option>
+                    <option value="" data-en="Select Honey Variant" data-hi="शहद का प्रकार चुनें">Select Honey Variant</option>
                     <option>Van Amrit — Wild Honey</option>
                     <option>Shila Madhu — Honey Dew</option>
                     <option>Him Kanti — White Honey</option>
@@ -536,21 +539,21 @@
                 </div>
 
                 <div class="col-lg-6 col-md-6">
-                  <input type="number" class="form-control" name="quantity" id="quantity" placeholder="Quantity (kg)" required="">
+                  <input type="number" class="form-control" name="quantity" id="quantity" placeholder="Quantity (kg)" data-placeholder-en="Quantity (kg)" data-placeholder-hi="मात्रा (किलो)" required="">
                 </div>
 
                 <div class="col-lg-6 col-md-6">
-                  <input type="tel" class="form-control" name="phone" id="phone" placeholder="Phone" required="">
+                  <input type="tel" class="form-control" name="phone" id="phone" placeholder="Phone" data-placeholder-en="Phone" data-placeholder-hi="फोन" required="">
                 </div>
 
                 <div class="col-lg-6 col-md-6">
-                  <input type="text" class="form-control" name="city" id="city" placeholder="City / State" required="">
+                  <input type="text" class="form-control" name="city" id="city" placeholder="City / State" data-placeholder-en="City / State" data-placeholder-hi="शहर / राज्य" required="">
                 </div>
 
               </div>
 
               <div class="form-group mt-3">
-                <textarea class="form-control" name="message" rows="4" placeholder="Any special instructions or gifting notes"></textarea>
+                <textarea class="form-control" name="message" rows="4" placeholder="Any special instructions or gifting notes" data-placeholder-en="Any special instructions or gifting notes" data-placeholder-hi="कोई विशेष निर्देश या उपहार नोट्स"></textarea>
               </div>
 
               <div class="text-center mt-3">
@@ -695,19 +698,19 @@
           <div class="row gy-4">
 
             <div class="col-md-6">
-              <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+              <input type="text" name="name" class="form-control" placeholder="Your Name" data-placeholder-en="Your Name" data-placeholder-hi="आपका नाम" required>
             </div>
 
             <div class="col-md-6">
-              <input type="email" class="form-control" name="email" placeholder="Your Email" required>
+              <input type="email" class="form-control" name="email" placeholder="Your Email" data-placeholder-en="Your Email" data-placeholder-hi="आपका ईमेल" required>
             </div>
 
             <div class="col-md-12">
-              <input type="text" class="form-control" name="subject" placeholder="Subject" required>
+              <input type="text" class="form-control" name="subject" placeholder="Subject" data-placeholder-en="Subject" data-placeholder-hi="विषय" required>
             </div>
 
             <div class="col-md-12">
-              <textarea class="form-control" name="message" rows="6" placeholder="Message" required></textarea>
+              <textarea class="form-control" name="message" rows="6" placeholder="Message" data-placeholder-en="Message" data-placeholder-hi="संदेश" required></textarea>
             </div>
 
             <div class="col-md-12 text-center">
@@ -984,6 +987,39 @@ themeToggle.addEventListener('click', (e) => {
 
 // Apply theme on initial load
 applySavedTheme();
+
+// Language toggle functionality
+const langToggle = document.getElementById('lang-toggle');
+let currentLang = localStorage.getItem('language') || 'en';
+
+function switchLanguage(lang) {
+  document.querySelectorAll('[data-en][data-hi]').forEach(element => {
+    if (lang === 'hi') {
+      element.textContent = element.getAttribute('data-hi');
+    } else {
+      element.textContent = element.getAttribute('data-en');
+    }
+  });
+  
+  document.querySelectorAll('[data-placeholder-en][data-placeholder-hi]').forEach(element => {
+    if (lang === 'hi') {
+      element.placeholder = element.getAttribute('data-placeholder-hi');
+    } else {
+      element.placeholder = element.getAttribute('data-placeholder-en');
+    }
+  });
+  
+  langToggle.querySelector('span').textContent = lang === 'en' ? 'हिं' : 'EN';
+  localStorage.setItem('language', lang);
+  currentLang = lang;
+}
+
+langToggle.addEventListener('click', (e) => {
+  e.preventDefault();
+  switchLanguage(currentLang === 'en' ? 'hi' : 'en');
+});
+
+switchLanguage(currentLang);
 </script>
 
 </body>
