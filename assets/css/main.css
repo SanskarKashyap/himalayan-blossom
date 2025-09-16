@@ -20,21 +20,21 @@
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root { 
   --background-color: #ffffff; /* Background color for the entire website, including individual sections */
-  --default-color: #212529; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #37373f; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #ce1212; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --default-color: #000000; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #000000; /* Color for headings, subheadings and title throughout the website */
+  --accent-color: #ffd700; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
-  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+  --contrast-color: #000000; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
-  --nav-color: #7f7f90;  /* The default color of the main navmenu links */
-  --nav-hover-color: #ce1212; /* Applied to main navmenu links when they are hovered over or active */
+  --nav-color: #000000;  /* The default color of the main navmenu links */
+  --nav-hover-color: #ffd700; /* Applied to main navmenu links when they are hovered over or active */
   --nav-mobile-background-color: #ffffff; /* Used as the background color for mobile navigation menu */
   --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-  --nav-dropdown-color: #7f7f90; /* Used for navigation links of the dropdown items in the navigation menu. */
-  --nav-dropdown-hover-color: #ce1212; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+  --nav-dropdown-color: #000000; /* Used for navigation links of the dropdown items in the navigation menu. */
+  --nav-dropdown-hover-color: #ffd700; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
 }
 
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
@@ -45,10 +45,10 @@
 }
 
 .dark-background {
-  --background-color: #1f1f24;
+  --background-color: #000000;
   --default-color: #ffffff;
   --heading-color: #ffffff;
-  --surface-color: #37373f;
+  --surface-color: #1a1a1a;
   --contrast-color: #ffffff;
 }
 
@@ -1030,8 +1030,18 @@ section,
 }
 
 .why-us .icon-box:hover i {
-  color: var(--contrast-color);
-  background: var(--accent-color);
+  color: #121212;
+  background: #E0C56E;
+}
+
+.dark-theme .why-us .icon-box h4,
+.dark-theme .why-us .icon-box p {
+  color: var(--default-color);
+}
+
+.dark-theme .menu .btn-primary {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
 }
 
 /*--------------------------------------------------------------
@@ -1694,8 +1704,14 @@ section,
 /*--------------------------------------------------------------
 # Starter Section Section
 --------------------------------------------------------------*/
-.starter-section {
-  /* Add your styles here */
+.starter .starter-item {
+  background-color: var(--surface-color);
+  box-shadow: 0px 0 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  border-radius: 5px;
+  transition: 0.3s;
+  padding: 30px;
 }
 
 /* Performance Optimizations */
@@ -1705,9 +1721,78 @@ section,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+     
+    * {
+      scroll-behavior: auto !important;
+    }
   }
+
+
+/*--------------------------------------------------------------
+# Theme Toggle
+--------------------------------------------------------------*/
+.btn-theme-toggle {
+  color: #ffd700;
+  font-size: 20px;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.btn-theme-toggle:hover {
+  color: #b8860b;
+}
+
+/*--------------------------------------------------------------
+# Dark Theme
+--------------------------------------------------------------*/
+body.dark-theme {
+  --background-color: #000000;
+  --default-color: #ffffff;
+  --heading-color: #ffffff;
+  --accent-color: #ffd700;
+  --surface-color: #1a1a1a;
+  --contrast-color: #000000;
+
+  --nav-color: #ffffff;
+  --nav-hover-color: #ffd700;
+  --nav-mobile-background-color: #1a1a1a;
+  --nav-dropdown-background-color: #1a1a1a;
+  --nav-dropdown-color: #ffffff;
+  --nav-dropdown-hover-color: #ffd700;
+}
+
+body.dark-theme .light-background {
+  background-color: #111111;
+}
+
+body.dark-theme .contact .info-item,
+body.dark-theme .contact-form {
+  background-color: #1a1a1a;
+  border-color: #333;
+}
+
+body.dark-theme .map-placeholder {
+  background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+}
+
+body.dark-theme .contact-form input,
+body.dark-theme .contact-form textarea {
+  background-color: #000000;
+  border-color: #333;
+  color: #ffffff;
+}
+
+body.dark-theme .contact-form input::placeholder,
+body.dark-theme .contact-form textarea::placeholder {
+  color: #999;
+}
+
+body.dark-theme .why-us .icon-box {
+  background-color: #1a1a1a;
+  border-color: #333;
+}
+
+body.dark-theme .why-us .icon-box h4,
+body.dark-theme .why-us .icon-box p {
+  color: #ffffff;
 }

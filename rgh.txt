@@ -20,4 +20,3 @@ preorder.html
 gallery.html
 contact.html
 
-
