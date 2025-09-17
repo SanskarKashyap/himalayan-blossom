@@ -513,20 +513,25 @@
                 <div class="col-lg-6 col-md-6">
                   <select class="form-control" name="product" required="" id="honeyvariant">
                     <option value="" data-en="Select Honey Variant" data-hi="शहद का प्रकार चुनें">Select Honey Variant</option>
-                    <option>Van Amrit — Wild Honey</option>
-                    <option>Shila Madhu — Honey Dew</option>
-                    <option>Him Kanti — White Honey</option>
-                    <option>Kashtha Bal — Chestnut Honey</option>
-                    <option>Him Saans — Thyme Honey</option>
-                    <option>Pachan Amrit — Ajwain Honey</option>
-                    <option>Gahana Madhu — Malty Honey</option>
-                    <option>Sarson Tejas — Mustard Honey</option>
-                    <option>Kshudhra Madhu — Stingless Bee Honey</option>
+                    <option value="Van Amrit — Wild Honey" data-en="Van Amrit — Wild Honey" data-hi="वन अमृत — जंगली शहद">Van Amrit — Wild Honey</option>
+                    <option value="Shila Madhu — Honey Dew" data-en="Shila Madhu — Honey Dew" data-hi="शिला मधु — हनी ड्यू">Shila Madhu — Honey Dew</option>
+                    <option value="Him Kanti — White Honey" data-en="Him Kanti — White Honey" data-hi="हिम कांति — सफेद शहद">Him Kanti — White Honey</option>
+                    <option value="Kashtha Bal — Chestnut Honey" data-en="Kashtha Bal — Chestnut Honey" data-hi="काष्ठ बल — चेस्टनट शहद">Kashtha Bal — Chestnut Honey</option>
+                    <option value="Him Saans — Thyme Honey" data-en="Him Saans — Thyme Honey" data-hi="हिम सांस — थाइम शहद">Him Saans — Thyme Honey</option>
+                    <option value="Pachan Amrit — Ajwain Honey" data-en="Pachan Amrit — Ajwain Honey" data-hi="पाचन अमृत — अजवाइन शहद">Pachan Amrit — Ajwain Honey</option>
+                    <option value="Gahana Madhu — Malty Honey" data-en="Gahana Madhu — Malty Honey" data-hi="गहना मधु — माल्टी शहद">Gahana Madhu — Malty Honey</option>
+                    <option value="Sarson Tejas — Mustard Honey" data-en="Sarson Tejas — Mustard Honey" data-hi="सरसों तेजस — सरसों शहद">Sarson Tejas — Mustard Honey</option>
+                    <option value="Kshudhra Madhu — Stingless Bee Honey" data-en="Kshudhra Madhu — Stingless Bee Honey" data-hi="क्षुध्र मधु — डंकरहित मधुमक्खी शहद">Kshudhra Madhu — Stingless Bee Honey</option>
                   </select>
                 </div>
 
                 <div class="col-lg-6 col-md-6">
-                  <input type="number" class="form-control" name="quantity" id="quantity" placeholder="Quantity (kg)" data-placeholder-en="Quantity (kg)" data-placeholder-hi="मात्रा (किलो)" required="">
+                  <select class="form-control" name="size" required="" id="presize">
+                    <option value="" data-en="Select Jar Size" data-hi="जार का आकार चुनें">Select Jar Size</option>
+                    <option value="250 gram" data-en="250 gram" data-hi="250 ग्राम">250 gram</option>
+                    <option value="500 gram" data-en="500 gram" data-hi="500 ग्राम">500 gram</option>
+                    <option value="1000 gram" data-en="1000 gram" data-hi="1000 ग्राम">1000 gram</option>
+                  </select>
                 </div>
 
                 <div class="col-lg-6 col-md-6">
@@ -805,8 +810,47 @@
     </div>
   </div>
 
+  <div id="preorderModalOverlay" class="modal-overlay" style="display:none;"></div>
+  <div id="preorderSelectionModal" class="modal preorder-modal" tabindex="-1" style="display:none;">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <button type="button" class="modal-close" id="preorderModalClose" aria-label="Close">&times;</button>
+        <div class="row g-0">
+          <div class="col-md-5">
+            <img id="preorderModalImg" src="" alt="" class="img-fluid rounded-start" />
+          </div>
+          <div class="col-md-7 d-flex flex-column justify-content-center">
+            <div class="modal-body-right">
+              <h4 id="preorderModalTitle"></h4>
+              <p id="preorderModalSubtitle" data-en="Select your preferred jar size to continue." data-hi="जारी रखने के लिए अपना पसंदीदा जार आकार चुनें।">Select your preferred jar size to continue.</p>
+              <div class="size-options" id="preorderSizeOptions">
+                <label class="size-option" for="preorder-size-250">
+                  <input type="radio" name="preorderSize" id="preorder-size-250" value="250 gram">
+                  <span data-en="250 gram" data-hi="250 ग्राम">250 gram</span>
+                </label>
+                <label class="size-option" for="preorder-size-500">
+                  <input type="radio" name="preorderSize" id="preorder-size-500" value="500 gram">
+                  <span data-en="500 gram" data-hi="500 ग्राम">500 gram</span>
+                </label>
+                <label class="size-option" for="preorder-size-1000">
+                  <input type="radio" name="preorderSize" id="preorder-size-1000" value="1000 gram">
+                  <span data-en="1000 gram" data-hi="1000 ग्राम">1000 gram</span>
+                </label>
+              </div>
+              <div class="modal-actions">
+                <button type="button" class="modal-action-btn ghost" id="preorderModalCancel" data-en="Cancel" data-hi="रद्द करें">Cancel</button>
+                <button type="button" class="modal-action-btn primary" id="preorderModalConfirm" data-en="Continue to Pre-order" data-hi="प्री-ऑर्डर पर जाएँ" disabled>Continue to Pre-order</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <style>
-  .product-modal {
+  .product-modal,
+  .preorder-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -819,13 +863,15 @@
     padding: 2rem clamp(1rem, 4vw, 3rem);
   }
 
-  .product-modal .modal-dialog.modal-lg {
+  .product-modal .modal-dialog.modal-lg,
+  .preorder-modal .modal-dialog.modal-lg {
     max-width: min(960px, 92vw);
     width: 100%;
     margin: 0;
   }
 
-  .product-modal .modal-content {
+  .product-modal .modal-content,
+  .preorder-modal .modal-content {
     background: var(--surface-color);
     color: var(--default-color);
     border-radius: 18px;
@@ -838,18 +884,21 @@
     min-height: clamp(320px, 60vh, 520px);
   }
 
-  .product-modal .row {
+  .product-modal .row,
+  .preorder-modal .row {
     flex: 1 1 auto;
   }
 
-  .product-modal .modal-body-right {
+  .product-modal .modal-body-right,
+  .preorder-modal .modal-body-right {
     padding: clamp(1.5rem, 2.5vw, 2.5rem);
     background: color-mix(in srgb, var(--surface-color) 92%, var(--accent-color) 8%);
     border-left: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent 75%);
     overflow-y: auto;
   }
 
-  .product-modal .modal-body-right h4 {
+  .product-modal .modal-body-right h4,
+  .preorder-modal .modal-body-right h4 {
     font-family: var(--heading-font);
     font-weight: 600;
     font-size: clamp(1.6rem, 3vw, 2.1rem);
@@ -864,7 +913,8 @@
     gap: 0.75rem;
   }
 
-  .product-modal .modal-close {
+  .product-modal .modal-close,
+  .preorder-modal .modal-close {
     position: absolute;
     top: 18px;
     right: 20px;
@@ -884,23 +934,26 @@
     line-height: 1;
   }
 
-  .product-modal .modal-close:hover {
+  .product-modal .modal-close:hover,
+  .preorder-modal .modal-close:hover {
     transform: translateY(-2px);
     color: var(--contrast-color);
     background: var(--accent-color);
   }
 
-  #productModal {
+  #productModal,
+  #preorderSelectionModal {
     transition: opacity 0.2s;
   }
 
-  #productModal .img-fluid {
+  .product-modal .img-fluid,
+  .preorder-modal .img-fluid {
     height: 100%;
     width: 100%;
     object-fit: cover;
   }
 
-  #modalOverlay {
+  .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -923,45 +976,150 @@
     line-height: 1.65;
   }
 
+  .preorder-modal .modal-body-right {
+    background: var(--surface-color);
+    border-left: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .preorder-modal .modal-body-right p {
+    margin: 0;
+    color: color-mix(in srgb, var(--default-color) 70%, transparent);
+    line-height: 1.6;
+  }
+
+  .preorder-modal .size-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .preorder-modal .size-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 14px;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent 65%);
+    background: color-mix(in srgb, var(--surface-color) 94%, var(--accent-color) 6%);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .preorder-modal .size-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.08);
+    border-color: color-mix(in srgb, var(--accent-color) 55%, transparent 45%);
+  }
+
+  .preorder-modal .size-option input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent-color);
+  }
+
+  .preorder-modal .size-option span {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--heading-color);
+  }
+
+  .preorder-modal .size-option input[type="radio"]:checked + span {
+    color: color-mix(in srgb, var(--heading-color) 90%, var(--accent-color) 10%);
+  }
+
+  .preorder-modal .modal-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  .modal-action-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 0.75rem 1.9rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  .modal-action-btn.primary {
+    background: var(--accent-color);
+    color: var(--contrast-color);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .modal-action-btn.primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .modal-action-btn.primary:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+
+  .modal-action-btn.ghost {
+    background: color-mix(in srgb, var(--surface-color) 75%, var(--accent-color) 25%);
+    color: var(--heading-color);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent 65%);
+  }
+
+  .modal-action-btn.ghost:hover {
+    background: color-mix(in srgb, var(--accent-color) 40%, transparent 60%);
+  }
+
   @media (max-width: 767px) {
-    .product-modal {
+    .product-modal,
+    .preorder-modal {
       padding: 1.25rem;
     }
 
-    .product-modal .modal-content {
+    .product-modal .modal-content,
+    .preorder-modal .modal-content {
       flex-direction: column;
     }
 
-    .product-modal .modal-dialog.modal-lg {
+    .product-modal .modal-dialog.modal-lg,
+    .preorder-modal .modal-dialog.modal-lg {
       max-width: 100%;
       margin: 0;
     }
 
-    #productModal .img-fluid.rounded-start {
+    .product-modal .img-fluid.rounded-start,
+    .preorder-modal .img-fluid.rounded-start {
       border-radius: 16px 16px 0 0 !important;
       max-height: 240px;
     }
 
-    .product-modal .modal-body-right {
+    .product-modal .modal-body-right,
+    .preorder-modal .modal-body-right {
       border-left: 0;
       border-top: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent 75%);
       background: color-mix(in srgb, var(--surface-color) 94%, var(--accent-color) 6%);
     }
 
-    .product-modal .modal-close {
+    .product-modal .modal-close,
+    .preorder-modal .modal-close {
       top: 12px;
       right: 16px;
     }
   }
 
-  .product-modal.dark-theme .modal-content {
+  .product-modal.dark-theme .modal-content,
+  .preorder-modal.dark-theme .modal-content {
     background: #0f0f0f;
     color: #f4f4f4;
     border-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 24px 40px rgba(0, 0, 0, 0.6);
   }
 
-  .product-modal.dark-theme .modal-body-right {
+  .product-modal.dark-theme .modal-body-right,
+  .preorder-modal.dark-theme .modal-body-right {
     background: rgba(255, 255, 255, 0.03);
     border-color: rgba(255, 255, 255, 0.08);
   }
@@ -973,14 +1131,45 @@
     box-shadow: none;
   }
 
-  .product-modal.dark-theme .modal-close {
+  .product-modal.dark-theme .modal-close,
+  .preorder-modal.dark-theme .modal-close {
     color: #ffd700;
     background: rgba(255, 255, 255, 0.08);
     box-shadow: none;
   }
 
-  .product-modal.dark-theme .modal-close:hover {
+  .product-modal.dark-theme .modal-close:hover,
+  .preorder-modal.dark-theme .modal-close:hover {
     background: #ffd700;
+    color: #1a1a1a;
+  }
+
+  .preorder-modal.dark-theme .modal-body-right p {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .preorder-modal.dark-theme .size-option {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .preorder-modal.dark-theme .size-option:hover {
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.45);
+    border-color: rgba(255, 215, 0, 0.45);
+  }
+
+  .preorder-modal.dark-theme .size-option span {
+    color: #f5f5f5;
+  }
+
+  .preorder-modal.dark-theme .modal-action-btn.ghost {
+    background: rgba(255, 255, 255, 0.12);
+    color: #f5f5f5;
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  .preorder-modal.dark-theme .modal-action-btn.ghost:hover {
+    background: rgba(255, 215, 0, 0.18);
     color: #1a1a1a;
   }
 </style>
@@ -1047,51 +1236,167 @@ document.querySelectorAll('.menu-item').forEach(function(item) {
     modal.style.display = 'flex';
     
     // Apply current theme to modal
-    if (document.body.classList.contains('dark-theme')) {
-      modal.classList.add('dark-theme');
-    } else {
-      modal.classList.remove('dark-theme');
-    }
+    updateModalThemes();
 
   });
 });
 
-// Close modal when clicking close button or outside modal
-document.querySelector('.modal-close').onclick = function() {
-  document.getElementById('modalOverlay').style.display = 'none';
-  document.getElementById('productModal').style.display = 'none';
-};
-window.onclick = function(event) {
-  var modal = document.getElementById('productModal');
-  var overlay = document.getElementById('modalOverlay');
-  if(event.target === overlay) {
-    overlay.style.display = 'none';
-    modal.style.display = 'none';
+// Close detail modal when clicking close button
+const productModalClose = document.querySelector('#productModal .modal-close');
+if (productModalClose) {
+  productModalClose.addEventListener('click', function() {
+    document.getElementById('modalOverlay').style.display = 'none';
+    document.getElementById('productModal').style.display = 'none';
+  });
+}
+
+// Pre-order size selection modal logic
+const preorderOverlay = document.getElementById('preorderModalOverlay');
+const preorderModal = document.getElementById('preorderSelectionModal');
+const preorderModalImg = document.getElementById('preorderModalImg');
+const preorderModalTitle = document.getElementById('preorderModalTitle');
+const preorderConfirmBtn = document.getElementById('preorderModalConfirm');
+const preorderCancelBtn = document.getElementById('preorderModalCancel');
+const preorderCloseBtn = document.getElementById('preorderModalClose');
+const preorderSizeInputs = document.querySelectorAll('input[name="preorderSize"]');
+let activePreorderItem = null;
+
+function closePreorderModal() {
+  if (preorderOverlay) preorderOverlay.style.display = 'none';
+  if (preorderModal) preorderModal.style.display = 'none';
+  if (preorderConfirmBtn) preorderConfirmBtn.disabled = true;
+  activePreorderItem = null;
+  preorderSizeInputs.forEach(input => { input.checked = false; });
+}
+
+function populatePreorderForm(menuItem, selectedSize) {
+  const productTitle = menuItem.getAttribute('data-title') || '';
+  const productImg = menuItem.getAttribute('data-img') || '';
+  const productSelect = document.getElementById('honeyvariant');
+  const sizeSelect = document.getElementById('presize');
+  const reservationImg = document.querySelector('#preorder .reservation-img');
+
+  if (productSelect) {
+    productSelect.value = productTitle;
+    productSelect.dispatchEvent(new Event('change', { bubbles: true }));
   }
-};
 
-// Pre-order form autofill logic
+  if (sizeSelect) {
+    sizeSelect.value = selectedSize || '';
+    sizeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  if (reservationImg) {
+    const backgroundSrc = productImg || 'assets/img/reservation.jpg';
+    reservationImg.style.backgroundImage = `url(${backgroundSrc})`;
+  }
+}
+
+function openPreorderModal(menuItem) {
+  if (!preorderOverlay || !preorderModal) return;
+  activePreorderItem = menuItem;
+
+  const titleEn = menuItem.getAttribute('data-title') || '';
+  const titleHi = menuItem.getAttribute('data-title-hi') || titleEn;
+  const imageSrc = menuItem.getAttribute('data-img') || '';
+  const productImgEl = menuItem.querySelector('img');
+  const altEn = productImgEl ? (productImgEl.getAttribute('data-alt-en') || productImgEl.getAttribute('alt') || titleEn) : titleEn;
+  const altHi = productImgEl ? (productImgEl.getAttribute('data-alt-hi') || titleHi) : titleHi;
+  const isHindi = typeof currentLang !== 'undefined' && currentLang === 'hi';
+
+  if (preorderModalTitle) {
+    preorderModalTitle.setAttribute('data-en', titleEn);
+    preorderModalTitle.setAttribute('data-hi', titleHi);
+    preorderModalTitle.textContent = isHindi && titleHi ? titleHi : titleEn;
+  }
+
+  if (preorderModalImg) {
+    preorderModalImg.src = imageSrc;
+    preorderModalImg.setAttribute('data-alt-en', altEn);
+    preorderModalImg.setAttribute('data-alt-hi', altHi);
+    preorderModalImg.alt = isHindi && altHi ? altHi : altEn;
+  }
+
+  preorderSizeInputs.forEach(input => { input.checked = false; });
+  if (preorderConfirmBtn) {
+    preorderConfirmBtn.disabled = true;
+  }
+
+  updateModalThemes();
+  preorderOverlay.style.display = 'block';
+  preorderModal.style.display = 'flex';
+}
+
 document.querySelectorAll('.menu-item a[href="#preorder"]').forEach(function(button) {
-  button.addEventListener('click', function() {
+  button.addEventListener('click', function(e) {
+    e.preventDefault();
     const menuItem = button.closest('.menu-item');
-    const productTitle = menuItem.getAttribute('data-title');
-    const productImg = menuItem.getAttribute('data-img');
-    const productSelect = document.querySelector('#preorder select[name="product"]');
-    const reservationImg = document.querySelector('#preorder .reservation-img');
+    if (!menuItem) return;
+    openPreorderModal(menuItem);
+  });
+});
 
-    if (productTitle && productSelect) {
-      for (let option of productSelect.options) {
-        if (option.text === productTitle) {
-          option.selected = true;
-          break;
-        }
-      }
-    }
-
-    if (productImg && reservationImg) {
-      reservationImg.style.backgroundImage = `url(${productImg})`;
+preorderSizeInputs.forEach(input => {
+  input.addEventListener('change', function() {
+    if (preorderConfirmBtn) {
+      preorderConfirmBtn.disabled = !document.querySelector('input[name="preorderSize"]:checked');
     }
   });
+});
+
+if (preorderConfirmBtn) {
+  preorderConfirmBtn.addEventListener('click', function() {
+    const selectedRadio = document.querySelector('input[name="preorderSize"]:checked');
+    if (!selectedRadio || !activePreorderItem) return;
+    populatePreorderForm(activePreorderItem, selectedRadio.value);
+    closePreorderModal();
+    const preorderSection = document.getElementById('preorder');
+    if (preorderSection) {
+      preorderSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    const nameField = document.getElementById('prename');
+    if (nameField) {
+      try {
+        nameField.focus({ preventScroll: true });
+      } catch (err) {
+        nameField.focus();
+      }
+    }
+  });
+}
+
+if (preorderCancelBtn) {
+  preorderCancelBtn.addEventListener('click', closePreorderModal);
+}
+
+if (preorderCloseBtn) {
+  preorderCloseBtn.addEventListener('click', closePreorderModal);
+}
+
+window.addEventListener('click', function(event) {
+  const productModalElement = document.getElementById('productModal');
+  const productOverlay = document.getElementById('modalOverlay');
+  if (event.target === productOverlay) {
+    productOverlay.style.display = 'none';
+    productModalElement.style.display = 'none';
+  }
+  if (event.target === preorderOverlay) {
+    closePreorderModal();
+  }
+});
+
+window.addEventListener('keyup', function(event) {
+  if (event.key === 'Escape') {
+    const productOverlay = document.getElementById('modalOverlay');
+    const productModalElement = document.getElementById('productModal');
+    if (productOverlay && productOverlay.style.display === 'block') {
+      productOverlay.style.display = 'none';
+      productModalElement.style.display = 'none';
+    }
+    if (preorderOverlay && preorderOverlay.style.display === 'block') {
+      closePreorderModal();
+    }
+  }
 });
 // Contact on whatsapp logic
   function sendToWhatsApp() {
@@ -1117,6 +1422,7 @@ function sendToWhatsAppPrebooking() {
     const name = document.getElementById("prename").value.trim();
     const email = document.getElementById("preemail").value.trim();
     const honeyVariant = document.getElementById("honeyvariant").value.trim();
+    const jarSize = document.getElementById("presize").value.trim();
     const message = document.getElementById("premessage").value.trim();
     const prePhone = document.getElementById("prephone").value.trim();
     const city = document.getElementById("precity").value.trim();
@@ -1126,7 +1432,7 @@ function sendToWhatsAppPrebooking() {
     const whatsappMessage = `Hello Himalayan Blossom, my name is ${name}.
 Email: ${email}
 Honey Variant: ${honeyVariant}
-Quantity (kg): ${quantity}
+Jar Size: ${jarSize}
 Phone: ${prePhone}
 City/State: ${city}
 Message: ${message}`;
@@ -1157,6 +1463,19 @@ const themeToggle = document.getElementById('theme-toggle');
 const body = document.body;
 const themeIcon = themeToggle.querySelector('i');
 
+const updateModalThemes = () => {
+    const productModalEl = document.getElementById('productModal');
+    const preorderModalEl = document.getElementById('preorderSelectionModal');
+    [productModalEl, preorderModalEl].forEach((modal) => {
+        if (!modal) return;
+        if (body.classList.contains('dark-theme')) {
+            modal.classList.add('dark-theme');
+        } else {
+            modal.classList.remove('dark-theme');
+        }
+    });
+};
+
 // Function to apply the saved theme on page load
 const applySavedTheme = () => {
     const savedTheme = localStorage.getItem('theme');
@@ -1169,6 +1488,7 @@ const applySavedTheme = () => {
         themeIcon.classList.remove('bi-moon');
         themeIcon.classList.add('bi-sun');
     }
+    updateModalThemes();
 };
 
 // Toggle theme on button click
@@ -1186,6 +1506,7 @@ themeToggle.addEventListener('click', (e) => {
         themeIcon.classList.add('bi-sun');
         localStorage.setItem('theme', 'light');
     }
+    updateModalThemes();
 });
 
 // Apply theme on initial load
