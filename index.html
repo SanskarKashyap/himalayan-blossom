@@ -786,7 +786,7 @@
   <script src="assets/js/main.js"></script>
   <!-- Product Modal (Place this just before </body>) -->
   <div id="modalOverlay" class="modal-overlay" style="display:none;"></div>
-  <div id="productModal" class="modal" tabindex="-1" style="display:none;">
+  <div id="productModal" class="modal product-modal" tabindex="-1" style="display:none;">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <span class="modal-close">&times;</span>
@@ -797,7 +797,7 @@
           <div class="col-md-6 d-flex flex-column justify-content-center">
             <div class="modal-body-right">
               <h4 id="modalTitle"></h4>
-              <p id="modalDesc"></p>
+              <div id="modalDesc"></div>
             </div>
           </div>
         </div>
@@ -806,62 +806,183 @@
   </div>
 
 <style>
-  .modal { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; display:flex; align-items:center; justify-content:center; }
-  .modal-dialog.modal-lg { max-width: 90vw; width: 950px; }
-  .modal-content { background:#fff; border-radius:10px; position:relative; text-align:left; border: none; box-shadow: 0 5px 25px rgba(0,0,0,0.15); overflow: hidden; max-height: 90vh; display: flex; }
-  .modal-content .row { flex-grow: 1; }
-  .modal-body-right { padding: 2rem; overflow-y: auto; }
-  .modal-body-right h4 { font-family: 'Amatic SC', sans-serif; font-size: 2.5rem; color: var(--accent-color); margin-bottom: 1rem; }
-  .modal-body-right p { font-size: 1rem; line-height: 1.6; }
-  .modal-close { position:absolute; top:10px; right:20px; font-size:2.5rem; cursor:pointer; z-index: 10; color: var(--accent-color); text-shadow: none; line-height: 1; }
-  .modal-close:hover { color:#ac0e0e; }
-  #productModal { transition: opacity 0.2s; }
-  #productModal .img-fluid { height: 100%; object-fit: cover; }
-  .modal-overlay {
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(4px);
-  z-index: 9998;
-  transition: opacity 0.2s;
-}
+  .product-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem clamp(1rem, 4vw, 3rem);
+  }
 
-.desc-tile {
-  background-color: #f8f9fa;
-  padding: 10px 15px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  border-left: 3px solid var(--accent-color);
-}
+  .product-modal .modal-dialog.modal-lg {
+    max-width: min(960px, 92vw);
+    width: 100%;
+    margin: 0;
+  }
 
-.desc-tile:last-child {
-  margin-bottom: 0;
-}
+  .product-modal .modal-content {
+    background: var(--surface-color);
+    color: var(--default-color);
+    border-radius: 18px;
+    position: relative;
+    text-align: left;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent 70%);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    display: flex;
+    min-height: clamp(320px, 60vh, 520px);
+  }
 
-@media (max-width: 767px) {
-  .modal-dialog.modal-lg { max-width: 90vw; margin: 1rem auto; }
-  .modal-content .row { flex-direction: column; }
-  #productModal .img-fluid.rounded-start { border-radius: 10px 10px 0 0 !important; }
-  .modal-close { color: #333; text-shadow: none; }
-}
+  .product-modal .row {
+    flex: 1 1 auto;
+  }
 
-.modal.dark-theme .modal-content {
-  background: #1a1a1a;
-  color: #ffffff;
-}
+  .product-modal .modal-body-right {
+    padding: clamp(1.5rem, 2.5vw, 2.5rem);
+    background: color-mix(in srgb, var(--surface-color) 92%, var(--accent-color) 8%);
+    border-left: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent 75%);
+    overflow-y: auto;
+  }
 
-.modal.dark-theme .desc-tile {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-left-color: #ffd700;
-}
+  .product-modal .modal-body-right h4 {
+    font-family: var(--heading-font);
+    font-weight: 600;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    color: var(--heading-color);
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.01em;
+  }
 
-.modal.dark-theme .modal-close {
-  color: #ffd700;
-}
+  .product-modal #modalDesc {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 
-.modal.dark-theme .modal-close:hover {
-  color: #ffffff;
-}
+  .product-modal .modal-close {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    cursor: pointer;
+    z-index: 10;
+    color: var(--accent-color);
+    background: color-mix(in srgb, var(--surface-color) 70%, var(--accent-color) 30%);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    transition: transform 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+    line-height: 1;
+  }
+
+  .product-modal .modal-close:hover {
+    transform: translateY(-2px);
+    color: var(--contrast-color);
+    background: var(--accent-color);
+  }
+
+  #productModal {
+    transition: opacity 0.2s;
+  }
+
+  #productModal .img-fluid {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  #modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(12, 10, 8, 0.55);
+    backdrop-filter: blur(6px);
+    z-index: 9998;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-modal .desc-tile {
+    background: color-mix(in srgb, var(--surface-color) 88%, var(--accent-color) 12%);
+    color: var(--default-color);
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent 65%);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  @media (max-width: 767px) {
+    .product-modal {
+      padding: 1.25rem;
+    }
+
+    .product-modal .modal-content {
+      flex-direction: column;
+    }
+
+    .product-modal .modal-dialog.modal-lg {
+      max-width: 100%;
+      margin: 0;
+    }
+
+    #productModal .img-fluid.rounded-start {
+      border-radius: 16px 16px 0 0 !important;
+      max-height: 240px;
+    }
+
+    .product-modal .modal-body-right {
+      border-left: 0;
+      border-top: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent 75%);
+      background: color-mix(in srgb, var(--surface-color) 94%, var(--accent-color) 6%);
+    }
+
+    .product-modal .modal-close {
+      top: 12px;
+      right: 16px;
+    }
+  }
+
+  .product-modal.dark-theme .modal-content {
+    background: #0f0f0f;
+    color: #f4f4f4;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 24px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  .product-modal.dark-theme .modal-body-right {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .product-modal.dark-theme .desc-tile {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 215, 0, 0.5);
+    color: #f4f4f4;
+    box-shadow: none;
+  }
+
+  .product-modal.dark-theme .modal-close {
+    color: #ffd700;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+  }
+
+  .product-modal.dark-theme .modal-close:hover {
+    background: #ffd700;
+    color: #1a1a1a;
+  }
 </style>
 
 <script>
@@ -875,41 +996,63 @@ document.querySelectorAll('.menu-item').forEach(function(item) {
     }
     // Prevent glightbox from opening if clicking image and prevent modal from opening for other links
     if(e.target.tagName === 'IMG' || e.target.closest('a')) e.preventDefault();
-    // Set modal content
-    document.getElementById('modalImg').src = item.getAttribute('data-img');
-    document.getElementById('modalTitle').textContent = item.getAttribute('data-title');
-    
+    // Prepare modal elements
+    const modal = document.getElementById('productModal');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
     const descContainer = document.getElementById('modalDesc');
-    const descText = item.getAttribute('data-desc');
-    const descParts = descText.split('<br>');
-    descContainer.innerHTML = ''; // Clear previous content
-    descParts.forEach(part => {
-      if (part.trim() !== '') {
-        const tile = document.createElement('div');
-        tile.className = 'desc-tile';
-        tile.innerHTML = part;
-        descContainer.appendChild(tile);
-      }
-    });
+
+    // Set modal image with fallbacks for alt text
+    const titleEn = item.getAttribute('data-title') || '';
+    const titleHi = item.getAttribute('data-title-hi') || titleEn;
+    const imageSrc = item.getAttribute('data-img') || '';
+    const productImgEl = item.querySelector('img');
+    const altEn = productImgEl ? (productImgEl.getAttribute('data-alt-en') || productImgEl.getAttribute('alt') || titleEn) : titleEn;
+    const altHi = productImgEl ? (productImgEl.getAttribute('data-alt-hi') || titleHi) : titleHi;
+    const isHindi = typeof currentLang !== 'undefined' && currentLang === 'hi';
+
+    modalImg.src = imageSrc;
+    modalImg.setAttribute('data-alt-en', altEn);
+    modalImg.setAttribute('data-alt-hi', altHi);
+    modalImg.alt = isHindi && altHi ? altHi : altEn;
+
+    // Update title with language attributes
+    modalTitle.setAttribute('data-en', titleEn);
+    modalTitle.setAttribute('data-hi', titleHi);
+    modalTitle.textContent = isHindi && titleHi ? titleHi : titleEn;
+
+    // Build description tiles with bilingual text
+    descContainer.innerHTML = '';
+    const descEnRaw = item.getAttribute('data-desc') || '';
+    const descHiRaw = item.getAttribute('data-desc-hi') || '';
+    const descPartsEn = descEnRaw.split('<br>');
+    const descPartsHi = descHiRaw.split('<br>');
+    const totalTiles = Math.max(descPartsEn.length, descPartsHi.length);
+
+    for (let i = 0; i < totalTiles; i += 1) {
+      const cleanEn = (descPartsEn[i] || '').trim();
+      const cleanHi = (descPartsHi[i] || '').trim();
+      if (!cleanEn && !cleanHi) continue;
+
+      const tile = document.createElement('div');
+      tile.className = 'desc-tile';
+      tile.setAttribute('data-en', cleanEn);
+      tile.setAttribute('data-hi', cleanHi || cleanEn);
+      tile.textContent = isHindi && (cleanHi || cleanEn) ? (cleanHi || cleanEn) : cleanEn;
+      descContainer.appendChild(tile);
+    }
 
     // Show overlay and modal
     document.getElementById('modalOverlay').style.display = 'block';
-    document.getElementById('productModal').style.display = 'flex';
+    modal.style.display = 'flex';
     
     // Apply current theme to modal
-    const modal = document.getElementById('productModal');
     if (document.body.classList.contains('dark-theme')) {
       modal.classList.add('dark-theme');
     } else {
       modal.classList.remove('dark-theme');
     }
-    
-    // Apply current language to modal content
-    if (typeof currentLang !== 'undefined' && currentLang === 'hi') {
-      modal.querySelectorAll('[data-en][data-hi]').forEach(element => {
-        element.textContent = element.getAttribute('data-hi');
-      });
-    }
+
   });
 });
 
