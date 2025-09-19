@@ -1796,3 +1796,13 @@ body.dark-theme .why-us .icon-box h4,
 body.dark-theme .why-us .icon-box p {
   color: #ffffff;
 }
+
+/* Add this inside your <style> tag or main.css file */
+
+@media (max-width: 767px) {
+  .btn-getstarted, /* Pre-order Now button in header */
+  
+  .btn-theme-toggle { /* Language toggle button */
+    display: none !important;
+  }
+}
