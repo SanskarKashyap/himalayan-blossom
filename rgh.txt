@@ -1,28 +1,22 @@
-Van Amrit — Wild Honey Shila Madhu — Honey Dew Him Kanti — White Honey Kashtha
-Bal — Chestnut Honey Him Saans — Thyme Honey Pachan Amrit — Ajwain Honey Gahana
-Madhu — Malty Honey Sarson Tejas — Mustard Honey Kshudhra Madhu — Stingless Bee
-Honey hero.html about.html why-us.html collection.html testimonials.html
-events.html chefs.html preorder.html gallery.html contact.html When i lick on a
-product, a popup/modal opens showing more detailed information about that
-product. i lready have a color theme toggle (e.g., dark/light or custom theme)
-and a language toggle (English/Hindi) implemented for the site, but those
-settings are not being applied inside the modal — meaning the modal still shows
-the old colors and text instead of reflecting the current theme or language.
-
-<h1
-  data-aos="fade-up"
-  style="font-family: 'Montserrat', sans-serif"
-  data-en="Himalayan Honey, Reimagined."
-  data-hi="हिमालयी शहद, नई कल्पना।"
->
-  <span style="color: #ffd700 !important">Himalayan Honey,</span> Reimagined.
-</h1>
-
 <link
-  href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap"
+                href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap"
+                rel="stylesheet"
+              />
+
+              <h1>
+                <span class="text-accent">Himalayan Honey,</span> Reimagined.
+              </h1>
+
+
+              <link
+  href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap"
   rel="stylesheet"
 />
 
-<h1 style="font-family: 'Poppins', sans-serif">
-  <span style="color: #ffd700">Himalayan Honey,</span> Reimagined.
+<h1
+  class="hero-title"
+  data-en="<span class='text-accent'>Himalayan Honey,</span> Reimagined."
+  data-hi="<span class='text-accent'>हिमालयी शहद,</span> नया रूप।"
+>
+  <span class="text-accent">Himalayan Honey,</span> Reimagined.
 </h1>
