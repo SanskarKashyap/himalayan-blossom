@@ -28,6 +28,121 @@
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
 
+  <style>
+    /* Mobile Navigation Styles */
+    .mobile-nav-toggle {
+      background: transparent;
+      border: none;
+      color: var(--accent-color);
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 0;
+      padding: 8px;
+      margin-left: 12px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-nav-toggle:hover {
+      color: var(--accent-color);
+      background: color-mix(in srgb, var(--accent-color) 15%, transparent);
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 100%;
+      max-width: 320px;
+      height: 100vh;
+      background: var(--surface-color);
+      padding: 60px 0 20px 0;
+      overflow-y: auto;
+      transition: 0.3s;
+      z-index: 999;
+      box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+      border-left: 1px solid color-mix(in srgb, var(--accent-color) 15%, transparent);
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav-wrapper {
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-nav-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .mobile-nav-menu li {
+      border-bottom: 1px solid color-mix(in srgb, var(--accent-color) 15%, transparent);
+    }
+
+    .mobile-nav-menu li:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-nav-menu a {
+      display: block;
+      padding: 15px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--heading-color);
+      transition: 0.3s;
+      text-decoration: none;
+    }
+
+    .mobile-nav-menu a:hover,
+    .mobile-nav-menu .active {
+      color: var(--accent-color);
+    }
+
+    .mobile-nav-buttons {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid color-mix(in srgb, var(--accent-color) 15%, transparent);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .mobile-nav-buttons .btn-lang-toggle,
+    .mobile-nav-buttons .btn-theme-toggle {
+      width: calc(50% - 6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+      color: var(--heading-color);
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .mobile-nav-buttons .btn-getstarted {
+      width: 100%;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    body.mobile-nav-active {
+      overflow: hidden;
+    }
+
+    .dark-theme .mobile-nav {
+      background: var(--surface-color);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+
   <!-- =======================================================
   * Template Name: Yummy (modified for Himalayan Blossom)
   ======================================================== -->
@@ -36,41 +151,66 @@
 <body class="index-page">
 
   <header id="header" class="header d-flex align-items-center sticky-top">
-  <div class="container position-relative d-flex align-items-center justify-content-between">
-
-    <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
-      <!-- Keep same image file if needed -->
-      <!-- <img src="assets/img/logo.png" alt=""> -->
-      <h1 class="sitename">Himalayan Blossom</h1>
-      <span>.</span>
-    </a>
-
-    <nav id="navmenu" class="navmenu">
-      <ul>
-        <li><a href="#hero" class="active" data-en="Home" data-hi="होम">Home<br></a></li>
-        <li><a href="#about" data-en="About" data-hi="हमारे बारे में">About</a></li>
-        <li><a href="#collection" data-en="Collection" data-hi="कलेक्शन">Collection</a></li>
-        <li><a href="#preorder" data-en="Pre-order" data-hi="प्री-ऑर्डर">Pre-order</a></li>
-        <li><a href="#wellness" data-en="Wellness" data-hi="स्वास्थ्य">Wellness</a></li>
-        <li><a href="#gallery" data-en="Gallery" data-hi="गैलरी">Gallery</a></li>
-        <li><a href="#contact" data-en="Contact" data-hi="संपर्क">Contact</a></li>
-      </ul>
-
-      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-    </nav>
-
-    <div class="header-buttons d-flex align-items-center">
-      <a id="lang-toggle" class="btn-lang-toggle ms-3" href="#">
-        <span>हिं</span>
+    <div class="container position-relative d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center me-auto">
+        <h1 class="sitename">Himalayan Blossom</h1>
+        <span>.</span>
       </a>
-      <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
-        <i class="bi bi-sun"></i>
-      </a>
-      <a class="btn-getstarted ms-3" href="#preorder" data-en="Pre-order Now" data-hi="अभी ऑर्डर करें">Pre-order Now</a>
+
+      <!-- Desktop Navigation -->
+      <nav id="navmenu" class="navmenu d-none d-xl-block">
+        <ul class="d-flex align-items-center mb-0">
+          <li><a href="#hero" class="active" data-en="Home" data-hi="होम">Home</a></li>
+          <li><a href="#about" data-en="About" data-hi="हमारे बारे में">About</a></li>
+          <li><a href="#collection" data-en="Collection" data-hi="कलेक्शन">Collection</a></li>
+          <li><a href="#preorder" data-en="Pre-order" data-hi="प्री-ऑर्डर">Pre-order</a></li>
+          <li><a href="#wellness" data-en="Wellness" data-hi="स्वास्थ्य">Wellness</a></li>
+          <li><a href="#gallery" data-en="Gallery" data-hi="गैलरी">Gallery</a></li>
+          <li><a href="#contact" data-en="Contact" data-hi="संपर्क">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Desktop Header Buttons -->
+      <div class="header-buttons d-none d-xl-flex align-items-center">
+        <a id="lang-toggle" class="btn-lang-toggle ms-3" href="#">
+          <span>हिं</span>
+        </a>
+        <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
+          <i class="bi bi-sun"></i>
+        </a>
+        <a class="btn-getstarted ms-3" href="#preorder" data-en="Pre-order Now" data-hi="अभी ऑर्डर करें">Pre-order Now</a>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-nav-toggle d-xl-none" aria-label="Toggle Navigation">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <!-- Mobile Menu -->
+      <div class="mobile-nav">
+        <div class="mobile-nav-wrapper">
+          <ul class="mobile-nav-menu">
+            <li><a href="#hero" class="active" data-en="Home" data-hi="होम">Home</a></li>
+            <li><a href="#about" data-en="About" data-hi="हमारे बारे में">About</a></li>
+            <li><a href="#collection" data-en="Collection" data-hi="कलेक्शन">Collection</a></li>
+            <li><a href="#preorder" data-en="Pre-order" data-hi="प्री-ऑर्डर">Pre-order</a></li>
+            <li><a href="#wellness" data-en="Wellness" data-hi="स्वास्थ्य">Wellness</a></li>
+            <li><a href="#gallery" data-en="Gallery" data-hi="गैलरी">Gallery</a></li>
+            <li><a href="#contact" data-en="Contact" data-hi="संपर्क">Contact</a></li>
+          </ul>
+          <div class="mobile-nav-buttons">
+            <a id="mobile-lang-toggle" class="btn-lang-toggle" href="#">
+              <span>हिं</span>
+            </a>
+            <a id="mobile-theme-toggle" class="btn-theme-toggle" href="#">
+              <i class="bi bi-sun"></i>
+            </a>
+            <a class="btn-getstarted" href="#preorder" data-en="Pre-order Now" data-hi="अभी ऑर्डर करें">Pre-order Now</a>
+          </div>
+        </div>
+      </div>
     </div>
-
-  </div>
-</header>
+  </header>
 
   <main class="main">
 
@@ -929,7 +1069,7 @@
     z-index: 10;
     color: var(--accent-color);
     background: color-mix(in srgb, var(--surface-color) 70%, var(--accent-color) 30%);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 16px rgba(0, 0, 0,   0.12);
     transition: transform 0.25s ease, color 0.25s ease, background-color 0.25s ease;
     line-height: 1;
   }
@@ -1568,6 +1708,47 @@ langToggle.addEventListener('click', (e) => {
 });
 
 switchLanguage(currentLang);
+
+// Handle mobile menu toggle
+const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+const mobileNav = document.querySelector('.mobile-nav');
+
+if (mobileNavToggle && mobileNav) {
+  mobileNavToggle.addEventListener('click', function() {
+    mobileNav.classList.toggle('active');
+    this.querySelector('i').classList.toggle('bi-list');
+    this.querySelector('i').classList.toggle('bi-x');
+    document.body.classList.toggle('mobile-nav-active');
+  });
+}
+
+// Close mobile menu when clicking on a nav link
+document.querySelectorAll('.mobile-nav-menu a').forEach(link => {
+  link.addEventListener('click', () => {
+    mobileNav.classList.remove('active');
+    mobileNavToggle.querySelector('i').classList.add('bi-list');
+    mobileNavToggle.querySelector('i').classList.remove('bi-x');
+    document.body.classList.remove('mobile-nav-active');
+  });
+});
+
+// Sync mobile theme toggle with main theme toggle
+const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+if (mobileThemeToggle) {
+  mobileThemeToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('theme-toggle').click();
+  });
+}
+
+// Sync mobile language toggle with main language toggle
+const mobileLangToggle = document.getElementById('mobile-lang-toggle');
+if (mobileLangToggle) {
+  mobileLangToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('lang-toggle').click();
+  });
+}
 </script>
 
 </body>
