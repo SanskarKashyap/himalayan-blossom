@@ -21,7 +21,7 @@
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -47,124 +47,6 @@
 
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet" />
-
-    <style>
-      /* Mobile Navigation Styles */
-      .mobile-nav-toggle {
-        background: transparent;
-        border: none;
-        color: var(--accent-color);
-        font-size: 28px;
-        cursor: pointer;
-        line-height: 0;
-        padding: 8px;
-        margin-left: 12px;
-        border-radius: 50%;
-        transition: all 0.3s ease;
-      }
-
-      .mobile-nav-toggle:hover {
-        color: var(--accent-color);
-        background: color-mix(in srgb, var(--accent-color) 15%, transparent);
-      }
-
-      .mobile-nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 100%;
-        max-width: 320px;
-        height: 100vh;
-        background: var(--surface-color);
-        padding: 60px 0 20px 0;
-        overflow-y: auto;
-        transition: 0.3s;
-        z-index: 999;
-        box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
-        border-left: 1px solid
-          color-mix(in srgb, var(--accent-color) 15%, transparent);
-      }
-
-      .mobile-nav.active {
-        right: 0;
-      }
-
-      .mobile-nav-wrapper {
-        padding: 0 24px;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .mobile-nav-menu {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      .mobile-nav-menu li {
-        border-bottom: 1px solid
-          color-mix(in srgb, var(--accent-color) 15%, transparent);
-      }
-
-      .mobile-nav-menu li:last-child {
-        border-bottom: none;
-      }
-
-      .mobile-nav-menu a {
-        display: block;
-        padding: 15px 0;
-        font-size: 16px;
-        font-weight: 500;
-        color: var(--heading-color);
-        transition: 0.3s;
-        text-decoration: none;
-      }
-
-      .mobile-nav-menu a:hover,
-      .mobile-nav-menu .active {
-        color: var(--accent-color);
-      }
-
-      .mobile-nav-buttons {
-        margin-top: auto;
-        padding-top: 24px;
-        border-top: 1px solid
-          color-mix(in srgb, var(--accent-color) 15%, transparent);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .mobile-nav-buttons .btn-lang-toggle,
-      .mobile-nav-buttons .btn-theme-toggle {
-        width: calc(50% - 6px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 10px;
-        border-radius: 8px;
-        background: color-mix(in srgb, var(--accent-color) 10%, transparent);
-        color: var(--heading-color);
-        text-decoration: none;
-        transition: 0.3s;
-      }
-
-      .mobile-nav-buttons .btn-getstarted {
-        width: 100%;
-        text-align: center;
-        margin-top: 8px;
-      }
-
-      body.mobile-nav-active {
-        overflow: hidden;
-      }
-
-      .dark-theme .mobile-nav {
-        background: var(--surface-color);
-        border-left: 1px solid rgba(255, 255, 255, 0.1);
-      }
-    </style>
 
     <!-- =======================================================
   * Template Name: Yummy (modified for Himalayan Blossom)
@@ -200,11 +82,6 @@
               >
             </li>
             <li>
-              <a href="#preorder" data-en="Pre-order" data-hi="प्री-ऑर्डर"
-                >Pre-order</a
-              >
-            </li>
-            <li>
               <a href="#wellness" data-en="Wellness" data-hi="स्वास्थ्य"
                 >Wellness</a
               >
@@ -229,9 +106,9 @@
           <a
             class="btn-getstarted ms-3"
             href="#preorder"
-            data-en="Pre-order Now"
-            data-hi="अभी ऑर्डर करें"
-            >Pre-order Now</a
+            data-en="Pre-order"
+            data-hi="ऑर्डर करें"
+            >Pre-order</a
           >
         </div>
 
@@ -260,11 +137,6 @@
               <li>
                 <a href="#collection" data-en="Collection" data-hi="कलेक्शन"
                   >Collection</a
-                >
-              </li>
-              <li>
-                <a href="#preorder" data-en="Pre-order" data-hi="प्री-ऑर्डर"
-                  >Pre-order</a
                 >
               </li>
               <li>
@@ -314,8 +186,8 @@
                 rel="stylesheet"
               />
 
-              <h1 style="font-family: 'Playfair Display', serif">
-                <span style="color: #ffd700">Himalayan Honey,</span> Reimagined.
+              <h1 data-en-part1="Himalayan Honey," data-en-part2=" Reimagined." data-hi-part1="हिमालयी शहद," data-hi-part2=" नई कल्पना।">
+                <span class="text-accent">Himalayan Honey,</span> Reimagined.
               </h1>
               <p
                 class="lead"
@@ -345,7 +217,7 @@
                 data-aos="fade-up"
                 data-aos-delay="300"
               >
-                <span style="color: #ffd700 !important"
+                <span class="text-accent fw-semibold"
                   >Limited seasonal batches • Traceable to valley &amp; harvest
                   date</span
                 >
@@ -372,20 +244,12 @@
         class="special-offer section light-background"
       >
         <div class="container text-center" data-aos="fade-up">
-          <div
-            class="offer-box"
-            style="
-              border: 2px dashed var(--accent-color);
-              padding: 30px;
-              border-radius: 10px;
-            "
-          >
+          <div class="offer-box">
             <h2 data-en="Limited Time Offer!" data-hi="सीमित समय का ऑफर!">
               Limited Time Offer!
             </h2>
             <p
               class="lead"
-              style="font-size: 1.2rem"
               data-en="Pre-order any single jar of our Himalayan honey and receive a FREE tasting sample kit with all nine of our rare honey varieties!"
               data-hi="हमारे हिमालयी शहद का कोई भी एक जार प्री-ऑर्डर करें और हमारी सभी नौ दुर्लभ शहद किस्मों के साथ मुफ्त टेस्टिंग सैंपल किट प्राप्त करें!"
             >
@@ -2391,14 +2255,14 @@
 
       .product-modal.dark-theme .modal-close,
       .preorder-modal.dark-theme .modal-close {
-        color: #ffd700;
+        color: var(--accent-color);
         background: rgba(255, 255, 255, 0.08);
         box-shadow: none;
       }
 
       .product-modal.dark-theme .modal-close:hover,
       .preorder-modal.dark-theme .modal-close:hover {
-        background: #ffd700;
+        background: var(--accent-color);
         color: #1a1a1a;
       }
 
