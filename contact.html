@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Contact Himalayan Blossom — Connect &amp; Visit</title>
+    <meta
+      name="description"
+      content=" Nature’s Luxury, From the Himalayas to Your Home. Pure. Rare. Himalayan. Taste the Himalayas, Live the Purity.Hand-harvested Himalayan honey by Deen Dayal — pure, raw, and limited by nature. Pre-order exclusive batches and receive a tasting sample in luxury packaging."
+    />
+    <meta
+      name="keywords"
+      content="Himalayan honey, luxury honey, raw honey, Deen Dayal, pre-order honey"
+    />
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" />
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Amatic+SC:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+    <link
+      href="assets/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link
+      href="assets/vendor/glightbox/css/glightbox.min.css"
+      rel="stylesheet"
+    />
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet" />
+
+    <style>
+      .header-auth {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .auth-state {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .auth-state[hidden] {
+        display: none !important;
+      }
+
+      .auth-user-name {
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 0.85rem;
+        letter-spacing: 0.02em;
+      }
+
+      .auth-role-badge {
+        background: rgba(212, 175, 55, 0.28);
+        color: #f4d27a;
+        border-radius: 999px;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        padding: 0.2rem 0.7rem;
+      }
+
+      .auth-logout-btn {
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: transparent;
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+      }
+
+      .auth-logout-btn:hover {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+      }
+
+      body.dark-theme .auth-logout-btn {
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      body.dark-theme .auth-role-badge {
+        background: rgba(212, 175, 55, 0.75);
+        color: #1a1a1a;
+      }
+
+      .header-auth .google-signin-anchor {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-auth .google-signin-anchor > div {
+        transform: scale(0.88);
+        transform-origin: left center;
+      }
+
+      .mobile-nav .auth-wrapper {
+        width: 100%;
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      body.dark-theme .mobile-nav .auth-wrapper {
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .mobile-nav .auth-state {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .mobile-nav .auth-user-name {
+        color: inherit;
+      }
+
+      .mobile-nav .auth-logout-btn {
+        border-color: rgba(0, 0, 0, 0.55);
+        color: inherit;
+        padding: 0.45rem 1.1rem;
+      }
+
+      body.dark-theme .mobile-nav .auth-logout-btn {
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #ffffff;
+      }
+
+      .mobile-nav .auth-user-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .mobile-nav .google-signin-anchor {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .mobile-nav .google-signin-anchor > div {
+        width: 100%;
+        transform: scale(1);
+        transform-origin: center;
+      }
+
+      .form-status-inline {
+        margin-top: 0.75rem;
+      }
+
+      .form-status-inline.is-hidden {
+        display: none !important;
+      }
+
+      .auth-logout-btn-mobile {
+        align-self: flex-start;
+      }
+
+      .auth-warning {
+        color: #f4d27a;
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.85;
+      }
+
+      body.dark-theme .auth-warning {
+        color: #f8e89c;
+      }
+    </style>
+
+    <script>
+      window.APP_API_BASE_URL =
+        window.APP_API_BASE_URL || 'http://localhost:8000/api';
+      window.APP_GOOGLE_CLIENT_ID =
+        window.APP_GOOGLE_CLIENT_ID || 
+        '144658462401-2l7kms1j90v4jl9ovga4uvolunnhghpj.apps.googleusercontent.com';
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+
+    <!-- =======================================================
+  * Template Name: Yummy (modified for Himalayan Blossom)
+  ======================================================== -->
+  </head>
+
+  <body class="contact-page">
+    <header id="header" class="header d-flex align-items-center sticky-top">
+      <div
+        class="container position-relative d-flex align-items-center justify-content-between"
+      >
+        <a href="index.html" class="logo d-flex align-items-center me-auto">
+          <h1 class="sitename">Himalayan Blossom</h1>
+          <span>.</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav id="navmenu" class="navmenu d-none d-xl-block">
+          <ul class="d-flex align-items-center mb-0">
+            <li>
+              <a href="index.html" data-en="Home" data-hi="होम">Home</a>
+            </li>
+            <li>
+              <a href="about.html" data-en="About" data-hi="हमारे बारे में"
+                >About</a
+              >
+            </li>
+            <li>
+              <a href="collection.html" data-en="Collection" data-hi="कलेक्शन"
+                >Collection</a
+              >
+            </li>
+            <li>
+              <a href="wellness.html" data-en="Wellness" data-hi="स्वास्थ्य"
+                >Wellness</a
+              >
+            </li>
+            <li>
+              <a href="gallery.html" data-en="Gallery" data-hi="गैलरी"
+                >Gallery</a
+              >
+            </li>
+            <li>
+              <a href="contact.html" class="active" data-en="Contact" data-hi="संपर्क"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Desktop Header Buttons -->
+        <div class="header-buttons d-none d-xl-flex align-items-center">
+          <div class="header-auth ms-3">
+            <div
+              id="authSignedOutDesktop"
+              class="auth-state auth-signed-out"
+            >
+              <div
+                id="googleSignInButtonDesktop"
+                class="google-signin-anchor"
+              ></div>
+            </div>
+            <div
+              id="authSignedInDesktop"
+              class="auth-state auth-signed-in"
+              hidden
+            >
+              <span id="authUserNameDesktop" class="auth-user-name"></span>
+              <span id="authUserRoleDesktop" class="auth-role-badge"></span>
+              <button
+                type="button"
+                id="authLogoutButtonDesktop"
+                class="auth-logout-btn"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+          <a id="lang-toggle" class="btn-lang-toggle ms-3" href="#">
+            <span>हिं</span>
+          </a>
+          <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
+            <i class="bi bi-sun"></i>
+          </a>
+          <a
+            class="btn-getstarted ms-3"
+            href="preorder.html"
+            data-en="Pre-order"
+            data-hi="ऑर्डर करें"
+            >Pre-order</a
+          >
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button
+          class="mobile-nav-toggle d-xl-none"
+          aria-label="Toggle Navigation"
+        >
+          <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-nav">
+          <div class="mobile-nav-wrapper">
+            <ul class="mobile-nav-menu">
+              <li>
+                <a href="index.html" data-en="Home" data-hi="होम">Home</a>
+              </li>
+              <li>
+                <a href="about.html" data-en="About" data-hi="हमारे बारे में"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a href="collection.html" data-en="Collection" data-hi="कलेक्शन"
+                  >Collection</a
+                >
+              </li>
+              <li>
+                <a href="wellness.html" data-en="Wellness" data-hi="स्वास्थ्य"
+                  >Wellness</a
+                >
+              </li>
+              <li>
+                <a href="gallery.html" data-en="Gallery" data-hi="गैलरी"
+                  >Gallery</a
+                >
+              </li>
+              <li>
+                <a
+                  href="contact.html"
+                  class="active"
+                  data-en="Contact"
+                  data-hi="संपर्क"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+            <div class="mobile-nav-buttons">
+              <a id="mobile-lang-toggle" class="btn-lang-toggle" href="#">
+                <span>हिं</span>
+              </a>
+              <a id="mobile-theme-toggle" class="btn-theme-toggle" href="#">
+                <i class="bi bi-sun"></i>
+              </a>
+              <a
+                class="btn-getstarted"
+                href="preorder.html"
+                data-en="Pre-order Now"
+                data-hi="अभी ऑर्डर करें"
+                >Pre-order Now</a
+              >
+              <div class="auth-wrapper">
+                <div
+                  id="authSignedOutMobile"
+                  class="auth-state auth-signed-out"
+                >
+                  <div
+                    id="googleSignInButtonMobile"
+                    class="google-signin-anchor"
+                  ></div>
+                </div>
+                <div
+                  id="authSignedInMobile"
+                  class="auth-state auth-signed-in"
+                  hidden
+                >
+                  <div class="auth-user-summary">
+                    <span
+                      id="authUserNameMobile"
+                      class="auth-user-name"
+                    ></span>
+                    <span
+                      id="authUserRoleMobile"
+                      class="auth-role-badge"
+                    ></span>
+                  </div>
+                  <button
+                    type="button"
+                    id="authLogoutButtonMobile"
+                    class="auth-logout-btn auth-logout-btn-mobile"
+                  >
+                    Log out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Page Hero -->
+      <section class="page-hero section light-background">
+        <div class="container">
+          <div class="row gy-4 align-items-center">
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+              <span class="badge text-bg-light px-3 py-2 mb-3" data-en="Connect" data-hi="संपर्क">Connect</span>
+              <h1 class="display-5 mb-3" data-en="We'd Love to Hear From You" data-hi="हम आपसे सुनना चाहेंगे">
+                We'd Love to Hear From You
+              </h1>
+              <p class="lead" data-en="Reach out for pre-orders, partnerships, or to plan a tasting at our Himalayan studio." data-hi="प्री-ऑर्डर, साझेदारी या हमारे हिमालयी स्टूडियो में टेस्टिंग की योजना के लिए हमसे संपर्क करें।">
+                Reach out for pre-orders, partnerships, or to plan a tasting at our Himalayan studio.
+              </p>
+              <div class="d-flex flex-wrap gap-3">
+                <a href="preorder.html" class="btn-get-started" data-en="Reserve a Jar" data-hi="एक जार आरक्षित करें">
+                  Reserve a Jar
+                </a>
+                <a href="mailto:hello@himalayanblossom.com" class="btn btn-outline-primary px-4" data-en="Email Us" data-hi="हमें ईमेल करें">
+                  Email Us
+                </a>
+              </div>
+            </div>
+            <div class="col-lg-6" data-aos="zoom-out" data-aos-delay="200">
+              <div class="ratio ratio-4x3 rounded-4 overflow-hidden shadow-lg">
+                <img
+                  src="assets/img/events-4.jpg"
+                  class="w-100 h-100 object-fit-cover"
+                  alt="Himalayan Blossom tasting room"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- About Section -->
+      
+      <!-- /About Section -->
+
+      <!-- Why Us Section -->
+      <!-- Why Us Section -->
+      
+      <!-- /Why Us Section -->
+
+      <!-- Collection / Products Section -->
+      
+      <!-- /Collection Section -->
+
+      <!-- Testimonials Section -->
+      
+      <!-- /Testimonials Section -->
+
+      <!-- Events / Stories Section -->
+      
+      <!-- /Events Section -->
+
+      <!-- Team / Craftspeople Section (Chefs replaced with Beekeepers) -->
+      
+      <!-- /Team Section -->
+
+      <!-- Pre-order Section (replaces Book A Table) -->
+      
+      <!-- /Pre-order Section -->
+
+      <!-- Gallery Section -->
+      
+      <!-- /Gallery Section -->
+
+      <!-- Contact Section -->
+      <section id="contact" class="contact section">
+        <!-- Section Title -->
+        <div class="container section-title">
+          <h2 data-en="Contact" data-hi="संपर्क">Contact</h2>
+          <p>
+            <span data-en="Need Help?" data-hi="मदद चाहिए?">Need Help?</span>
+            <span
+              class="description-title"
+              data-en="Contact Us"
+              data-hi="हमसे संपर्क करें"
+              >Contact Us</span
+            >
+          </p>
+        </div>
+        <!-- End Section Title -->
+
+        <div class="container">
+          <div class="mb-5 map-container">
+            <div class="map-placeholder" onclick="loadMap()">
+              <div class="map-overlay">
+                <i class="bi bi-geo-alt"></i>
+                <p>Click to load map</p>
+              </div>
+            </div>
+          </div>
+          <!-- End Google Maps -->
+
+          <div class="row gy-4">
+            <div class="col-md-6">
+              <div class="info-item d-flex align-items-center">
+                <i class="icon bi bi-geo-alt flex-shrink-0"></i>
+                <div>
+                  <h3 data-en="Address" data-hi="पता">Address</h3>
+                  <p>
+                    Sample Valley Apiaries, Kullu District, Himachal Pradesh,
+                    India
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- End Info Item -->
+
+            <div class="col-md-6">
+              <div class="info-item d-flex align-items-center">
+                <i class="icon bi bi-telephone flex-shrink-0"></i>
+                <div>
+                  <h3 data-en="Call Us" data-hi="हमें कॉल करें">Call Us</h3>
+                  <p>+91 98765 43210</p>
+                </div>
+              </div>
+            </div>
+            <!-- End Info Item -->
+
+            <div class="col-md-6">
+              <div class="info-item d-flex align-items-center">
+                <i class="icon bi bi-envelope flex-shrink-0"></i>
+                <div>
+                  <h3 data-en="Email Us" data-hi="हमें ईमेल करें">Email Us</h3>
+                  <p>hello@himalayanblossom.com</p>
+                </div>
+              </div>
+            </div>
+            <!-- End Info Item -->
+
+            <div class="col-md-6">
+              <div class="info-item d-flex align-items-center">
+                <i class="icon bi bi-clock flex-shrink-0"></i>
+                <div>
+                  <h3 data-en="Opening Hours" data-hi="खुलने का समय">
+                    Opening Hours
+                  </h3>
+                  <p>
+                    <strong>Mon-Sat:</strong> 09:00 - 18:00;
+                    <strong>Sunday:</strong> Closed
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- End Info Item -->
+          </div>
+
+          <form class="contact-form" onsubmit="sendToWhatsApp(); return false;">
+            <div class="row gy-4">
+              <div class="col-md-6">
+                <input
+                  type="text"
+                  id="name"
+                  class="form-control"
+                  placeholder="Your Name"
+                  data-placeholder-en="Your Name"
+                  data-placeholder-hi="आपका नाम"
+                  required
+                />
+              </div>
+
+              <div class="col-md-6">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  placeholder="Your Email"
+                  data-placeholder-en="Your Email"
+                  data-placeholder-hi="आपका ईमेल"
+                  required
+                />
+              </div>
+
+              <div class="col-md-12">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="subject"
+                  placeholder="Subject"
+                  data-placeholder-en="Subject"
+                  data-placeholder-hi="विषय"
+                  required
+                />
+              </div>
+
+              <div class="col-md-12">
+                <textarea
+                  class="form-control"
+                  id="message"
+                  rows="6"
+                  placeholder="Message"
+                  data-placeholder-en="Message"
+                  data-placeholder-hi="संदेश"
+                  required
+                ></textarea>
+              </div>
+
+              <div class="col-md-12 text-center">
+                <button
+                  type="submit"
+                  data-en="Send Message"
+                  data-hi="संदेश भेजें"
+                >
+                  Send Message
+                </button>
+              </div>
+            </div>
+          </form>
+          <!-- End Contact Form -->
+        </div>
+      </section>
+      <!-- /Contact Section -->
+    </main>
+
+    <footer id="footer" class="footer dark-background">
+      <div class="container">
+        <div class="row gy-3">
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-geo-alt icon"></i>
+            <div class="address">
+              <h4 data-en="Address" data-hi="पता">Address</h4>
+              <p>Sample Valley Apiaries</p>
+              <p>Kullu, Himachal Pradesh, India</p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-telephone icon"></i>
+            <div>
+              <h4 data-en="Contact" data-hi="संपर्क">Contact</h4>
+              <p>
+                <strong data-en="Phone:" data-hi="फोन:">Phone:</strong>
+                <span>+91 98765 43210</span><br />
+                <strong data-en="Email:" data-hi="ईमेल:">Email:</strong>
+                <span>hello@himalayanblossom.com</span><br />
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-clock icon"></i>
+            <div>
+              <h4 data-en="Opening Hours" data-hi="खुलने का समय">
+                Opening Hours
+              </h4>
+              <p>
+                <strong data-en="Mon-Sat:" data-hi="सोम-शनि:">Mon-Sat:</strong>
+                <span>09:00 - 18:00</span><br />
+                <strong data-en="Sunday" data-hi="रविवार">Sunday</strong>:
+                <span data-en="Closed" data-hi="बंद">Closed</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <h4 data-en="Follow Us" data-hi="हमारा अनुसरण करें">Follow Us</h4>
+            <div class="social-links d-flex">
+              <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+              <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container copyright text-center mt-4">
+        <p>
+          © <span data-en="Copyright" data-hi="कॉपीराइट">Copyright</span>
+          <strong class="px-1 sitename">Himalayan Blossom</strong>
+          <span data-en="All Rights Reserved" data-hi="सभी अधिकार सुरक्षित"
+            >All Rights Reserved</span
+          >
+        </p>
+      </div>
+    </footer>
+
+    <!-- Scroll Top -->
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

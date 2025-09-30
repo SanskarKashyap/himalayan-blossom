@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>About Himalayan Blossom — Our Story &amp; Community</title>
+    <meta
+      name="description"
+      content=" Nature’s Luxury, From the Himalayas to Your Home. Pure. Rare. Himalayan. Taste the Himalayas, Live the Purity.Hand-harvested Himalayan honey by Deen Dayal — pure, raw, and limited by nature. Pre-order exclusive batches and receive a tasting sample in luxury packaging."
+    />
+    <meta
+      name="keywords"
+      content="Himalayan honey, luxury honey, raw honey, Deen Dayal, pre-order honey"
+    />
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" />
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Amatic+SC:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+    <link
+      href="assets/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link
+      href="assets/vendor/glightbox/css/glightbox.min.css"
+      rel="stylesheet"
+    />
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet" />
+
+    <style>
+      .header-auth {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .auth-state {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .auth-state[hidden] {
+        display: none !important;
+      }
+
+      .auth-user-name {
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 0.85rem;
+        letter-spacing: 0.02em;
+      }
+
+      .auth-role-badge {
+        background: rgba(212, 175, 55, 0.28);
+        color: #f4d27a;
+        border-radius: 999px;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        padding: 0.2rem 0.7rem;
+      }
+
+      .auth-logout-btn {
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: transparent;
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+      }
+
+      .auth-logout-btn:hover {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+      }
+
+      body.dark-theme .auth-logout-btn {
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      body.dark-theme .auth-role-badge {
+        background: rgba(212, 175, 55, 0.75);
+        color: #1a1a1a;
+      }
+
+      .header-auth .google-signin-anchor {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-auth .google-signin-anchor > div {
+        transform: scale(0.88);
+        transform-origin: left center;
+      }
+
+      .mobile-nav .auth-wrapper {
+        width: 100%;
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      body.dark-theme .mobile-nav .auth-wrapper {
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .mobile-nav .auth-state {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .mobile-nav .auth-user-name {
+        color: inherit;
+      }
+
+      .mobile-nav .auth-logout-btn {
+        border-color: rgba(0, 0, 0, 0.55);
+        color: inherit;
+        padding: 0.45rem 1.1rem;
+      }
+
+      body.dark-theme .mobile-nav .auth-logout-btn {
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #ffffff;
+      }
+
+      .mobile-nav .auth-user-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .mobile-nav .google-signin-anchor {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .mobile-nav .google-signin-anchor > div {
+        width: 100%;
+        transform: scale(1);
+        transform-origin: center;
+      }
+
+      .form-status-inline {
+        margin-top: 0.75rem;
+      }
+
+      .form-status-inline.is-hidden {
+        display: none !important;
+      }
+
+      .auth-logout-btn-mobile {
+        align-self: flex-start;
+      }
+
+      .auth-warning {
+        color: #f4d27a;
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.85;
+      }
+
+      body.dark-theme .auth-warning {
+        color: #f8e89c;
+      }
+    </style>
+
+    <script>
+      window.APP_API_BASE_URL =
+        window.APP_API_BASE_URL || 'http://localhost:8000/api';
+      window.APP_GOOGLE_CLIENT_ID =
+        window.APP_GOOGLE_CLIENT_ID || 
+        '144658462401-2l7kms1j90v4jl9ovga4uvolunnhghpj.apps.googleusercontent.com';
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+
+    <!-- =======================================================
+  * Template Name: Yummy (modified for Himalayan Blossom)
+  ======================================================== -->
+  </head>
+
+  <body class="about-page">
+    <header id="header" class="header d-flex align-items-center sticky-top">
+      <div
+        class="container position-relative d-flex align-items-center justify-content-between"
+      >
+        <a href="index.html" class="logo d-flex align-items-center me-auto">
+          <h1 class="sitename">Himalayan Blossom</h1>
+          <span>.</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav id="navmenu" class="navmenu d-none d-xl-block">
+          <ul class="d-flex align-items-center mb-0">
+            <li>
+              <a href="index.html" data-en="Home" data-hi="होम">Home</a>
+            </li>
+            <li>
+              <a href="about.html" class="active" data-en="About" data-hi="हमारे बारे में"
+                >About</a
+              >
+            </li>
+            <li>
+              <a href="collection.html" data-en="Collection" data-hi="कलेक्शन"
+                >Collection</a
+              >
+            </li>
+            <li>
+              <a href="wellness.html" data-en="Wellness" data-hi="स्वास्थ्य"
+                >Wellness</a
+              >
+            </li>
+            <li>
+              <a href="gallery.html" data-en="Gallery" data-hi="गैलरी"
+                >Gallery</a
+              >
+            </li>
+            <li>
+              <a href="contact.html" data-en="Contact" data-hi="संपर्क"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Desktop Header Buttons -->
+        <div class="header-buttons d-none d-xl-flex align-items-center">
+          <div class="header-auth ms-3">
+            <div
+              id="authSignedOutDesktop"
+              class="auth-state auth-signed-out"
+            >
+              <div
+                id="googleSignInButtonDesktop"
+                class="google-signin-anchor"
+              ></div>
+            </div>
+            <div
+              id="authSignedInDesktop"
+              class="auth-state auth-signed-in"
+              hidden
+            >
+              <span id="authUserNameDesktop" class="auth-user-name"></span>
+              <span id="authUserRoleDesktop" class="auth-role-badge"></span>
+              <button
+                type="button"
+                id="authLogoutButtonDesktop"
+                class="auth-logout-btn"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+          <a id="lang-toggle" class="btn-lang-toggle ms-3" href="#">
+            <span>हिं</span>
+          </a>
+          <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
+            <i class="bi bi-sun"></i>
+          </a>
+          <a
+            class="btn-getstarted ms-3"
+            href="preorder.html"
+            data-en="Pre-order"
+            data-hi="ऑर्डर करें"
+            >Pre-order</a
+          >
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button
+          class="mobile-nav-toggle d-xl-none"
+          aria-label="Toggle Navigation"
+        >
+          <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-nav">
+          <div class="mobile-nav-wrapper">
+            <ul class="mobile-nav-menu">
+              <li>
+                <a href="index.html" data-en="Home" data-hi="होम">Home</a>
+              </li>
+              <li>
+                <a
+                  href="about.html"
+                  class="active"
+                  data-en="About"
+                  data-hi="हमारे बारे में"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a
+                  href="collection.html"
+                  data-en="Collection"
+                  data-hi="कलेक्शन"
+                  >Collection</a
+                >
+              </li>
+              <li>
+                <a
+                  href="wellness.html"
+                  data-en="Wellness"
+                  data-hi="स्वास्थ्य"
+                  >Wellness</a
+                >
+              </li>
+              <li>
+                <a href="gallery.html" data-en="Gallery" data-hi="गैलरी"
+                  >Gallery</a
+                >
+              </li>
+              <li>
+                <a href="contact.html" data-en="Contact" data-hi="संपर्क"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+            <div class="mobile-nav-buttons">
+              <a id="mobile-lang-toggle" class="btn-lang-toggle" href="#">
+                <span>हिं</span>
+              </a>
+              <a id="mobile-theme-toggle" class="btn-theme-toggle" href="#">
+                <i class="bi bi-sun"></i>
+              </a>
+              <a
+                class="btn-getstarted"
+                href="preorder.html"
+                data-en="Pre-order Now"
+                data-hi="अभी ऑर्डर करें"
+                >Pre-order Now</a
+              >
+              <div class="auth-wrapper">
+                <div
+                  id="authSignedOutMobile"
+                  class="auth-state auth-signed-out"
+                >
+                  <div
+                    id="googleSignInButtonMobile"
+                    class="google-signin-anchor"
+                  ></div>
+                </div>
+                <div
+                  id="authSignedInMobile"
+                  class="auth-state auth-signed-in"
+                  hidden
+                >
+                  <div class="auth-user-summary">
+                    <span
+                      id="authUserNameMobile"
+                      class="auth-user-name"
+                    ></span>
+                    <span
+                      id="authUserRoleMobile"
+                      class="auth-role-badge"
+                    ></span>
+                  </div>
+                  <button
+                    type="button"
+                    id="authLogoutButtonMobile"
+                    class="auth-logout-btn auth-logout-btn-mobile"
+                  >
+                    Log out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Page Hero -->
+      <section class="page-hero section light-background">
+        <div class="container">
+          <div class="row gy-4 align-items-center">
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+              <span class="badge text-bg-light px-3 py-2 mb-3" data-en="Our Story" data-hi="हमारी कहानी">Our Story</span>
+              <h1 class="display-5 mb-3" data-en="Meet the Minds Behind Himalayan Blossom" data-hi="हिमालयन ब्लॉसम के पीछे की टीम से मिलें">
+                Meet the Minds Behind Himalayan Blossom
+              </h1>
+              <p class="lead" data-en="From high-altitude apiaries to community-led wellness, discover how Deen Dayal and our artisan beekeepers craft rare Himalayan honey." data-hi="उच्च ऊंचाई वाले apiaries से समुदाय-नेतृत्व वाली वेलनेस तक, जानें कि दीन दयाल और हमारे कारीगर मधुमक्खी पालक कैसे दुर्लभ हिमालयी शहद बनाते हैं।">
+                From high-altitude apiaries to community-led wellness, discover how Deen Dayal and our artisan beekeepers craft rare Himalayan honey.
+              </p>
+              <div class="d-flex flex-wrap gap-3">
+                <a href="collection.html" class="btn-get-started" data-en="Taste the Collection" data-hi="कलेक्शन का स्वाद लें">
+                  Taste the Collection
+                </a>
+                <a href="preorder.html" class="btn btn-outline-primary px-4" data-en="Reserve a Jar" data-hi="एक जार आरक्षित करें">
+                  Reserve a Jar
+                </a>
+              </div>
+            </div>
+            <div class="col-lg-6" data-aos="zoom-out" data-aos-delay="200">
+              <div class="ratio ratio-4x3 rounded-4 overflow-hidden shadow-lg">
+                <img
+                  src="assets/img/about-2.jpg"
+                  class="w-100 h-100 object-fit-cover"
+                  alt="Beekeepers working in Himalayan valley"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- About Section -->
+      <section id="about" class="about section">
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+          <h2 data-en="About Us" data-hi="हमारे बारे में">About Us</h2>
+          <p>
+            <span data-en="Meet" data-hi="मिलिए">Meet</span>
+            <span
+              class="description-title"
+              data-en="Deen Dayal & The Hive"
+              data-hi="दीन दयाल और द हाइव"
+              >Deen Dayal &amp; The Hive</span
+            >
+          </p>
+        </div>
+        <!-- End Section Title -->
+
+        <div class="container">
+          <div class="row gy-4 align-items-center">
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+              <img
+                src="assets/img/about.jpg"
+                class="img-fluid mb-4"
+                alt="Deen Dayal tending Himalayan beehives"
+              />
+              <div class="book-a-table">
+                <h3 data-en="Founder" data-hi="संस्थापक">Founder</h3>
+                <p
+                  data-en='Deen Dayal — the "Bee Father of India"'
+                  data-hi="दीन दयाल — भारत के मधुमक्खी पिता"
+                >
+                  Deen Dayal — the "Bee Father of India"
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="250">
+              <div class="content ps-0 ps-lg-5">
+                <p
+                  class="fst-italic"
+                  data-en="Deen Dayal has spent over 20 years hand-tending Himalayan hives. Blending ancestral beekeeping with modern AI hive monitoring, he harvests honey that is pure, raw, and traceable to a single valley. Our mission is to empower local farmers with sustainable livelihoods, bring beekeeping education to schools, and deliver an ethical luxury honey to homes worldwide."
+                  data-hi="दीन दयाल ने 20 सालों से अधिक समय हिमालयी मधुमक्खियों की देखभाल की है। पैतृक मधुमक्खी पालन को आधुनिक AI मॉनिटरिंग के साथ मिलाकर, वह शुद्ध, कच्चा और एक ही घाटी से पता लगाने योग्य शहद का उत्पादन करता है।"
+                >
+                  Deen Dayal has spent over 20 years hand-tending Himalayan
+                  hives. Blending ancestral beekeeping with modern AI hive
+                  monitoring, he harvests honey that is pure, raw, and traceable
+                  to a single valley. Our mission is to empower local farmers
+                  with sustainable livelihoods, bring beekeeping education to
+                  schools, and deliver an ethical luxury honey to homes
+                  worldwide.
+                </p>
+
+                <div class="position-relative mt-4">
+                  <img
+                    src="assets/img/about-2.jpg"
+                    class="img-fluid"
+                    alt="Bees and bloom in Himalayan valley"
+                  />
+                  <a
+                    href="https://youtu.be/gURe4sclFzU"
+                    class="glightbox pulsating-play-btn"
+                    aria-label="Watch founder video"
+                  ></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /About Section -->
+
+      <!-- Why Us Section -->
+      <!-- Why Us Section -->
+      <section id="why-us" class="why-us section light-background">
+        <div class="container">
+          <div class="row gy-4">
+            <div
+              class="col-lg-4 d-flex align-items-stretch"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <div
+                class="why-box h-100 d-flex flex-column justify-content-between"
+              >
+                <h3
+                  data-en="Why Choose Himalayan Blossom"
+                  data-hi="हिमालयन ब्लॉसम क्यों चुनें"
+                >
+                  Why Choose Himalayan Blossom
+                </h3>
+                <p
+                  data-en="Pure, small-batch honey crafted with care — traceable to valley and harvest, ethically harvested, and presented in luxury packaging for a thoughtful unboxing."
+                  data-hi="सावधानी से बनाया गया शुद्ध, छोटे बैच का शहद — घाटी और फसल तक पता लगाने योग्य, नैतिक रूप से काटा गया, और विचारशील अनबॉक्सिंग के लिए लक्जरी पैकेजिंग में प्रस्तुत।"
+                >
+                  Pure, small-batch honey crafted with care — traceable to
+                  valley and harvest, ethically harvested, and presented in
+                  luxury packaging for a thoughtful unboxing.
+                </p>
+                <div class="text-center mt-auto">
+                  <a href="#about" class="more-btn"
+                    ><span data-en="Learn More" data-hi="और जानें"
+                      >Learn More</span
+                    >
+                    <i class="bi bi-chevron-right"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+            <!-- End Why Box -->
+
+            <div class="col-lg-8 d-flex align-items-stretch">
+              <div class="row gy-4 w-100">
+                <div class="col-xl-4 d-flex align-items-stretch">
+                  <div
+                    class="icon-box h-100 d-flex flex-column justify-content-center align-items-center"
+                  >
+                    <i class="bi bi-clipboard-data"></i>
+                    <h4
+                      data-en="Purity & Traceability"
+                      data-hi="शुद्धता और पता लगाना"
+                    >
+                      Purity &amp; Traceability
+                    </h4>
+                    <p
+                      data-en="Raw, unfiltered honey sourced from named Himalayan valleys — each small batch is traceable back to the farm and seasonal harvest."
+                      data-hi="नामित हिमालयी घाटियों से प्राप्त कच्चा, बिना फिल्टर का शहद — हर छोटा बैच फार्म और मौसमी फसल तक पता लगाने योग्य है।"
+                    >
+                      Raw, unfiltered honey sourced from named Himalayan valleys
+                      — each small batch is traceable back to the farm and
+                      seasonal harvest.
+                    </p>
+                  </div>
+                </div>
+                <!-- End Icon Box -->
+
+                <div
+                  class="col-xl-4 d-flex align-items-stretch"
+                  data-aos="fade-up"
+                  data-aos-delay="300"
+                >
+                  <div
+                    class="icon-box h-100 d-flex flex-column justify-content-center align-items-center"
+                  >
+                    <i class="bi bi-gem"></i>
+                    <h4
+                      data-en="Ethical Harvest & Community"
+                      data-hi="नैतिक फसल और समुदाय"
+                    >
+                      Ethical Harvest &amp; Community
+                    </h4>
+                    <p
+                      data-en="We train and equip local farmers with beehives, creating new income streams, improved pollination and stronger communities."
+                      data-hi="हम स्थानीय किसानों को मधुमक्खी पालन का प्रशिक्षण देते हैं और उन्हें साजो-सामान से लैस करते हैं, नई आय के स्रोत, बेहतर परागण और मजबूत समुदाय बनाते हैं।"
+                    >
+                      We train and equip local farmers with beehives, creating
+                      new income streams, improved pollination and stronger
+                      communities.
+                    </p>
+                  </div>
+                </div>
+                <!-- End Icon Box -->
+
+                <div
+                  class="col-xl-4 d-flex align-items-stretch"
+                  data-aos="fade-up"
+                  data-aos-delay="400"
+                >
+                  <div
+                    class="icon-box h-100 d-flex flex-column justify-content-center align-items-center"
+                  >
+                    <i class="bi bi-inboxes"></i>
+                    <h4
+                      data-en="Luxury Packaging & Exclusive Batches"
+                      data-hi="लक्जरी पैकेजिंग और विशेष बैच"
+                    >
+                      Luxury Packaging &amp; Exclusive Batches
+                    </h4>
+                    <p
+                      data-en="Hand-numbered jars, natural-linen labels, wooden lids and a wax-sealed story-tag — every order is an experience."
+                      data-hi="हाथ से नंबर किए गए जार, प्राकृतिक लिनेन लेबल, लकड़ी के ढक्कन और मोम से मुहरबंद कहानी टैग — हर ऑर्डर एक अनुभव है।"
+                    >
+                      Hand-numbered jars, natural-linen labels, wooden lids and
+                      a wax-sealed story-tag — every order is an experience.
+                    </p>
+                  </div>
+                </div>
+                <!-- End Icon Box -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /Why Us Section -->
+
+      <!-- Collection / Products Section -->
+      
+      <!-- /Collection Section -->
+
+      <!-- Testimonials Section -->
+      
+      <!-- /Testimonials Section -->
+
+      <!-- Events / Stories Section -->
+      <section id="events" class="events section">
+        <div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
+          <div class="swiper init-swiper">
+            <script type="application/json" class="swiper-config">
+              {
+                "loop": true,
+                "speed": 600,
+                "autoplay": {
+                  "delay": 5000
+                },
+                "slidesPerView": "auto",
+                "pagination": {
+                  "el": ".swiper-pagination",
+                  "type": "bullets",
+                  "clickable": true
+                },
+                "breakpoints": {
+                  "320": {
+                    "slidesPerView": 1,
+                    "spaceBetween": 40
+                  },
+                  "1200": {
+                    "slidesPerView": 3,
+                    "spaceBetween": 1
+                  }
+                }
+              }
+            </script>
+            <div class="swiper-wrapper">
+              <div
+                class="swiper-slide event-item d-flex flex-column justify-content-end"
+                style="background-image: url(assets/img/events-1.jpg)"
+              >
+                <h3
+                  data-en="Farmer Training Camps"
+                  data-hi="किसान प्रशिक्षण शिविर"
+                >
+                  Farmer Training Camps
+                </h3>
+                <div
+                  class="price align-self-start"
+                  data-en="Community"
+                  data-hi="समुदाय"
+                >
+                  Community
+                </div>
+                <p
+                  class="description"
+                  data-en="Hands-on beekeeping workshops bringing new income streams to Himalayan farms."
+                  data-hi="हिमालयी खेतों में नई आय धाराएं लाने वाली व्यावहारिक मधुमक्खी पालन कार्यशालाएं।"
+                >
+                  Hands-on beekeeping workshops bringing new income streams to
+                  Himalayan farms.
+                </p>
+              </div>
+              <!-- End Event item -->
+
+              <div
+                class="swiper-slide event-item d-flex flex-column justify-content-end"
+                style="background-image: url(assets/img/events-2.jpg)"
+              >
+                <h3
+                  data-en="School Bee Projects"
+                  data-hi="स्कूल मधुमक्खी परियोजनाएं"
+                >
+                  School Bee Projects
+                </h3>
+                <div
+                  class="price align-self-start"
+                  data-en="Education"
+                  data-hi="शिक्षा"
+                >
+                  Education
+                </div>
+                <p
+                  class="description"
+                  data-en="Introducing children to the importance of pollinators through school apiary programs."
+                  data-hi="स्कूल मधुमक्खी पालन कार्यक्रमों के माध्यम से बच्चों को परागणकर्ताओं के महत्व से परिचित कराना।"
+                >
+                  Introducing children to the importance of pollinators through
+                  school apiary programs.
+                </p>
+              </div>
+              <!-- End Event item -->
+
+              <div
+                class="swiper-slide event-item d-flex flex-column justify-content-end"
+                style="background-image: url(assets/img/events-3.jpg)"
+              >
+                <h3 data-en="Harvest Stories" data-hi="फसल की कहानियां">
+                  Harvest Stories
+                </h3>
+                <div
+                  class="price align-self-start"
+                  data-en="Limited Batches"
+                  data-hi="सीमित बैच"
+                >
+                  Limited Batches
+                </div>
+                <p
+                  class="description"
+                  data-en="Read the harvest stories and batch notes from each valley and season."
+                  data-hi="प्रत्येक घाटी और मौसम की फसल की कहानियां और बैच नोट्स पढ़ें।"
+                >
+                  Read the harvest stories and batch notes from each valley and
+                  season.
+                </p>
+              </div>
+              <!-- End Event item -->
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+      </section>
+      <!-- /Events Section -->
+
+      <!-- Team / Craftspeople Section (Chefs replaced with Beekeepers) -->
+      <section id="chefs" class="chefs section">
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+          <h2 data-en="Meet the Bee Keepers" data-hi="मधुमक्खी पालकों से मिलें">
+            Meet the Bee Keepers
+          </h2>
+          <p>
+            <span data-en="Our" data-hi="हमारी">Our</span>
+            <span
+              class="description-title"
+              data-en="Community & Crafts"
+              data-hi="समुदाय और शिल्प"
+              >Community &amp; Crafts</span
+            >
+          </p>
+        </div>
+        <!-- End Section Title -->
+
+        <div class="container">
+          <div class="row gy-4">
+            <div
+              class="col-lg-4 d-flex align-items-stretch"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <div class="team-member">
+                <div class="member-img">
+                  <img
+                    src="assets/img/chefs/chefs-1.jpg"
+                    class="img-fluid"
+                    alt="Beekeeper Ramesh"
+                  />
+                  <div class="social">
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-info">
+                  <h4 data-en="Ramesh" data-hi="रमेश">Ramesh</h4>
+                  <span data-en="Lead Beekeeper" data-hi="मुख्य मधुमक्खी पालक"
+                    >Lead Beekeeper</span
+                  >
+                  <p
+                    data-en="Ramesh manages our high-altitude apiaries and ensures every batch is hand-checked at harvest."
+                    data-hi="रमेश हमारी उच्च आल्टिट्यूड मधुमक्खी पालन का प्रबंधन करता है और यह सुनिश्चित करता है कि हर बैच को फसल के समय हाथ से जांचा जाए।"
+                  >
+                    Ramesh manages our high-altitude apiaries and ensures every
+                    batch is hand-checked at harvest.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- End Member -->
+
+            <div
+              class="col-lg-4 d-flex align-items-stretch"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <div class="team-member">
+                <div class="member-img">
+                  <img
+                    src="assets/img/chefs/chefs-2.jpg"
+                    class="img-fluid"
+                    alt="Beekeeper Sita"
+                  />
+                  <div class="social">
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-info">
+                  <h4 data-en="Sita" data-hi="सीता">Sita</h4>
+                  <span data-en="Training Lead" data-hi="प्रशिक्षण प्रमुख"
+                    >Training Lead</span
+                  >
+                  <p
+                    data-en="Sita runs our farmer-training sessions and school outreach, bringing beekeeping to local communities."
+                    data-hi="सीता हमारे किसान-प्रशिक्षण सत्र और स्कूल आउटरीच चलाती है, स्थानीय समुदायों में मधुमक्खी पालन लाती है।"
+                  >
+                    Sita runs our farmer-training sessions and school outreach,
+                    bringing beekeeping to local communities.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- End Member -->
+
+            <div
+              class="col-lg-4 d-flex align-items-stretch"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <div class="team-member">
+                <div class="member-img">
+                  <img
+                    src="assets/img/chefs/chefs-3.jpg"
+                    class="img-fluid"
+                    alt="Beekeeper Mohan"
+                  />
+                  <div class="social">
+                    <a href="#"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+                <div class="member-info">
+                  <h4 data-en="Mohan" data-hi="मोहन">Mohan</h4>
+                  <span data-en="Quality Steward" data-hi="गुणवत्ता प्रबंधक"
+                    >Quality Steward</span
+                  >
+                  <p
+                    data-en="Mohan handles sampling and AI monitoring integration to guarantee purity and traceability."
+                    data-hi="मोहन नमूना लेने और AI मॉनिटरिंग इंटीग्रेशन का काम संभालता है ताकि शुद्धता और पता लगाने की गारंटी दी जा सके।"
+                  >
+                    Mohan handles sampling and AI monitoring integration to
+                    guarantee purity and traceability.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- End Member -->
+          </div>
+        </div>
+      </section>
+      <!-- /Team Section -->
+
+      <!-- Pre-order Section (replaces Book A Table) -->
+      
+      <!-- /Pre-order Section -->
+
+      <!-- Gallery Section -->
+      
+      <!-- /Gallery Section -->
+
+      <!-- Contact Section -->
+      
+      <!-- /Contact Section -->
+    </main>
+
+    <footer id="footer" class="footer dark-background">
+      <div class="container">
+        <div class="row gy-3">
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-geo-alt icon"></i>
+            <div class="address">
+              <h4 data-en="Address" data-hi="पता">Address</h4>
+              <p>Sample Valley Apiaries</p>
+              <p>Kullu, Himachal Pradesh, India</p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-telephone icon"></i>
+            <div>
+              <h4 data-en="Contact" data-hi="संपर्क">Contact</h4>
+              <p>
+                <strong data-en="Phone:" data-hi="फोन:">Phone:</strong>
+                <span>+91 98765 43210</span><br />
+                <strong data-en="Email:" data-hi="ईमेल:">Email:</strong>
+                <span>hello@himalayanblossom.com</span><br />
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-clock icon"></i>
+            <div>
+              <h4 data-en="Opening Hours" data-hi="खुलने का समय">
+                Opening Hours
+              </h4>
+              <p>
+                <strong data-en="Mon-Sat:" data-hi="सोम-शनि:">Mon-Sat:</strong>
+                <span>09:00 - 18:00</span><br />
+                <strong data-en="Sunday" data-hi="रविवार">Sunday</strong>:
+                <span data-en="Closed" data-hi="बंद">Closed</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <h4 data-en="Follow Us" data-hi="हमारा अनुसरण करें">Follow Us</h4>
+            <div class="social-links d-flex">
+              <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+              <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container copyright text-center mt-4">
+        <p>
+          © <span data-en="Copyright" data-hi="कॉपीराइट">Copyright</span>
+          <strong class="px-1 sitename">Himalayan Blossom</strong>
+          <span data-en="All Rights Reserved" data-hi="सभी अधिकार सुरक्षित"
+            >All Rights Reserved</span
+          >
+        </p>
+      </div>
+    </footer>
+
+    <!-- Scroll Top -->
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>

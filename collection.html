@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Himalayan Blossom Collection — Tasting Notes &amp; Pairings</title>
+    <meta
+      name="description"
+      content=" Nature’s Luxury, From the Himalayas to Your Home. Pure. Rare. Himalayan. Taste the Himalayas, Live the Purity.Hand-harvested Himalayan honey by Deen Dayal — pure, raw, and limited by nature. Pre-order exclusive batches and receive a tasting sample in luxury packaging."
+    />
+    <meta
+      name="keywords"
+      content="Himalayan honey, luxury honey, raw honey, Deen Dayal, pre-order honey"
+    />
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" />
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Amatic+SC:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+    <link
+      href="assets/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link
+      href="assets/vendor/glightbox/css/glightbox.min.css"
+      rel="stylesheet"
+    />
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet" />
+
+    <style>
+      .header-auth {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .auth-state {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .auth-state[hidden] {
+        display: none !important;
+      }
+
+      .auth-user-name {
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 0.85rem;
+        letter-spacing: 0.02em;
+      }
+
+      .auth-role-badge {
+        background: rgba(212, 175, 55, 0.28);
+        color: #f4d27a;
+        border-radius: 999px;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        padding: 0.2rem 0.7rem;
+      }
+
+      .auth-logout-btn {
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: transparent;
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+      }
+
+      .auth-logout-btn:hover {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+      }
+
+      body.dark-theme .auth-logout-btn {
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      body.dark-theme .auth-role-badge {
+        background: rgba(212, 175, 55, 0.75);
+        color: #1a1a1a;
+      }
+
+      .header-auth .google-signin-anchor {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-auth .google-signin-anchor > div {
+        transform: scale(0.88);
+        transform-origin: left center;
+      }
+
+      .mobile-nav .auth-wrapper {
+        width: 100%;
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      body.dark-theme .mobile-nav .auth-wrapper {
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .mobile-nav .auth-state {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .mobile-nav .auth-user-name {
+        color: inherit;
+      }
+
+      .mobile-nav .auth-logout-btn {
+        border-color: rgba(0, 0, 0, 0.55);
+        color: inherit;
+        padding: 0.45rem 1.1rem;
+      }
+
+      body.dark-theme .mobile-nav .auth-logout-btn {
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #ffffff;
+      }
+
+      .mobile-nav .auth-user-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .mobile-nav .google-signin-anchor {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .mobile-nav .google-signin-anchor > div {
+        width: 100%;
+        transform: scale(1);
+        transform-origin: center;
+      }
+
+      .form-status-inline {
+        margin-top: 0.75rem;
+      }
+
+      .form-status-inline.is-hidden {
+        display: none !important;
+      }
+
+      .auth-logout-btn-mobile {
+        align-self: flex-start;
+      }
+
+      .auth-warning {
+        color: #f4d27a;
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.85;
+      }
+
+      body.dark-theme .auth-warning {
+        color: #f8e89c;
+      }
+    </style>
+
+    <script>
+      window.APP_API_BASE_URL =
+        window.APP_API_BASE_URL || 'http://localhost:8000/api';
+      window.APP_GOOGLE_CLIENT_ID =
+        window.APP_GOOGLE_CLIENT_ID || 
+        '144658462401-2l7kms1j90v4jl9ovga4uvolunnhghpj.apps.googleusercontent.com';
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+
+    <!-- =======================================================
+  * Template Name: Yummy (modified for Himalayan Blossom)
+  ======================================================== -->
+  </head>
+
+  <body class="collection-page">
+    <header id="header" class="header d-flex align-items-center sticky-top">
+      <div
+        class="container position-relative d-flex align-items-center justify-content-between"
+      >
+        <a href="index.html" class="logo d-flex align-items-center me-auto">
+          <h1 class="sitename">Himalayan Blossom</h1>
+          <span>.</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav id="navmenu" class="navmenu d-none d-xl-block">
+          <ul class="d-flex align-items-center mb-0">
+            <li>
+              <a href="index.html" data-en="Home" data-hi="होम">Home</a>
+            </li>
+            <li>
+              <a href="about.html" data-en="About" data-hi="हमारे बारे में"
+                >About</a
+              >
+            </li>
+            <li>
+              <a href="collection.html" class="active" data-en="Collection" data-hi="कलेक्शन"
+                >Collection</a
+              >
+            </li>
+            <li>
+              <a href="wellness.html" data-en="Wellness" data-hi="स्वास्थ्य"
+                >Wellness</a
+              >
+            </li>
+            <li>
+              <a href="gallery.html" data-en="Gallery" data-hi="गैलरी"
+                >Gallery</a
+              >
+            </li>
+            <li>
+              <a href="contact.html" data-en="Contact" data-hi="संपर्क"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Desktop Header Buttons -->
+        <div class="header-buttons d-none d-xl-flex align-items-center">
+          <div class="header-auth ms-3">
+            <div
+              id="authSignedOutDesktop"
+              class="auth-state auth-signed-out"
+            >
+              <div
+                id="googleSignInButtonDesktop"
+                class="google-signin-anchor"
+              ></div>
+            </div>
+            <div
+              id="authSignedInDesktop"
+              class="auth-state auth-signed-in"
+              hidden
+            >
+              <span id="authUserNameDesktop" class="auth-user-name"></span>
+              <span id="authUserRoleDesktop" class="auth-role-badge"></span>
+              <button
+                type="button"
+                id="authLogoutButtonDesktop"
+                class="auth-logout-btn"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+          <a id="lang-toggle" class="btn-lang-toggle ms-3" href="#">
+            <span>हिं</span>
+          </a>
+          <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
+            <i class="bi bi-sun"></i>
+          </a>
+          <a
+            class="btn-getstarted ms-3"
+            href="preorder.html"
+            data-en="Pre-order"
+            data-hi="ऑर्डर करें"
+            >Pre-order</a
+          >
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button
+          class="mobile-nav-toggle d-xl-none"
+          aria-label="Toggle Navigation"
+        >
+          <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-nav">
+          <div class="mobile-nav-wrapper">
+            <ul class="mobile-nav-menu">
+              <li>
+                <a href="index.html" data-en="Home" data-hi="होम">Home</a>
+              </li>
+              <li>
+                <a href="about.html" data-en="About" data-hi="हमारे बारे में"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a
+                  href="collection.html"
+                  class="active"
+                  data-en="Collection"
+                  data-hi="कलेक्शन"
+                  >Collection</a
+                >
+              </li>
+              <li>
+                <a
+                  href="wellness.html"
+                  data-en="Wellness"
+                  data-hi="स्वास्थ्य"
+                  >Wellness</a
+                >
+              </li>
+              <li>
+                <a href="gallery.html" data-en="Gallery" data-hi="गैलरी"
+                  >Gallery</a
+                >
+              </li>
+              <li>
+                <a href="contact.html" data-en="Contact" data-hi="संपर्क"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+            <div class="mobile-nav-buttons">
+              <a id="mobile-lang-toggle" class="btn-lang-toggle" href="#">
+                <span>हिं</span>
+              </a>
+              <a id="mobile-theme-toggle" class="btn-theme-toggle" href="#">
+                <i class="bi bi-sun"></i>
+              </a>
+              <a
+                class="btn-getstarted"
+                href="preorder.html"
+                data-en="Pre-order Now"
+                data-hi="अभी ऑर्डर करें"
+                >Pre-order Now</a
+              >
+              <div class="auth-wrapper">
+                <div
+                  id="authSignedOutMobile"
+                  class="auth-state auth-signed-out"
+                >
+                  <div
+                    id="googleSignInButtonMobile"
+                    class="google-signin-anchor"
+                  ></div>
+                </div>
+                <div
+                  id="authSignedInMobile"
+                  class="auth-state auth-signed-in"
+                  hidden
+                >
+                  <div class="auth-user-summary">
+                    <span
+                      id="authUserNameMobile"
+                      class="auth-user-name"
+                    ></span>
+                    <span
+                      id="authUserRoleMobile"
+                      class="auth-role-badge"
+                    ></span>
+                  </div>
+                  <button
+                    type="button"
+                    id="authLogoutButtonMobile"
+                    class="auth-logout-btn auth-logout-btn-mobile"
+                  >
+                    Log out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Hero Section -->
+      <section id="hero" class="hero section light-background">
+        <div class="container">
+          <div class="row gy-5 justify-content-center">
+            <div
+              class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center text-center"
+            >
+              <link
+                href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap"
+                rel="stylesheet"
+              />
+
+              <h1 class="hero-title">
+                <span
+                  class="text-accent"
+                  data-en="Himalayan Honey, "
+                  data-hi="हिमालयी शहद, "
+                  >Himalayan Honey, </span
+                ><span
+                  class="hero-title-tail"
+                  data-en="Reimagined."
+                  data-hi="नई कल्पना।"
+                  >Reimagined.</span
+                >
+              </h1>
+              <p
+                class="lead"
+                data-aos="fade-up"
+                data-aos-delay="100"
+                data-en="Nature’s Luxury, From the Himalayas to Your Home by Deen Dayal — pure, raw, and limited by nature."
+                data-hi="प्रकृति की विलासिता, हिमालय से आपके घर तक। दीन दयाल द्वारा — शुद्ध, कच्चा और प्रकृति द्वारा सीमित।"
+              >
+                Hand-harvested in the high Himalayas by Deen Dayal — pure, raw,
+                and limited by nature.
+              </p>
+              <div
+                class="d-flex justify-content-center"
+                data-aos="fade-up"
+                data-aos-delay="200"
+              >
+                <a
+                  href="#collection"
+                  class="btn-get-started"
+                  data-en="Explore Our Collection"
+                  data-hi="हमारा कलेक्शन देखें"
+                  >Explore Our Collection</a
+                >
+              </div>
+              <p
+                class="mt-3 text-muted small"
+                data-aos="fade-up"
+                data-aos-delay="300"
+              >
+                <span class="text-accent fw-semibold"
+                  >Limited seasonal batches • Traceable to valley &amp; harvest
+                  date</span
+                >
+              </p>
+            </div>
+            <div
+              class="col-lg-6 order-1 order-lg-2 hero-img d-flex align-items-center justify-content-center"
+              data-aos="zoom-out"
+            >
+              <img
+                src="assets/img/hero-img.png"
+                class="img-fluid animated"
+                alt="Himalayan mountains at dawn with Himalayan Blossom honey jar"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /Hero Section -->
+
+      <!-- Special Offer Section -->
+      <section
+        id="special-offer"
+        class="special-offer section light-background"
+      >
+        <div class="container text-center" data-aos="fade-up">
+          <div class="offer-box">
+            <h2 data-en="Limited Time Offer!" data-hi="सीमित समय का ऑफर!">
+              Limited Time Offer!
+            </h2>
+            <p
+              class="lead"
+              data-en="Pre-order any single jar of our Himalayan honey and receive a FREE tasting sample kit with all nine of our rare honey varieties!"
+              data-hi="हमारे हिमालयी शहद का कोई भी एक जार प्री-ऑर्डर करें और हमारी सभी नौ दुर्लभ शहद किस्मों के साथ मुफ्त टेस्टिंग सैंपल किट प्राप्त करें!"
+            >
+              Pre-order any single jar of our Himalayan honey and receive a
+              <strong>FREE tasting sample kit</strong> with all nine of our rare
+              honey varieties!
+            </p>
+            <a
+              href="#collection"
+              class="btn-get-started"
+              data-en="Choose Your Honey & Claim Your Free Gift"
+              data-hi="अपना शहद चुनें और अपना मुफ्त उपहार पाएं"
+              >Choose Your Honey & Claim Your Free Gift</a
+            >
+          </div>
+        </div>
+      </section>
+      <!-- /Special Offer Section -->
+
+      <!-- About Section -->
+      
+      <!-- /About Section -->
+
+      <!-- Why Us Section -->
+      <!-- Why Us Section -->
+      
+      <!-- /Why Us Section -->
+
+      <!-- Collection / Products Section -->
+      <section id="collection" class="menu section">
+        <div class="container section-title" data-aos="fade-up">
+          <h2 data-en="Our Himalayan Treasures" data-hi="हमारे हिमालयी खजाने">
+            Our Himalayan Treasures
+          </h2>
+          <p>
+            <span data-en="Discover" data-hi="खोजें">Discover</span>
+            <span
+              class="description-title"
+              data-en="Nine Rare Honeys"
+              data-hi="नौ दुर्लभ शहद"
+              >Nine Rare Honeys</span
+            >
+          </p>
+          <p class="mt-3">
+            <strong data-en="Remember:" data-hi="याद रखें:">Remember:</strong>
+            <span
+              data-en="Every pre-order includes a complimentary tasting kit of all nine honey varieties!"
+              data-hi="हर प्री-ऑर्डर में सभी नौ शहद किस्मों की मुफ्त टेस्टिंग किट शामिल है!"
+              >Every pre-order includes a complimentary tasting kit of all nine
+              honey varieties!</span
+            >
+          </p>
+        </div>
+        <div class="container">
+          <div class="row gy-5">
+            <div
+              class="col-lg-4 menu-item d-flex flex-column"
+              data-title="Van Amrit — Wild Honey"
+              data-title-hi="वन अमृत — जंगली शहद"
+              data-img="assets/img/menu/menu-item-1.png"
+              data-desc="The Family Shield: Daily immunity support for the whole family.<br>Anti-Aging Face Mask: Its high antioxidant content helps fight free radicals, rejuvenating skin and reducing fine lines."
+              data-desc-hi="पारिवारिक ढाल: पूरे परिवार के लिए दैनिक प्रतिरक्षा समर्थन।<br>एंटी-एजिंग फेस मास्क: इसकी उच्च एंटीऑक्सीडेंट सामग्री मुक्त कणों से लड़ने में मदद करती है, त्वचा को फिर से जीवंत करती है और महीन रेखाओं को कम करती है।"
+            >
+              <img
+                src="assets/img/menu/menu-item-1.png"
+                class="menu-img img-fluid"
+                alt="Van Amrit — Wild Honey jar"
+              />
+              <h4
+                class="text-center"
+                data-en="Van Amrit — Wild Honey"
+                data-hi="वन अमृत — जंगली शहद"
+              >
+                Van Amrit — Wild Honey
+              </h4>
+              <p
+                class="ingredients"
+                data-en="The Family Shield — Daily immunity support for the whole family."
+                data-hi="पारिवारिक ढाल — पूरे परिवार के लिए दैनिक प्रतिरक्षा समर्थन।"
+              >
+                The Family Shield — Daily immunity support for the whole family.
+              </p>
+              <a
+                href="#preorder"
+                class="btn btn-primary mt-auto align-self-center"
+                ><span data-en="Pre-order Now" data-hi="अभी प्री-ऑर्डर करें"
+                  >Pre-order Now</span
+                ></a
+              >
+            </div>
+            <div
+              class="col-lg-4 menu-item d-flex flex-column"
+              data-title="Shila Madhu — Honey Dew"
+              data-title-hi="शिला मधु — हनी ड्यू"
+              data-img="assets/img/menu/menu-item-2.png"
+              data-desc="The Post-Feast Fix: Soothes digestion and restores balance.<br>Hair Strengthening Rinse: High mineral content nourishes hair follicles, reducing breakage and adding a natural shine."
+              data-desc-hi="दावत के बाद का उपाय: पाचन को शांत करता है और संतुलन बहाल करता है।<br>बालों को मजबूत करने वाला रिंस: उच्च खनिज सामग्री बालों के रोमों को पोषण देती है, टूटना कम करती है और प्राकृतिक चमक जोड़ती है।"
+            >
+              <img
+                src="assets/img/menu/menu-item-2.png"
+                class="menu-img img-fluid"
+                alt="Shila Madhu — Honey Dew Honey jar"
+              />
+              <h4
+                class="text-center"
+                data-en="Shila Madhu — Honey Dew"
+                data-hi="शिला मधु — हनी ड्यू"
+              >
+                Shila Madhu — Honey Dew
+              </h4>
+              <p
+                class="ingredients"
+                data-en="The Post-Feast Fix — Soothes digestion and restores balance."
+                data-hi="दावत के बाद का उपाय — पाचन को शांत करता है और संतुलन बहाल करता है।"
+              >
+                The Post-Feast Fix — Soothes digestion and restores balance.
+              </p>
+              <a
+                href="#preorder"
+                class="btn btn-primary mt-auto align-self-center"
+                ><span data-en="Pre-order Now" data-hi="अभी प्री-ऑर्डर करें"
+                  >Pre-order Now</span
+                ></a
+              >
+            </div>
+            <div
+              class="col-lg-4 menu-item d-flex flex-column"
+              data-title="Him Kanti — White Honey"
+              data-title-hi="हिम कांति — सफेद शहद"
+              data-img="assets/img/menu/menu-item-3.png"
+              data-desc="The Morning Soother: Gentle energy & throat relief.<br>Gentle Facial Cleanser: Its creamy, gentle nature makes it a perfect cleanser and moisturizer for soft, supple skin."
+              data-desc-hi="सुबह का आराम: सौम्य ऊर्जा और गले में राहत।<br>सौम्य फेशियल क्लींजर: इसकी मलाईदार, सौम्य प्रकृति इसे मुलायम, कोमल त्वचा के लिए एक आदर्श क्लींजर और मॉइस्चराइज़र बनाती है।"
+            >
+              <img
+                src="assets/img/menu/menu-item-3.png"
+                class="menu-img img-fluid"
+                alt="Him Kanti — White Honey jar"
+              />
+              <h4
+                class="text-center"
+                data-en="Him Kanti — White Honey"
+                data-hi="हिम कांति — सफेद शहद"
+              >
+                Him Kanti — White Honey
+              </h4>
+              <p
+                class="ingredients"
+                data-en="The Morning Soother — Gentle energy & throat relief."
+                data-hi="सुबह का आराम — सौम्य ऊर्जा और गले में राहत।"
+              >
+                The Morning Soother — Gentle energy & throat relief.
+              </p>
+              <a
+                href="#preorder"
+                class="btn btn-primary mt-auto align-self-center"
+                ><span data-en="Pre-order Now" data-hi="अभी प्री-ऑर्डर करें"
+                  >Pre-order Now</span
+                ></a
+              >
+            </div>
+            <div
+              class="col-lg-4 menu-item d-flex flex-column"
+              data-title="Kashtha Bal — Chestnut Honey"
+              data-title-hi="काष्ठ बल — चेस्टनट शहद"
+              data-img="assets/img/menu/menu-item-4.png"
+              data-desc="The Fatigue Fighter: Nutrient-rich support for low energy & anemia.<br>Skin Toner: Helps to tone and clarify the skin, making it beneficial for reducing excess oil and tightening pores."
+              data-desc-hi="थकान से लड़ने वाला: कम ऊर्जा और एनीमिया के लिए पोषक तत्वों से भरपूर समर्थन।<br>स्किन टोनर: त्वचा को टोन और साफ करने में मदद करता है, जिससे यह अतिरिक्त तेल को कम करने और छिद्रों को कसने के लिए फायदेमंद होता है।"
+            >
+              <img
+                src="assets/img/menu/menu-item-4.png"
+                class="menu-img img-fluid"
+                alt="Kashtha Bal — Chestnut Honey jar"
+              />
+              <h4
+                class="text-center"
+                data-en="Kashtha Bal — Chestnut Honey"
+                data-hi="काष्ठ बल — चेस्टनट शहद"
+              >
+                Kashtha Bal — Chestnut Honey
+              </h4>
+              <p
+                class="ingredients"
+                data-en="The Fatigue Fighter — Nutrient-rich support for low energy & anemia."
+                data-hi="थकान से लड़ने वाला — कम ऊर्जा और एनीमिया के लिए पोषक तत्वों से भरपूर समर्थन।"
+              >
+                The Fatigue Fighter — Nutrient-rich support for low energy &
+                anemia.
+              </p>
+              <a
+                href="#preorder"
+                class="btn btn-primary mt-auto align-self-center"
+                ><span data-en="Pre-order Now" data-hi="अभी प्री-ऑर्डर करें"
+                  >Pre-order Now</span
+                ></a
+              >
+            </div>
+            <div
+              class="col-lg-4 menu-item d-flex flex-column"
+              data-title="Him Saans — Thyme Honey"
+              data-title-hi="हिम सांस — अजवायन का शहद"
+              data-img="assets/img/menu/menu-item-5.png"
+              data-desc="The Cough Quieter: Targeted relief for coughs & congestion.<br>Acne Spot Treatment: Its powerful antiseptic properties make it an effective natural spot treatment to clarify blemishes"
+              data-desc-hi="खांसी शांत करने वाला: खांसी और जमाव के लिए लक्षित राहत।<br>मुंहासे का स्पॉट ट्रीटमेंट: इसके शक्तिशाली एंटीसेप्टिक गुण इसे दाग-धब्बों को साफ करने के लिए एक प्रभावी प्राकृतिक स्पॉट ट्रीटमेंट बनाते हैं"
+            >
+              <img
+                src="assets/img/menu/menu-item-5.png"
+                class="menu-img img-fluid"
+                alt="Him Saans — Thyme Honey jar"
+              />
+              <h4
+                class="text-center"
+                data-en="Him Saans — Thyme Honey"
+                data-hi="हिम सांस — अजवायन का शहद"
+              >
+                Him Saans — Thyme Honey
+              </h4>
+              <p
+                class="ingredients"
+                data-en="The Cough Quieter — Targeted relief for coughs & congestion."
+                data-hi="खांसी शांत करने वाला — खांसी और जमाव के लिए लक्षित राहत।"
+              >
+                The Cough Quieter — Targeted relief for coughs & congestion.
+              </p>
+              <a
+                href="#preorder"
+                class="btn btn-primary mt-auto align-self-center"
+                ><span data-en="Pre-order Now" data-hi="अभी प्री-ऑर्डर करें"
+                  >Pre-order Now</span
+                ></a
+              >
+            </div>
+            <div
+              class="col-lg-4 menu-item d-flex flex-column"
+              data-title="Pachan Amrit — Ajwain Honey"
+              data-title-hi="पाचन अमृत — अजवाइन शहद"
+              data-img="assets/img/menu/menu-item-6.png"
+              data-desc="The Acidity Tamer: Soothe gas, bloating and acidity.<br>Soothing Skin Treatment: Its anti-inflammatory nature helps to calm skin irritation and redness for a balanced complexion."
+              data-desc-hi="एसिडिटी को नियंत्रित करने वाला: गैस, सूजन और एसिडिटी को शांत करें।<br>त्वचा को शांत करने वाला उपचार: इसकी सूजन-रोधी प्रकृति त्वचा की जलन और लालिमा को शांत करके एक संतुलित रंगत देने में मदद करती है।"
+            >
+              <img
+                src="assets/img/menu/menu-item-6.png"
+                class="menu-img img-fluid"
+                alt="Pachan Amrit — Ajwain Honey jar"
+              />
+              <h4
+                class="text-center"
+                data-en="Pachan Amrit — Ajwain Honey"
+                data-hi="पाचन अमृत — अजवाइन शहद"
+              >
+                Pachan Amrit — Ajwain Honey
+              </h4>
+              <p
+                class="ingredients"
+                data-en="The Acidity Tamer — Soothe gas, bloating and acidity."
+                data-hi="एसिडिटी को नियंत्रित करने वाला — गैस, सूजन और एसिडिटी को शांत करें।"
+              >
+                The Acidity Tamer — Soothe gas, bloating and acidity.
+              </p>
+              <a
+                href="#preorder"
+                class="btn btn-primary mt-auto align-self-center"
+                ><span data-en="Pre-order Now" data-hi="अभी प्री-ऑर्डर करें"
+                  >Pre-order Now</span
+                ></a
+              >
+            </div>
+            <div
+              class="col-lg-4 menu-item d-flex flex-column"
+              data-title="Gahana Madhu — Malty Honey"
+              data-title-hi="गहना मधु — माल्टी शहद"
+              data-img="assets/img/menu/menu-item-7.png"
+              data-desc="The Healthy Sweetener: A nutritious swap for everyday sweetening.<br>Deep Conditioning Hair Mask: An intensely moisturizing treatment that revives dry, lackluster hair."
+              data-desc-hi="स्वस्थ स्वीटनर: रोजमर्रा की मिठास के लिए एक पौष्टिक विकल्प।<br>डीप कंडीशनिंग हेयर मास्क: एक गहन मॉइस्चराइजिंग उपचार जो सूखे, बेजान बालों को पुनर्जीवित करता है।"
+            >
+              <img
+                src="assets/img/menu/menu-item-7.png"
+                class="menu-img img-fluid"
+                alt="Gahana Madhu — Malty Honey jar"
+              />
+              <h4
+                class="text-center"
+                data-en="Gahana Madhu — Malty Honey"
+                data-hi="गहना मधु — माल्टी शहद"
+              >
+                Gahana Madhu — Malty Honey
+              </h4>
+              <p
+                class="ingredients"
+                data-en="The Healthy Sweetener — A nutritious swap for everyday sweetening."
+                data-hi="स्वस्थ स्वीटनर — रोजमर्रा की मिठास के लिए एक पौष्टिक विकल्प।"
+              >
+                The Healthy Sweetener — A nutritious swap for everyday
+                sweetening.
+              </p>
+              <a
+                href="#preorder"
+                class="btn btn-primary mt-auto align-self-center"
+                ><span data-en="Pre-order Now" data-hi="अभी प्री-ऑर्डर करें"
+                  >Pre-order Now</span
+                ></a
+              >
+            </div>
+            <div
+              class="col-lg-4 menu-item d-flex flex-column"
+              data-title="Sarson Tejas — Mustard Honey"
+              data-title-hi="सरसों तेजस — सरसों का शहद"
+              data-img="assets/img/menu/menu-item-8.png"
+              data-desc="The First-Response: Quick support for colds and low energy.<br>Exfoliating Body Scrub: When crystallized, it acts as a natural exfoliant to scrub away dead cells and reveal glowing skin."
+              data-desc-hi="पहली प्रतिक्रिया: सर्दी और कम ऊर्जा के लिए त्वरित समर्थन।<br>एक्सफ़ोलीएटिंग बॉडी स्क्रब: क्रिस्टलीकृत होने पर, यह मृत कोशिकाओं को साफ़ करने और चमकदार त्वचा प्रकट करने के लिए एक प्राकृतिक एक्सफ़ोलिएंट के रूप में कार्य करता है।"
+            >
+              <img
+                src="assets/img/menu/menu-item-8.png"
+                class="menu-img img-fluid"
+                alt="Sarson Tejas — Mustard Honey jar"
+              />
+              <h4
+                class="text-center"
+                data-en="Sarson Tejas — Mustard Honey"
+                data-hi="सरसों तेजस — सरसों का शहद"
+              >
+                Sarson Tejas — Mustard Honey
+              </h4>
+              <p
+                class="ingredients"
+                data-en="The First-Response — Quick support for colds and low energy."
+                data-hi="पहली प्रतिक्रिया — सर्दी और कम ऊर्जा के लिए त्वरित समर्थन।"
+              >
+                The First-Response — Quick support for colds and low energy.
+              </p>
+              <a
+                href="#preorder"
+                class="btn btn-primary mt-auto align-self-center"
+                ><span data-en="Pre-order Now" data-hi="अभी प्री-ऑर्डर करें"
+                  >Pre-order Now</span
+                ></a
+              >
+            </div>
+            <div
+              class="col-lg-4 menu-item d-flex flex-column"
+              data-title="Kshudhra Madhu — Stingless Bee Honey"
+              data-title-hi="क्षुद्र मधु — डंक रहित मधुमक्खी का शहद"
+              data-img="assets/img/menu/menu-item-9.png"
+              data-desc="The Natural First-Aid: Potent internal healing and eye health.<br>Scar & Blemish Repair: Promotes skin cell regeneration, making it exceptional for reducing the appearance of scars and dark spots."
+              data-desc-hi="प्राकृतिक प्राथमिक चिकित्सा: शक्तिशाली आंतरिक उपचार और आंखों का स्वास्थ्य।<br>निशान और धब्बे की मरम्मत: त्वचा कोशिका पुनर्जनन को बढ़ावा देता है, जिससे यह निशान और काले धब्बों की उपस्थिति को कम करने के लिए असाधारण है।"
+            >
+              <img
+                src="assets/img/menu/menu-item-9.png"
+                class="menu-img img-fluid"
+                alt="Kshudhra Madhu — Stingless Bee Honey jar"
+              />
+              <h4
+                class="text-center"
+                data-en="Kshudhra Madhu — Stingless Bee Honey"
+                data-hi="क्षुद्र मधु — डंक रहित मधुमक्खी का शहद"
+              >
+                Kshudhra Madhu — Stingless Bee Honey
+              </h4>
+              <p
+                class="ingredients"
+                data-en="The Natural First-Aid — Potent internal healing and eye health."
+                data-hi="प्राकृतिक प्राथमिक चिकित्सा — शक्तिशाली आंतरिक उपचार और आंखों का स्वास्थ्य।"
+              >
+                The Natural First-Aid — Potent internal healing and eye health.
+              </p>
+              <a
+                href="#preorder"
+                class="btn btn-primary mt-auto align-self-center"
+                ><span data-en="Pre-order Now" data-hi="अभी प्री-ऑर्डर करें"
+                  >Pre-order Now</span
+                ></a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /Collection Section -->
+
+      <!-- Testimonials Section -->
+      <section id="testimonials" class="testimonials section light-background">
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+          <h2>Testimonials</h2>
+          <p>What Our <span class="description-title">Customers Say</span></p>
+        </div>
+        <!-- End Section Title -->
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+          <div class="swiper init-swiper">
+            <script type="application/json" class="swiper-config">
+              {
+                "loop": true,
+                "speed": 600,
+                "autoplay": {
+                  "delay": 5000
+                },
+                "slidesPerView": "auto",
+                "pagination": {
+                  "el": ".swiper-pagination",
+                  "type": "bullets",
+                  "clickable": true
+                }
+              }
+            </script>
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <div class="testimonial-item">
+                  <div class="row gy-4 justify-content-center">
+                    <div class="col-lg-6">
+                      <div class="testimonial-content">
+                        <p>
+                          <i class="bi bi-quote quote-icon-left"></i>
+                          <span
+                            >“Van Amrit gave my family the best winter we’ve had
+                            — fewer coughs and a sweeter morning ritual.”</span
+                          >
+                          <i class="bi bi-quote quote-icon-right"></i>
+                        </p>
+                        <h3>Asha Verma</h3>
+                        <h4>Home Chef</h4>
+                        <div class="stars">
+                          <i class="bi bi-star-fill"></i
+                          ><i class="bi bi-star-fill"></i
+                          ><i class="bi bi-star-fill"></i
+                          ><i class="bi bi-star-fill"></i
+                          ><i class="bi bi-star-fill"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 text-center">
+                      <img
+                        src="assets/img/testimonials/testimonials-1.jpg"
+                        class="img-fluid testimonial-img"
+                        alt="Customer Asha Verma"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End testimonial item -->
+
+              <div class="swiper-slide">
+                <div class="testimonial-item">
+                  <div class="row gy-4 justify-content-center">
+                    <div class="col-lg-6">
+                      <div class="testimonial-content">
+                        <p>
+                          <i class="bi bi-quote quote-icon-left"></i>
+                          <span
+                            >“The packaging felt like a gift. Tasting sample
+                            convinced me — we ordered the full jar
+                            immediately.”</span
+                          >
+                          <i class="bi bi-quote quote-icon-right"></i>
+                        </p>
+                        <h3>Rohit Sen</h3>
+                        <h4>Wellness Coach</h4>
+                        <div class="stars">
+                          <i class="bi bi-star-fill"></i
+                          ><i class="bi bi-star-fill"></i
+                          ><i class="bi bi-star-fill"></i
+                          ><i class="bi bi-star-fill"></i
+                          ><i class="bi bi-star-fill"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 text-center">
+                      <img
+                        src="assets/img/testimonials/testimonials-2.jpg"
+                        class="img-fluid testimonial-img"
+                        alt="Customer Rohit Sen"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End testimonial item -->
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+      </section>
+      <!-- /Testimonials Section -->
+
+      <!-- Events / Stories Section -->
+      
+      <!-- /Events Section -->
+
+      <!-- Team / Craftspeople Section (Chefs replaced with Beekeepers) -->
+      
+      <!-- /Team Section -->
+
+      <!-- Pre-order Section (replaces Book A Table) -->
+      
+      <!-- /Pre-order Section -->
+
+      <!-- Gallery Section -->
+      
+      <!-- /Gallery Section -->
+
+      <!-- Contact Section -->
+      
+      <!-- /Contact Section -->
+    </main>
+
+    <footer id="footer" class="footer dark-background">
+      <div class="container">
+        <div class="row gy-3">
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-geo-alt icon"></i>
+            <div class="address">
+              <h4 data-en="Address" data-hi="पता">Address</h4>
+              <p>Sample Valley Apiaries</p>
+              <p>Kullu, Himachal Pradesh, India</p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-telephone icon"></i>
+            <div>
+              <h4 data-en="Contact" data-hi="संपर्क">Contact</h4>
+              <p>
+                <strong data-en="Phone:" data-hi="फोन:">Phone:</strong>
+                <span>+91 98765 43210</span><br />
+                <strong data-en="Email:" data-hi="ईमेल:">Email:</strong>
+                <span>hello@himalayanblossom.com</span><br />
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-clock icon"></i>
+            <div>
+              <h4 data-en="Opening Hours" data-hi="खुलने का समय">
+                Opening Hours
+              </h4>
+              <p>
+                <strong data-en="Mon-Sat:" data-hi="सोम-शनि:">Mon-Sat:</strong>
+                <span>09:00 - 18:00</span><br />
+                <strong data-en="Sunday" data-hi="रविवार">Sunday</strong>:
+                <span data-en="Closed" data-hi="बंद">Closed</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <h4 data-en="Follow Us" data-hi="हमारा अनुसरण करें">Follow Us</h4>
+            <div class="social-links d-flex">
+              <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+              <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container copyright text-center mt-4">
+        <p>
+          © <span data-en="Copyright" data-hi="कॉपीराइट">Copyright</span>
+          <strong class="px-1 sitename">Himalayan Blossom</strong>
+          <span data-en="All Rights Reserved" data-hi="सभी अधिकार सुरक्षित"
+            >All Rights Reserved</span
+          >
+        </p>
+      </div>
+    </footer>
+
+    <!-- Scroll Top -->
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <!-- Product Modal (Place this just before </body>) -->
+    <div id="modalOverlay" class="modal-overlay" style="display: none"></div>
+    <div
+      id="productModal"
+      class="modal product-modal"
+      tabindex="-1"
+      style="display: none"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <span class="modal-close">&times;</span>
+          <div class="row g-0">
+            <div class="col-md-6">
+              <img
+                id="modalImg"
+                src=""
+                alt=""
+                class="img-fluid rounded-start"
+              />
+            </div>
+            <div class="col-md-6 d-flex flex-column justify-content-center">
+              <div class="modal-body-right">
+                <h4 id="modalTitle"></h4>
+                <div id="modalDesc"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="preorderModalOverlay"
+      class="modal-overlay"
+      style="display: none"
+    ></div>
+    <div
+      id="preorderSelectionModal"
+      class="modal preorder-modal"
+      tabindex="-1"
+      style="display: none"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <button
+            type="button"
+            class="modal-close"
+            id="preorderModalClose"
+            aria-label="Close"
+          >
+            &times;
+          </button>
+          <div class="row g-0">
+            <div class="col-md-5">
+              <img
+                id="preorderModalImg"
+                src=""
+                alt=""
+                class="img-fluid rounded-start"
+              />
+            </div>
+            <div class="col-md-7 d-flex flex-column justify-content-center">
+              <div class="modal-body-right">
+                <h4 id="preorderModalTitle"></h4>
+                <p
+                  id="preorderModalSubtitle"
+                  data-en="Select your preferred jar size to continue."
+                  data-hi="जारी रखने के लिए अपना पसंदीदा जार आकार चुनें।"
+                >
+                  Select your preferred jar size to continue.
+                </p>
+                <div class="size-options" id="preorderSizeOptions">
+                  <label class="size-option" for="preorder-size-250">
+                    <input
+                      type="radio"
+                      name="preorderSize"
+                      id="preorder-size-250"
+                      value="250 gram"
+                    />
+                    <span data-en="250 gram" data-hi="250 ग्राम">250 gram</span>
+                  </label>
+                  <label class="size-option" for="preorder-size-500">
+                    <input
+                      type="radio"
+                      name="preorderSize"
+                      id="preorder-size-500"
+                      value="500 gram"
+                    />
+                    <span data-en="500 gram" data-hi="500 ग्राम">500 gram</span>
+                  </label>
+                  <label class="size-option" for="preorder-size-1000">
+                    <input
+                      type="radio"
+                      name="preorderSize"
+                      id="preorder-size-1000"
+                      value="1000 gram"
+                    />
+                    <span data-en="1000 gram" data-hi="1000 ग्राम"
+                      >1000 gram</span
+                    >
+                  </label>
+                </div>
+                <div class="modal-actions">
+                  <button
+                    type="button"
+                    class="modal-action-btn ghost"
+                    id="preorderModalCancel"
+                    data-en="Cancel"
+                    data-hi="रद्द करें"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    class="modal-action-btn primary"
+                    id="preorderModalConfirm"
+                    data-en="Continue to Pre-order"
+                    data-hi="प्री-ऑर्डर पर जाएँ"
+                    disabled
+                  >
+                    Continue to Pre-order
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      .product-modal,
+      .preorder-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem clamp(1rem, 4vw, 3rem);
+      }
+
+      .product-modal .modal-dialog.modal-lg,
+      .preorder-modal .modal-dialog.modal-lg {
+        max-width: min(960px, 92vw);
+        width: 100%;
+        margin: 0;
+      }
+
+      .product-modal .modal-content,
+      .preorder-modal .modal-content {
+        background: var(--surface-color);
+        color: var(--default-color);
+        border-radius: 18px;
+        position: relative;
+        text-align: left;
+        border: 1px solid
+          color-mix(in srgb, var(--accent-color) 30%, transparent 70%);
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18);
+        overflow: hidden;
+        display: flex;
+        min-height: clamp(320px, 60vh, 520px);
+      }
+
+      .product-modal .row,
+      .preorder-modal .row {
+        flex: 1 1 auto;
+      }
+
+      .product-modal .modal-body-right,
+      .preorder-modal .modal-body-right {
+        padding: clamp(1.5rem, 2.5vw, 2.5rem);
+        background: color-mix(
+          in srgb,
+          var(--surface-color) 92%,
+          var(--accent-color) 8%
+        );
+        border-left: 1px solid
+          color-mix(in srgb, var(--accent-color) 25%, transparent 75%);
+        overflow-y: auto;
+      }
+
+      .product-modal .modal-body-right h4,
+      .preorder-modal .modal-body-right h4 {
+        font-family: var(--heading-font);
+        font-weight: 600;
+        font-size: clamp(1.6rem, 3vw, 2.1rem);
+        color: var(--heading-color);
+        margin-bottom: 1.25rem;
+        letter-spacing: 0.01em;
+      }
+
+      .product-modal #modalDesc {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .product-modal .modal-close,
+      .preorder-modal .modal-close {
+        position: absolute;
+        top: 18px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        cursor: pointer;
+        z-index: 10;
+        color: var(--accent-color);
+        background: color-mix(
+          in srgb,
+          var(--surface-color) 70%,
+          var(--accent-color) 30%
+        );
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        transition: transform 0.25s ease, color 0.25s ease,
+          background-color 0.25s ease;
+        line-height: 1;
+      }
+
+      .product-modal .modal-close:hover,
+      .preorder-modal .modal-close:hover {
+        transform: translateY(-2px);
+        color: var(--contrast-color);
+        background: var(--accent-color);
+      }
+
+      #productModal,
+      #preorderSelectionModal {
+        transition: opacity 0.2s;
+      }
+
+      .product-modal .img-fluid,
+      .preorder-modal .img-fluid {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(12, 10, 8, 0.55);
+        backdrop-filter: blur(6px);
+        z-index: 9998;
+        transition: opacity 0.3s ease;
+      }
+
+      .product-modal .desc-tile {
+        background: color-mix(
+          in srgb,
+          var(--surface-color) 88%,
+          var(--accent-color) 12%
+        );
+        color: var(--default-color);
+        padding: 14px 18px;
+        border-radius: 12px;
+        border: 1px solid
+          color-mix(in srgb, var(--accent-color) 35%, transparent 65%);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+        font-size: 1rem;
+        line-height: 1.65;
+      }
+
+      .preorder-modal .modal-body-right {
+        background: var(--surface-color);
+        border-left: none;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .preorder-modal .modal-body-right p {
+        margin: 0;
+        color: color-mix(in srgb, var(--default-color) 70%, transparent);
+        line-height: 1.6;
+      }
+
+      .preorder-modal .size-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .preorder-modal .size-option {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.9rem 1.1rem;
+        border-radius: 14px;
+        border: 1px solid
+          color-mix(in srgb, var(--accent-color) 35%, transparent 65%);
+        background: color-mix(
+          in srgb,
+          var(--surface-color) 94%,
+          var(--accent-color) 6%
+        );
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .preorder-modal .size-option:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 24px rgba(0, 0, 0, 0.08);
+        border-color: color-mix(
+          in srgb,
+          var(--accent-color) 55%,
+          transparent 45%
+        );
+      }
+
+      .preorder-modal .size-option input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--accent-color);
+      }
+
+      .preorder-modal .size-option span {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--heading-color);
+      }
+
+      .preorder-modal .size-option input[type="radio"]:checked + span {
+        color: color-mix(
+          in srgb,
+          var(--heading-color) 90%,
+          var(--accent-color) 10%
+        );
+      }
+
+      .preorder-modal .modal-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: auto;
+      }
+
+      .modal-action-btn {
+        border: none;
+        border-radius: 999px;
+        padding: 0.75rem 1.9rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .modal-action-btn.primary {
+        background: var(--accent-color);
+        color: var(--contrast-color);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      .modal-action-btn.primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .modal-action-btn.primary:not(:disabled):hover {
+        transform: translateY(-1px);
+      }
+
+      .modal-action-btn.ghost {
+        background: color-mix(
+          in srgb,
+          var(--surface-color) 75%,
+          var(--accent-color) 25%
+        );
+        color: var(--heading-color);
+        border: 1px solid
+          color-mix(in srgb, var(--accent-color) 35%, transparent 65%);
+      }
+
+      .modal-action-btn.ghost:hover {
+        background: color-mix(
+          in srgb,
+          var(--accent-color) 40%,
+          transparent 60%
+        );
+      }
+
+      @media (max-width: 767px) {
+        .product-modal,
+        .preorder-modal {
+          padding: 1.25rem;
+        }
+
+        .product-modal .modal-content,
+        .preorder-modal .modal-content {
+          flex-direction: column;
+        }
+
+        .product-modal .modal-dialog.modal-lg,
+        .preorder-modal .modal-dialog.modal-lg {
+          max-width: 100%;
+          margin: 0;
+        }
+
+        .product-modal .img-fluid.rounded-start,
+        .preorder-modal .img-fluid.rounded-start {
+          border-radius: 16px 16px 0 0 !important;
+          max-height: 240px;
+        }
+
+        .product-modal .modal-body-right,
+        .preorder-modal .modal-body-right {
+          border-left: 0;
+          border-top: 1px solid
+            color-mix(in srgb, var(--accent-color) 25%, transparent 75%);
+          background: color-mix(
+            in srgb,
+            var(--surface-color) 94%,
+            var(--accent-color) 6%
+          );
+        }
+
+        .product-modal .modal-close,
+        .preorder-modal .modal-close {
+          top: 12px;
+          right: 16px;
+        }
+      }
+
+      .product-modal.dark-theme .modal-content,
+      .preorder-modal.dark-theme .modal-content {
+        background: #0f0f0f;
+        color: #f4f4f4;
+        border-color: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 24px 40px rgba(0, 0, 0, 0.6);
+      }
+
+      .product-modal.dark-theme .modal-body-right,
+      .preorder-modal.dark-theme .modal-body-right {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(255, 255, 255, 0.08);
+      }
+
+      .product-modal.dark-theme .desc-tile {
+        background-color: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 215, 0, 0.5);
+        color: #f4f4f4;
+        box-shadow: none;
+      }
+
+      .product-modal.dark-theme .modal-close,
+      .preorder-modal.dark-theme .modal-close {
+        color: var(--accent-color);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: none;
+      }
+
+      .product-modal.dark-theme .modal-close:hover,
+      .preorder-modal.dark-theme .modal-close:hover {
+        background: var(--accent-color);
+        color: #1a1a1a;
+      }
+
+      .preorder-modal.dark-theme .modal-body-right p {
+        color: rgba(255, 255, 255, 0.75);
+      }
+
+      .preorder-modal.dark-theme .size-option {
+        background-color: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+
+      .preorder-modal.dark-theme .size-option:hover {
+        box-shadow: 0 16px 24px rgba(0, 0, 0, 0.45);
+        border-color: rgba(255, 215, 0, 0.45);
+      }
+
+      .preorder-modal.dark-theme .size-option span {
+        color: #f5f5f5;
+      }
+
+      .preorder-modal.dark-theme .modal-action-btn.ghost {
+        background: rgba(255, 255, 255, 0.12);
+        color: #f5f5f5;
+        border-color: rgba(255, 255, 255, 0.18);
+      }
+
+      .preorder-modal.dark-theme .modal-action-btn.ghost:hover {
+        background: rgba(255, 215, 0, 0.18);
+        color: #1a1a1a;
+      }
+    </style>
+
+    <script src="assets/js/site.js"></script>
+
+  </body>
+</html>
