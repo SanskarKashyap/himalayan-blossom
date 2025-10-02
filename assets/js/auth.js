@@ -786,10 +786,21 @@
     return false;
   }
 
+  function scheduleInit() {
+    const ready = window.APP_CONFIG_READY;
+    const promise = ready && typeof ready.then === 'function' ? ready : Promise.resolve();
+
+    promise
+      .catch((error) => {
+        console.warn('Proceeding with static auth configuration', error);
+      })
+      .finally(init);
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', scheduleInit);
   } else {
-    init();
+    scheduleInit();
   }
 
   window.Auth = {

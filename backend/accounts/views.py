@@ -80,6 +80,32 @@ class GoogleAuthView(APIView):
     return Response(data, status=status.HTTP_200_OK)
 
 
+class PublicConfigView(APIView):
+  permission_classes = [permissions.AllowAny]
+
+  def get(self, request, *args, **kwargs):
+    api_base = getattr(settings, 'PUBLIC_API_BASE_URL', None)
+    if not api_base:
+      api_base = request.build_absolute_uri('/api/')
+    api_base = api_base.rstrip('/')
+
+    google_client_id = getattr(settings, 'GOOGLE_CLIENT_ID', None)
+    google_redirect_uri = getattr(settings, 'GOOGLE_REDIRECT_URI', None)
+
+    if not google_client_id or not google_redirect_uri:
+      return Response(
+        {'message': 'Google OAuth configuration is incomplete'},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+      )
+
+    data = {
+      'apiBaseUrl': api_base,
+      'googleClientId': google_client_id,
+      'googleRedirectUri': google_redirect_uri,
+    }
+    return Response(data, status=status.HTTP_200_OK)
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
   serializer_class = UserSerializer
   queryset = User.objects.all().order_by('-date_joined')

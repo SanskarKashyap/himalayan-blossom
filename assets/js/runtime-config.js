@@ -3,9 +3,9 @@
 
   const global = window;
   const defaults = {
-    apiBaseUrl: 'http://localhost:8000/api',
+    apiBaseUrl: `${window.location.origin}/api`,
     googleClientId: '',
-    googleRedirectUri: 'http://localhost:8000/api/auth/google/',
+    googleRedirectUri: '',
   };
 
   function parseDotEnv(content) {
@@ -100,15 +100,49 @@
     : {};
 
   const runtimeConfig = Object.assign({}, defaults, envConfig, datasetConfig, overrides);
-  global.APP_CONFIG = runtimeConfig;
 
-  if (!global.APP_API_BASE_URL && runtimeConfig.apiBaseUrl) {
-    global.APP_API_BASE_URL = runtimeConfig.apiBaseUrl;
+  function applyGlobals(config) {
+    global.APP_CONFIG = config;
+    if (!global.APP_API_BASE_URL && config.apiBaseUrl) {
+      global.APP_API_BASE_URL = config.apiBaseUrl;
+    }
+    if (!global.APP_GOOGLE_CLIENT_ID && config.googleClientId) {
+      global.APP_GOOGLE_CLIENT_ID = config.googleClientId;
+    }
+    if (!global.APP_GOOGLE_REDIRECT_URI && config.googleRedirectUri) {
+      global.APP_GOOGLE_REDIRECT_URI = config.googleRedirectUri;
+    }
+    return config;
   }
-  if (!global.APP_GOOGLE_CLIENT_ID && runtimeConfig.googleClientId) {
-    global.APP_GOOGLE_CLIENT_ID = runtimeConfig.googleClientId;
-  }
-  if (!global.APP_GOOGLE_REDIRECT_URI && runtimeConfig.googleRedirectUri) {
-    global.APP_GOOGLE_REDIRECT_URI = runtimeConfig.googleRedirectUri;
-  }
+
+  const normalizedApiBase = (runtimeConfig.apiBaseUrl || defaults.apiBaseUrl).replace(/\/$/, '');
+
+  applyGlobals(runtimeConfig);
+
+  const serverConfigPromise = fetch(`${normalizedApiBase}/public-config/`, {
+    credentials: 'include',
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((serverConfig) => {
+      if (!serverConfig || typeof serverConfig !== 'object') {
+        return applyGlobals(runtimeConfig);
+      }
+      const merged = Object.assign(runtimeConfig, {
+        apiBaseUrl: (serverConfig.apiBaseUrl || runtimeConfig.apiBaseUrl || defaults.apiBaseUrl).replace(/\/$/, ''),
+        googleClientId: serverConfig.googleClientId || runtimeConfig.googleClientId || '',
+        googleRedirectUri: serverConfig.googleRedirectUri || runtimeConfig.googleRedirectUri || '',
+      });
+      return applyGlobals(merged);
+    })
+    .catch((error) => {
+      console.warn('Falling back to static runtime config', error);
+      return applyGlobals(runtimeConfig);
+    });
+
+  global.APP_CONFIG_READY = serverConfigPromise;
 })();

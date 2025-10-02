@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 
-from accounts.views import GoogleAuthView, UserViewSet
+from accounts.views import GoogleAuthView, PublicConfigView, UserViewSet
 from payments.views import PaymentOrderView
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
@@ -29,6 +29,7 @@ router.register('users', UserViewSet, basename='user')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/google/', GoogleAuthView.as_view(), name='google-auth'),
+    path('api/public-config/', PublicConfigView.as_view(), name='public-config'),
     path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
     path('api/auth/token/verify/', TokenVerifyView.as_view(), name='token-verify'),
     path('api/payments/order/', PaymentOrderView.as_view(), name='payment-order'),

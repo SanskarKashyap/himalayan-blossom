@@ -109,7 +109,9 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+PUBLIC_API_BASE_URL = os.getenv('PUBLIC_API_BASE_URL')
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI')
 ADMIN_EMAILS = [email.strip().lower() for email in os.getenv('ADMIN_EMAILS', '').split(',') if email.strip()]
 
 RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
