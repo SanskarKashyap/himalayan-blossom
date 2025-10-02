@@ -8,7 +8,7 @@ return new class extends Migration {
     {
         Schema::connection('mongodb')->create('refresh_tokens', function ($collection) {
             $collection->index('user_id');
-            $collection->index('jti', ['unique' => true]);
+            $collection->unique('jti');
             $collection->index('expires_at');
         });
     }

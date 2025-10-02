@@ -48,6 +48,9 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "serve": [
+            "@php artisan serve --host=127.0.0.1 --port=8080"
         ]
     },
     "extra": {

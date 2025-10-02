@@ -36,6 +36,10 @@ This Laravel API replaces the legacy Django service while keeping the existing R
    | `MONGODB_URI` | Connection string for MongoDB Atlas |
    | `PUBLIC_API_BASE_URL` | Public API origin used by the static frontend |
 
+   When running locally with the bundled frontend, set `APP_URL=http://127.0.0.1:8080`
+   and `PUBLIC_API_BASE_URL=http://127.0.0.1:8080/api` so the runtime config matches
+   the development server origin.
+
 3. **Generate Laravel app key**
 
    ```bash
@@ -48,11 +52,16 @@ This Laravel API replaces the legacy Django service while keeping the existing R
    php artisan migrate
    ```
 
-5. **Serve locally**
+5. **Serve locally** (frontend + backend)
 
    ```bash
-   php artisan serve --host=0.0.0.0 --port=8080
+   composer run serve
    ```
+
+   This starts the Laravel HTTP server on `http://127.0.0.1:8080`, serving the
+   static frontend pages and the `/api` routes from the same origin. You can
+   still run `php artisan serve --host=127.0.0.1 --port=8080` directly if you
+   prefer.
 
 6. **Expose via Cloudflare Tunnel** (example)
 

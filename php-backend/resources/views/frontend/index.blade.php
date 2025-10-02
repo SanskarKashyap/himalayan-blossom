@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Himalayan Blossom by Deen Dayal — Luxury Himalayan Honey</title>
+    <meta
+      name="description"
+      content=" Nature’s Luxury, From the Himalayas to Your Home. Pure. Rare. Himalayan. Taste the Himalayas, Live the Purity.Hand-harvested Himalayan honey by Deen Dayal — pure, raw, and limited by nature. Pre-order exclusive batches and receive a tasting sample in luxury packaging."
+    />
+    <meta
+      name="keywords"
+      content="Himalayan honey, luxury honey, raw honey, Deen Dayal, pre-order honey"
+    />
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" />
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Amatic+SC:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+    <link
+      href="assets/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link
+      href="assets/vendor/glightbox/css/glightbox.min.css"
+      rel="stylesheet"
+    />
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet" />
+
+    <style>
+      .header-auth {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .auth-state {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .auth-state[hidden] {
+        display: none !important;
+      }
+
+      .auth-user-name {
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 0.85rem;
+        letter-spacing: 0.02em;
+      }
+
+      .auth-role-badge {
+        background: rgba(212, 175, 55, 0.28);
+        color: #f4d27a;
+        border-radius: 999px;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        padding: 0.2rem 0.7rem;
+      }
+
+      .auth-logout-btn {
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: transparent;
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+      }
+
+      .auth-logout-btn:hover {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+      }
+
+      body.dark-theme .auth-logout-btn {
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      body.dark-theme .auth-role-badge {
+        background: rgba(212, 175, 55, 0.75);
+        color: #1a1a1a;
+      }
+
+      .header-auth .google-signin-anchor {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-auth .google-signin-anchor > div {
+        transform: scale(0.88);
+        transform-origin: left center;
+      }
+
+      .mobile-nav .auth-wrapper {
+        width: 100%;
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      body.dark-theme .mobile-nav .auth-wrapper {
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .mobile-nav .auth-state {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .mobile-nav .auth-user-name {
+        color: inherit;
+      }
+
+      .mobile-nav .auth-logout-btn {
+        border-color: rgba(0, 0, 0, 0.55);
+        color: inherit;
+        padding: 0.45rem 1.1rem;
+      }
+
+      body.dark-theme .mobile-nav .auth-logout-btn {
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #ffffff;
+      }
+
+      .mobile-nav .auth-user-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .mobile-nav .google-signin-anchor {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .mobile-nav .google-signin-anchor > div {
+        width: 100%;
+        transform: scale(1);
+        transform-origin: center;
+      }
+
+      .form-status-inline {
+        margin-top: 0.75rem;
+      }
+
+      .form-status-inline.is-hidden {
+        display: none !important;
+      }
+
+      .auth-logout-btn-mobile {
+        align-self: flex-start;
+      }
+
+      .auth-warning {
+        color: #f4d27a;
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.85;
+      }
+
+      .highlight-card {
+        border-radius: 1.5rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .highlight-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .highlight-card .icon-wrapper {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: rgba(212, 175, 55, 0.14);
+        color: var(--accent-color);
+      }
+
+      .highlight-card .icon-wrapper i {
+        line-height: 1;
+      }
+
+      .journal-card {
+        padding: 2rem;
+        border-radius: 1.5rem;
+        background: var(--surface-color);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        height: 100%;
+      }
+
+      .journal-card a {
+        color: var(--accent-color);
+        text-decoration: none;
+      }
+
+      .journal-card a:hover {
+        text-decoration: underline;
+      }
+
+      .experience .badge-card {
+        position: absolute;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        background: color-mix(in srgb, var(--accent-color) 15%, transparent 85%);
+        color: var(--heading-color);
+        padding: 1rem 1.5rem;
+        border-radius: 1rem;
+        display: inline-flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
+
+      @media (max-width: 575px) {
+        .experience .badge-card {
+          position: static;
+          margin-top: 1rem;
+        }
+      }
+
+      body.dark-theme .auth-warning {
+        color: #f8e89c;
+      }
+    </style>
+
+    <!-- Runtime configuration -->
+    <script>
+      const origin = window.location.origin.replace(/\/$/, '');
+      window.APP_API_BASE_URL = `${origin}/api`;
+      window.APP_GOOGLE_CLIENT_ID = @json(config('services.google.client_id'));
+      window.APP_GOOGLE_REDIRECT_URI = `${origin}/api/auth/google/`;
+    </script>
+    <script src="assets/js/runtime-config.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+
+    <!-- =======================================================
+  * Template Name: Yummy (modified for Himalayan Blossom)
+  ======================================================== -->
+  </head>
+
+  <body class="home-page">
+    <header id="header" class="header d-flex align-items-center sticky-top">
+      <div
+        class="container position-relative d-flex align-items-center justify-content-between"
+      >
+        <a href="index.html" class="logo d-flex align-items-center me-auto">
+          <h1 class="sitename">Himalayan Blossom</h1>
+          <span>.</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav id="navmenu" class="navmenu d-none d-xl-block">
+          <ul class="d-flex align-items-center mb-0">
+            <li>
+              <a href="index.html" class="active" data-en="Home" data-hi="होम"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a href="about.html" data-en="About" data-hi="हमारे बारे में"
+                >About</a
+              >
+            </li>
+            <li>
+              <a href="collection.html" data-en="Collection" data-hi="कलेक्शन"
+                >Collection</a
+              >
+            </li>
+            <li>
+              <a href="wellness.html" data-en="Wellness" data-hi="स्वास्थ्य"
+                >Wellness</a
+              >
+            </li>
+            <li>
+              <a href="gallery.html" data-en="Gallery" data-hi="गैलरी"
+                >Gallery</a
+              >
+            </li>
+            <li>
+              <a href="contact.html" data-en="Contact" data-hi="संपर्क"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Desktop Header Buttons -->
+        <div class="header-buttons d-none d-xl-flex align-items-center">
+          <div class="header-auth ms-3">
+            <div
+              id="authSignedOutDesktop"
+              class="auth-state auth-signed-out"
+            >
+              <div
+                id="googleSignInButtonDesktop"
+                class="google-signin-anchor"
+              ></div>
+            </div>
+            <div
+              id="authSignedInDesktop"
+              class="auth-state auth-signed-in"
+              hidden
+            >
+              <span id="authUserNameDesktop" class="auth-user-name"></span>
+              <span id="authUserRoleDesktop" class="auth-role-badge"></span>
+              <button
+                type="button"
+                id="authLogoutButtonDesktop"
+                class="auth-logout-btn"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+          <a id="lang-toggle" class="btn-lang-toggle ms-3" href="#">
+            <span>हिं</span>
+          </a>
+          <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
+            <i class="bi bi-sun"></i>
+          </a>
+          <a
+            class="btn-getstarted ms-3"
+            href="preorder.html"
+            data-en="Pre-order"
+            data-hi="ऑर्डर करें"
+            >Pre-order</a
+          >
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button
+          class="mobile-nav-toggle d-xl-none"
+          aria-label="Toggle Navigation"
+        >
+          <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-nav">
+          <div class="mobile-nav-wrapper">
+            <ul class="mobile-nav-menu">
+              <li>
+                <a
+                  href="index.html"
+                  class="active"
+                  data-en="Home"
+                  data-hi="होम"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a href="about.html" data-en="About" data-hi="हमारे बारे में"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a
+                  href="collection.html"
+                  data-en="Collection"
+                  data-hi="कलेक्शन"
+                  >Collection</a
+                >
+              </li>
+              <li>
+                <a
+                  href="wellness.html"
+                  data-en="Wellness"
+                  data-hi="स्वास्थ्य"
+                  >Wellness</a
+                >
+              </li>
+              <li>
+                <a href="gallery.html" data-en="Gallery" data-hi="गैलरी"
+                  >Gallery</a
+                >
+              </li>
+              <li>
+                <a href="contact.html" data-en="Contact" data-hi="संपर्क"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+            <div class="mobile-nav-buttons">
+              <a id="mobile-lang-toggle" class="btn-lang-toggle" href="#">
+                <span>हिं</span>
+              </a>
+              <a id="mobile-theme-toggle" class="btn-theme-toggle" href="#">
+                <i class="bi bi-sun"></i>
+              </a>
+              <a
+                class="btn-getstarted"
+                href="preorder.html"
+                data-en="Pre-order Now"
+                data-hi="अभी ऑर्डर करें"
+                >Pre-order Now</a
+              >
+              <div class="auth-wrapper">
+                <div
+                  id="authSignedOutMobile"
+                  class="auth-state auth-signed-out"
+                >
+                  <div
+                    id="googleSignInButtonMobile"
+                    class="google-signin-anchor"
+                  ></div>
+                </div>
+                <div
+                  id="authSignedInMobile"
+                  class="auth-state auth-signed-in"
+                  hidden
+                >
+                  <div class="auth-user-summary">
+                    <span
+                      id="authUserNameMobile"
+                      class="auth-user-name"
+                    ></span>
+                    <span
+                      id="authUserRoleMobile"
+                      class="auth-role-badge"
+                    ></span>
+                  </div>
+                  <button
+                    type="button"
+                    id="authLogoutButtonMobile"
+                    class="auth-logout-btn auth-logout-btn-mobile"
+                  >
+                    Log out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Hero Section -->
+      <section id="hero" class="hero section light-background">
+        <div class="container">
+          <div class="row gy-5 justify-content-center">
+            <div
+              class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center text-center"
+            >
+              <link
+                href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap"
+                rel="stylesheet"
+              />
+
+              <h1 class="hero-title">
+                <span
+                  class="text-accent"
+                  data-en="Himalayan Honey, "
+                  data-hi="हिमालयी शहद, "
+                  >Himalayan Honey, </span
+                ><span
+                  class="hero-title-tail"
+                  data-en="Reimagined."
+                  data-hi="नई कल्पना।"
+                  >Reimagined.</span
+                >
+              </h1>
+              <p
+                class="lead"
+                data-aos="fade-up"
+                data-aos-delay="100"
+                data-en="Nature’s Luxury, From the Himalayas to Your Home by Deen Dayal — pure, raw, and limited by nature."
+                data-hi="प्रकृति की विलासिता, हिमालय से आपके घर तक। दीन दयाल द्वारा — शुद्ध, कच्चा और प्रकृति द्वारा सीमित।"
+              >
+                Hand-harvested in the high Himalayas by Deen Dayal — pure, raw,
+                and limited by nature.
+              </p>
+              <div
+                class="d-flex justify-content-center"
+                data-aos="fade-up"
+                data-aos-delay="200"
+              >
+                <a
+                  href="collection.html"
+                  class="btn-get-started"
+                  data-en="Explore Our Collection"
+                  data-hi="हमारा कलेक्शन देखें"
+                  >Explore Our Collection</a
+                >
+              </div>
+              <p
+                class="mt-3 text-muted small"
+                data-aos="fade-up"
+                data-aos-delay="300"
+              >
+                <span class="text-accent fw-semibold"
+                  >Limited seasonal batches • Traceable to valley &amp; harvest
+                  date</span
+                >
+              </p>
+            </div>
+            <div
+              class="col-lg-6 order-1 order-lg-2 hero-img d-flex align-items-center justify-content-center"
+              data-aos="zoom-out"
+            >
+              <img
+                src="assets/img/hero-img.png"
+                class="img-fluid animated"
+                alt="Himalayan mountains at dawn with Himalayan Blossom honey jar"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /Hero Section -->
+
+      <!-- Special Offer Section -->
+      <section
+        id="special-offer"
+        class="special-offer section light-background"
+      >
+        <div class="container text-center" data-aos="fade-up">
+          <div class="offer-box">
+            <h2 data-en="Limited Time Offer!" data-hi="सीमित समय का ऑफर!">
+              Limited Time Offer!
+            </h2>
+            <p
+              class="lead"
+              data-en="Pre-order any single jar of our Himalayan honey and receive a FREE tasting sample kit with all nine of our rare honey varieties!"
+              data-hi="हमारे हिमालयी शहद का कोई भी एक जार प्री-ऑर्डर करें और हमारी सभी नौ दुर्लभ शहद किस्मों के साथ मुफ्त टेस्टिंग सैंपल किट प्राप्त करें!"
+            >
+              Pre-order any single jar of our Himalayan honey and receive a
+              <strong>FREE tasting sample kit</strong> with all nine of our rare
+              honey varieties!
+            </p>
+            <a
+              href="collection.html"
+              class="btn-get-started"
+              data-en="Choose Your Honey & Claim Your Free Gift"
+              data-hi="अपना शहद चुनें और अपना मुफ्त उपहार पाएं"
+              >Choose Your Honey & Claim Your Free Gift</a
+            >
+          </div>
+        </div>
+      </section>
+      <!-- /Special Offer Section -->
+
+      <!-- Highlights Section -->
+      <section id="highlights" class="section">
+        <div class="container section-title" data-aos="fade-up">
+          <h2 data-en="Discover Himalayan Blossom" data-hi="हिमालयन ब्लॉसम जानें">
+            Discover Himalayan Blossom
+          </h2>
+          <p>
+            <span data-en="Choose your path" data-hi="अपना अनुभव चुनें">Choose your path</span>
+            <span class="description-title" data-en="Across Our World" data-hi="हमारी दुनिया में"
+              >Across Our World</span
+            >
+          </p>
+        </div>
+        <div class="container">
+          <div class="row gy-4">
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+              <div class="card h-100 border-0 shadow-sm text-center p-4 highlight-card position-relative">
+                <div class="icon-wrapper mb-3">
+                  <i class="bi bi-people display-5 text-accent"></i>
+                </div>
+                <h3 class="h5 mb-3" data-en="Meet the Beekeepers" data-hi="मधुमक्खी पालकों से मिलें">
+                  Meet the Beekeepers
+                </h3>
+                <p class="mb-4" data-en="Learn how Deen Dayal and our hill communities craft every harvest by hand." data-hi="जानें कि दीन दयाल और हमारे पहाड़ी समुदाय हर फसल को हाथ से कैसे तैयार करते हैं।">
+                  Learn how Deen Dayal and our hill communities craft every harvest by hand.
+                </p>
+                <a class="stretched-link fw-semibold" href="about.html" data-en="Explore Our Story" data-hi="हमारी कहानी जानें">
+                  Explore Our Story
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+              <div class="card h-100 border-0 shadow-sm text-center p-4 highlight-card position-relative">
+                <div class="icon-wrapper mb-3">
+                  <i class="bi bi-collection display-5 text-accent"></i>
+                </div>
+                <h3 class="h5 mb-3" data-en="Nine Rare Honeys" data-hi="नौ दुर्लभ शहद">
+                  Nine Rare Honeys
+                </h3>
+                <p class="mb-4" data-en="Browse valley-specific honeys, tasting notes, and how to pair each jar." data-hi="घाटी-विशिष्ट शहद, स्वाद नोट्स और हर जार का उपयोग कैसे करें, देखें।">
+                  Browse valley-specific honeys, tasting notes, and how to pair each jar.
+                </p>
+                <a class="stretched-link fw-semibold" href="collection.html" data-en="View the Collection" data-hi="कलेक्शन देखें">
+                  View the Collection
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+              <div class="card h-100 border-0 shadow-sm text-center p-4 highlight-card position-relative">
+                <div class="icon-wrapper mb-3">
+                  <i class="bi bi-heart-pulse display-5 text-accent"></i>
+                </div>
+                <h3 class="h5 mb-3" data-en="Wellness Rituals" data-hi="स्वास्थ्य अनुष्ठान">
+                  Wellness Rituals
+                </h3>
+                <p class="mb-4" data-en="Discover immunity tonics, skin rituals, and mindful ways to enjoy Himalayan honey." data-hi="प्रतिरक्षा टॉनिक, त्वचा के अनुष्ठान और हिमालयी शहद का आनंद लेने के तरीके जानें।">
+                  Discover immunity tonics, skin rituals, and mindful ways to enjoy Himalayan honey.
+                </p>
+                <a class="stretched-link fw-semibold" href="wellness.html" data-en="Find Your Ritual" data-hi="अपना अनुष्ठान खोजें">
+                  Find Your Ritual
+                </a>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+              <div class="card h-100 border-0 shadow-sm text-center p-4 highlight-card position-relative">
+                <div class="icon-wrapper mb-3">
+                  <i class="bi bi-image display-5 text-accent"></i>
+                </div>
+                <h3 class="h5 mb-3" data-en="Valley Gallery" data-hi="घाटी गैलरी">
+                  Valley Gallery
+                </h3>
+                <p class="mb-4" data-en="Travel through bloom-laden meadows, harvest nights, and tasting salons." data-hi="खिले हुए घास के मैदानों, फसल की रातों और स्वाद सैलून की यात्रा करें।">
+                  Travel through bloom-laden meadows, harvest nights, and tasting salons.
+                </p>
+                <a class="stretched-link fw-semibold" href="gallery.html" data-en="See the Gallery" data-hi="गैलरी देखें">
+                  See the Gallery
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+  
+      <!-- Journal Section -->
+      <section id="journal" class="section">
+        <div class="container section-title" data-aos="fade-up">
+          <h2 data-en="Latest from the Hive" data-hi="हाइव से ताज़ा खबर">
+            Latest from the Hive
+          </h2>
+          <p>
+            <span data-en="Stories of" data-hi="कहानियां">Stories of</span>
+            <span class="description-title" data-en="Craft & Community" data-hi="शिल्प और समुदाय"
+              >Craft &amp; Community</span
+            >
+          </p>
+        </div>
+        <div class="container">
+          <div class="row gy-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+              <article class="journal-card h-100">
+                <h3 class="h5" data-en="Founder Q&A: Deen Dayal" data-hi="संस्थापक प्रश्नोत्तर: दीन दयाल">
+                  Founder Q&amp;A: Deen Dayal
+                </h3>
+                <p data-en="Deen shares how traditional beekeeping blends with AI hive monitoring across Himalayan slopes." data-hi="दीन साझा करते हैं कि पारंपरिक मधुमक्खी पालन कैसे हिमालयी ढलानों पर एआई हाइव मॉनिटरिंग के साथ जुड़ता है।">
+                  Deen shares how traditional beekeeping blends with AI hive monitoring across Himalayan slopes.
+                </p>
+                <a href="about.html" class="fw-semibold" data-en="Meet the Team" data-hi="टीम से मिलें">
+                  Meet the Team
+                </a>
+              </article>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+              <article class="journal-card h-100">
+                <h3 class="h5" data-en="Pairing Guide: Honey & Tea" data-hi="पेयरिंग गाइड: शहद और चाय">
+                  Pairing Guide: Honey &amp; Tea
+                </h3>
+                <p data-en="Create mindful tasting rituals with floral teas, spices, and our limited-batch honey flights." data-hi="फूलों वाली चाय, मसालों और हमारे सीमित बैच हनी फ्लाइट्स के साथ mindful स्वाद अनुष्ठान बनाएं।">
+                  Create mindful tasting rituals with floral teas, spices, and our limited-batch honey flights.
+                </p>
+                <a href="wellness.html" class="fw-semibold" data-en="Explore Rituals" data-hi="अनुष्ठान खोजें">
+                  Explore Rituals
+                </a>
+              </article>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+              <article class="journal-card h-100">
+                <h3 class="h5" data-en="Community Harvest Nights" data-hi="समुदाय की फसल रातें">
+                  Community Harvest Nights
+                </h3>
+                <p data-en="Step inside our moonlit harvests and see how each jar is hand-signed before it leaves the valley." data-hi="हमारी चांदनी फसलों के अंदर कदम रखें और देखें कि हर जार घाटी से निकलने से पहले कैसे हस्ताक्षरित होता है।">
+                  Step inside our moonlit harvests and see how each jar is hand-signed before it leaves the valley.
+                </p>
+                <a href="gallery.html" class="fw-semibold" data-en="View the Gallery" data-hi="गैलरी देखें">
+                  View the Gallery
+                </a>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="footer" class="footer dark-background">
+      <div class="container">
+        <div class="row gy-3">
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-geo-alt icon"></i>
+            <div class="address">
+              <h4 data-en="Address" data-hi="पता">Address</h4>
+              <p>Sample Valley Apiaries</p>
+              <p>Kullu, Himachal Pradesh, India</p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-telephone icon"></i>
+            <div>
+              <h4 data-en="Contact" data-hi="संपर्क">Contact</h4>
+              <p>
+                <strong data-en="Phone:" data-hi="फोन:">Phone:</strong>
+                <span>+91 98765 43210</span><br />
+                <strong data-en="Email:" data-hi="ईमेल:">Email:</strong>
+                <span>hello@himalayanblossom.com</span><br />
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-clock icon"></i>
+            <div>
+              <h4 data-en="Opening Hours" data-hi="खुलने का समय">
+                Opening Hours
+              </h4>
+              <p>
+                <strong data-en="Mon-Sat:" data-hi="सोम-शनि:">Mon-Sat:</strong>
+                <span>09:00 - 18:00</span><br />
+                <strong data-en="Sunday" data-hi="रविवार">Sunday</strong>:
+                <span data-en="Closed" data-hi="बंद">Closed</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <h4 data-en="Follow Us" data-hi="हमारा अनुसरण करें">Follow Us</h4>
+            <div class="social-links d-flex">
+              <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+              <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container copyright text-center mt-4">
+        <p>
+          © <span data-en="Copyright" data-hi="कॉपीराइट">Copyright</span>
+          <strong class="px-1 sitename">Himalayan Blossom</strong>
+          <span data-en="All Rights Reserved" data-hi="सभी अधिकार सुरक्षित"
+            >All Rights Reserved</span
+          >
+        </p>
+      </div>
+    </footer>
+
+    <!-- Scroll Top -->
+    <a
+      href="#"
+      id="scroll-top"
+      class="scroll-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>
