@@ -1,22 +1,19 @@
-<link
-                href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap"
-                rel="stylesheet"
-              />
+We’re getting the Google OAuth 2.0 “Error 400: origin_mismatch” when trying to sign in with Google on https://himalayan-blossom.vercel.app.
 
-              <h1>
-                <span class="text-accent">Himalayan Honey,</span> Reimagined.
-              </h1>
+1. Please update the OAuth 2.0 Client settings in Google Cloud Console as follows: Go to APIs & Services → Credentials → OAuth 2.0 Client ID (Web Application).
 
+2. In Authorized JavaScript origins, add: https://himalayan-blossom.vercel.app (Also add our preview domain(s) from Vercel if needed, e.g., https://<project>.vercel.app)
 
-              <link
-  href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap"
-  rel="stylesheet"
-/>
+3. In Authorized redirect URIs, add the exact callback URI our app is using. For example (verify the exact path in the code/network logs):
 
-<h1
-  class="hero-title"
-  data-en="<span class='text-accent'>Himalayan Honey,</span> Reimagined."
-  data-hi="<span class='text-accent'>हिमालयी शहद,</span> नया रूप।"
->
-  <span class="text-accent">Himalayan Honey,</span> Reimagined.
-</h1>
+https://himalayan-blossom.vercel.app/api/auth/callback/google
+
+(or whichever endpoint is configured in our app)
+
+Save the configuration.
+
+Ensure the frontend is using the correct Client ID from the updated credentials.
+
+After changes, clear cookies/cache or test in incognito mode to confirm login works.
+
+This should fix the authorization error and align our deployed domain with Google’s OAuth 2.0 policy.

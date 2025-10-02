@@ -22,6 +22,49 @@
     productAssets: { ...DEFAULT_PRODUCT_ASSETS },
   };
 
+  const LETTER_SPACING_QUERY = '[class*="tracking-"], [class*="btn"], button';
+  const letterSpacingCache = new WeakMap();
+
+  function shouldNormalizeSpacing(element) {
+    if (!element) return false;
+    if (element.tagName === 'BUTTON') return true;
+    if (!element.classList) return false;
+    return Array.from(element.classList).some((className) => (
+      className.startsWith('tracking-') ||
+      className === 'btn' ||
+      className.startsWith('btn')
+    ));
+  }
+
+  function adjustLetterSpacingForLanguage(lang) {
+    const shouldNormalize = lang === 'hi';
+    const elements = new Set();
+
+    document.querySelectorAll(LETTER_SPACING_QUERY).forEach((element) => {
+      if (shouldNormalizeSpacing(element)) {
+        elements.add(element);
+      }
+    });
+
+    elements.forEach((element) => {
+      if (!letterSpacingCache.has(element)) {
+        const inlineValue = element.style ? element.style.letterSpacing || null : null;
+        letterSpacingCache.set(element, inlineValue);
+      }
+
+      if (shouldNormalize) {
+        element.style.setProperty('letter-spacing', 'normal');
+      } else {
+        const original = letterSpacingCache.get(element);
+        if (!original) {
+          element.style.removeProperty('letter-spacing');
+        } else {
+          element.style.letterSpacing = original;
+        }
+      }
+    });
+  }
+
   try {
     const storedAssets = storage.getItem(PRODUCT_ASSETS_KEY);
     if (storedAssets) {
@@ -62,6 +105,13 @@
   function updateLanguage(lang) {
     state.language = lang;
     storage.setItem('language', lang);
+
+    document.documentElement.setAttribute('lang', lang);
+    if (document.body) {
+      document.body.dataset.language = lang;
+      document.body.classList.toggle('lang-hi', lang === 'hi');
+      document.body.classList.toggle('lang-en', lang === 'en');
+    }
 
     qsa('[data-en][data-hi]').forEach((el) => {
       const value = lang === 'hi' ? el.getAttribute('data-hi') : el.getAttribute('data-en');
@@ -109,6 +159,8 @@
         label.textContent = lang === 'en' ? 'हिं' : 'EN';
       }
     }
+
+    adjustLetterSpacingForLanguage(lang);
   }
 
   function initLanguageToggle() {

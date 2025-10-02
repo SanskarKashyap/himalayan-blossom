@@ -95,6 +95,23 @@ a:hover {
   text-decoration: none;
 }
 
+/*--------------------------------------------------------------
+# Language-specific Adjustments
+--------------------------------------------------------------*/
+body.lang-hi {
+  letter-spacing: normal;
+}
+
+body.lang-hi [class*="tracking-["],
+body.lang-hi [class*="tracking-"],
+body.lang-hi .btn,
+body.lang-hi [class^="btn"],
+body.lang-hi [class*=" btn"],
+body.lang-hi [class*="btn"],
+body.lang-hi button {
+  letter-spacing: normal;
+}
+
 .btn-get-started,
 .btn-get-started:focus {
   color: var(--contrast-color);

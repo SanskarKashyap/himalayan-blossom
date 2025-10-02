@@ -3,7 +3,8 @@
 
   const CONFIG = {
     apiBaseUrl: (window.APP_API_BASE_URL || 'http://localhost:8000/api').replace(/\/$/, ''),
-    googleClientId: window.APP_GOOGLE_CLIENT_ID || '144658462401-2l7kms1j90v4jl9ovga4uvolunnhghpj.apps.googleusercontent.com',
+    googleClientId: (window.APP_GOOGLE_CLIENT_ID || '').trim(),
+    googleRedirectUri: (window.APP_GOOGLE_REDIRECT_URI || '').trim(),
   };
 
   const STORAGE_KEY = 'hb_auth_state_v1';
@@ -308,12 +309,16 @@
 
     googleInitPromise = waitForGoogleLibrary()
       .then(() => {
-        window.google.accounts.id.initialize({
+        const initOptions = {
           client_id: CONFIG.googleClientId,
           callback: handleGoogleCredential,
           cancel_on_tap_outside: true,
           use_fedcm_for_prompt: true,
-        });
+        };
+        if (CONFIG.googleRedirectUri) {
+          initOptions.login_uri = getGoogleAuthUrl();
+        }
+        window.google.accounts.id.initialize(initOptions);
         state.googleInitialized = true;
         renderGoogleButtons();
         try {
@@ -346,7 +351,7 @@
 
   async function exchangeCredentialForTokens(credential) {
     const response = await fetch(
-      buildApiUrl('/auth/google/'),
+      getGoogleAuthUrl(),
       prepareRequestInit({
         method: 'POST',
         body: { credential },
@@ -395,6 +400,16 @@
     }
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
     return `${CONFIG.apiBaseUrl}${normalizedPath}`;
+  }
+
+  function getGoogleAuthUrl() {
+    if (CONFIG.googleRedirectUri) {
+      if (/^https?:/i.test(CONFIG.googleRedirectUri)) {
+        return CONFIG.googleRedirectUri;
+      }
+      return buildApiUrl(CONFIG.googleRedirectUri);
+    }
+    return buildApiUrl('/auth/google/');
   }
 
   async function extractErrorMessage(response) {
