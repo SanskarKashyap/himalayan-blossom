@@ -1,0 +1,85 @@
+{
+  "team": [
+    {
+      "name": {
+        "en": "Ramesh",
+        "hi": "रमेश"
+      },
+      "role": {
+        "en": "Lead Beekeeper",
+        "hi": "मुख्य मधुमक्खी पालक"
+      },
+      "bio": {
+        "en": "Ramesh manages our high-altitude apiaries and ensures every batch is hand-checked at harvest.",
+        "hi": "रमेश हमारी उच्च आल्टिट्यूड मधुमक्खी पालन का प्रबंधन करता है और यह सुनिश्चित करता है कि हर बैच को फसल के समय हाथ से जांचा जाए।"
+      },
+      "image": {
+        "src": "assets/img/chefs/chefs-1.jpg",
+        "alt": {
+          "en": "Beekeeper Ramesh",
+          "hi": "मधुमक्खी पालक रमेश"
+        }
+      },
+      "social": [
+        { "icon": "bi bi-twitter-x", "href": "#" },
+        { "icon": "bi bi-facebook", "href": "#" },
+        { "icon": "bi bi-instagram", "href": "#" },
+        { "icon": "bi bi-linkedin", "href": "#" }
+      ]
+    },
+    {
+      "name": {
+        "en": "Sita",
+        "hi": "सीता"
+      },
+      "role": {
+        "en": "Training Lead",
+        "hi": "प्रशिक्षण प्रमुख"
+      },
+      "bio": {
+        "en": "Sita runs our farmer-training sessions and school outreach, bringing beekeeping to local communities.",
+        "hi": "सीता हमारे किसान-प्रशिक्षण सत्र और स्कूल आउटरीच चलाती है, स्थानीय समुदायों में मधुमक्खी पालन लाती है।"
+      },
+      "image": {
+        "src": "assets/img/chefs/chefs-2.jpg",
+        "alt": {
+          "en": "Beekeeper Sita",
+          "hi": "मधुमक्खी पालक सीता"
+        }
+      },
+      "social": [
+        { "icon": "bi bi-twitter-x", "href": "#" },
+        { "icon": "bi bi-facebook", "href": "#" },
+        { "icon": "bi bi-instagram", "href": "#" },
+        { "icon": "bi bi-linkedin", "href": "#" }
+      ]
+    },
+    {
+      "name": {
+        "en": "Mohan",
+        "hi": "मोहन"
+      },
+      "role": {
+        "en": "Quality Steward",
+        "hi": "गुणवत्ता प्रबंधक"
+      },
+      "bio": {
+        "en": "Mohan handles sampling and AI monitoring integration to guarantee purity and traceability.",
+        "hi": "मोहन नमूना लेने और AI मॉनिटरिंग इंटीग्रेशन का काम संभालता है ताकि शुद्धता और पता लगाने की गारंटी दी जा सके।"
+      },
+      "image": {
+        "src": "assets/img/chefs/chefs-3.jpg",
+        "alt": {
+          "en": "Beekeeper Mohan",
+          "hi": "मधुमक्खी पालक मोहन"
+        }
+      },
+      "social": [
+        { "icon": "bi bi-twitter-x", "href": "#" },
+        { "icon": "bi bi-facebook", "href": "#" },
+        { "icon": "bi bi-instagram", "href": "#" },
+        { "icon": "bi bi-linkedin", "href": "#" }
+      ]
+    }
+  ]
+}

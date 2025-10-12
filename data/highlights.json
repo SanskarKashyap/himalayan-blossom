@@ -1,0 +1,80 @@
+{
+  "cards": [
+    {
+      "icon": "bi-people",
+      "title": {
+        "en": "Meet the Beekeepers",
+        "hi": "मधुमक्खी पालकों से मिलें"
+      },
+      "description": {
+        "en": "Learn how Deen Dayal and our hill communities craft every harvest by hand.",
+        "hi": "जानें कि दीन दयाल और हमारे पहाड़ी समुदाय हर फसल को हाथ से कैसे तैयार करते हैं।"
+      },
+      "link": {
+        "href": "about.html",
+        "text": {
+          "en": "Explore Our Story",
+          "hi": "हमारी कहानी जानें"
+        }
+      },
+      "aosDelay": 100
+    },
+    {
+      "icon": "bi-collection",
+      "title": {
+        "en": "Nine Rare Honeys",
+        "hi": "नौ दुर्लभ शहद"
+      },
+      "description": {
+        "en": "Browse valley-specific honeys, tasting notes, and how to pair each jar.",
+        "hi": "घाटी-विशिष्ट शहद, स्वाद नोट्स और हर जार का उपयोग कैसे करें, देखें।"
+      },
+      "link": {
+        "href": "collection.html",
+        "text": {
+          "en": "View the Collection",
+          "hi": "कलेक्शन देखें"
+        }
+      },
+      "aosDelay": 200
+    },
+    {
+      "icon": "bi-heart-pulse",
+      "title": {
+        "en": "Wellness Rituals",
+        "hi": "स्वास्थ्य अनुष्ठान"
+      },
+      "description": {
+        "en": "Discover immunity tonics, skin rituals, and mindful ways to enjoy Himalayan honey.",
+        "hi": "प्रतिरक्षा टॉनिक, त्वचा के अनुष्ठान और हिमालयी शहद का आनंद लेने के तरीके जानें।"
+      },
+      "link": {
+        "href": "wellness.html",
+        "text": {
+          "en": "Find Your Ritual",
+          "hi": "अपना अनुष्ठान खोजें"
+        }
+      },
+      "aosDelay": 300
+    },
+    {
+      "icon": "bi-image",
+      "title": {
+        "en": "Valley Gallery",
+        "hi": "घाटी गैलरी"
+      },
+      "description": {
+        "en": "Travel through bloom-laden meadows, harvest nights, and tasting salons.",
+        "hi": "खिले हुए घास के मैदानों, फसल की रातों और स्वाद सैलून की यात्रा करें।"
+      },
+      "link": {
+        "href": "gallery.html",
+        "text": {
+          "en": "See the Gallery",
+          "hi": "गैलरी देखें"
+        }
+      },
+      "aosDelay": 400
+    }
+  ]
+}

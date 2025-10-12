@@ -127,17 +127,6 @@
   initLightbox();
 
   /**
-   * Initiate Pure Counter
-   */
-  function initPureCounter() {
-    if (typeof PureCounter === 'function') {
-      new PureCounter();
-    }
-  }
-
-  initPureCounter();
-
-  /**
    * Init swiper sliders
    */
   function initSwiper() {
@@ -219,7 +208,6 @@
 
   function refreshInteractiveComponents() {
     initSwiper();
-    initPureCounter();
     if (window.AOS && typeof window.AOS.refreshHard === 'function') {
       window.AOS.refreshHard();
     }

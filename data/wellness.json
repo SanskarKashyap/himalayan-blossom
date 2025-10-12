@@ -1,0 +1,76 @@
+{
+  "rituals": [
+    {
+      "title": {
+        "en": "Immunity Dawn Tonic",
+        "hi": "इम्युनिटी डॉन टॉनिक"
+      },
+      "description": {
+        "en": "Blend Van Amrit wild honey with warm water, ginger, and tulsi leaves to energise mornings and support breathing.",
+        "hi": "वैन अमृत वाइल्ड हनी को गुनगुने पानी, अदरक और तुलसी पत्तियों के साथ मिलाकर सुबह को ऊर्जा दें और श्वसन का समर्थन करें।"
+      },
+      "steps": [
+        {
+          "en": "• 1 tsp honey stirred into 150 ml warm water",
+          "hi": "• 1 चम्मच शहद 150 मि.ली. गुनगुने पानी में"
+        },
+        {
+          "en": "• Add crushed ginger + 3 tulsi leaves",
+          "hi": "• कुटा हुआ अदरक + 3 तुलसी पत्ते मिलाएं"
+        },
+        {
+          "en": "• Sip mindfully before breakfast",
+          "hi": "• नाश्ते से पहले mindful तरीके से पिएं"
+        }
+      ]
+    },
+    {
+      "title": {
+        "en": "Radiance Skin Mask",
+        "hi": "रैडिएंस स्किन मास्क"
+      },
+      "description": {
+        "en": "Use Him Kanti white honey with saffron and sandalwood to calm and brighten skin during weekly at-home rituals.",
+        "hi": "हिम कांती व्हाइट हनी को केसर और चंदन के साथ उपयोग करें ताकि साप्ताहिक घर के अनुष्ठानों के दौरान त्वचा शांत और उजली बने।"
+      },
+      "steps": [
+        {
+          "en": "• 1 tsp honey + 1 pinch saffron",
+          "hi": "• 1 चम्मच शहद + 1 चुटकी केसर"
+        },
+        {
+          "en": "• Add sandalwood for a soothing paste",
+          "hi": "• शीतल पेस्ट के लिए चंदन मिलाएं"
+        },
+        {
+          "en": "• Apply 10 minutes before rinse",
+          "hi": "• धोने से 10 मिनट पहले लगाएं"
+        }
+      ]
+    },
+    {
+      "title": {
+        "en": "Moonlight Wind-Down",
+        "hi": "मूनलाइट विंड-डाउन"
+      },
+      "description": {
+        "en": "Stir Kashtha Bal chestnut honey into chamomile tea with a dash of nutmeg to relax muscles and mind.",
+        "hi": "काष्ठ बल चेस्टनट हनी को कैमोमाइल चाय में जायफल के साथ मिलाकर मांसपेशियों और मन को शांत करें।"
+      },
+      "steps": [
+        {
+          "en": "• Brew caffeine-free chamomile",
+          "hi": "• कैफीन-रहित कैमोमाइल बनाएं"
+        },
+        {
+          "en": "• Sweeten with 1 tsp honey",
+          "hi": "• 1 चम्मच शहद से मिठास दें"
+        },
+        {
+          "en": "• Sprinkle nutmeg & breathe deep",
+          "hi": "• जायफल छिड़कें और गहरी सांस लें"
+        }
+      ]
+    }
+  ]
+}

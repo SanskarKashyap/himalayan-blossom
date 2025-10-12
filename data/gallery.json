@@ -1,0 +1,60 @@
+{
+  "images": [
+    {
+      "src": "assets/img/gallery/gallery-1.jpg",
+      "alt": {
+        "en": "Himalayan valley blossoms",
+        "hi": "हिमालयी घाटी के पुष्प"
+      }
+    },
+    {
+      "src": "assets/img/gallery/gallery-2.jpg",
+      "alt": {
+        "en": "Apiary in Himalayan meadows",
+        "hi": "हिमालयी घास के मैदानों में मधुमक्खी पालन"
+      }
+    },
+    {
+      "src": "assets/img/gallery/gallery-3.jpg",
+      "alt": {
+        "en": "Harvest and sampling",
+        "hi": "फसल और नमूना संग्रह"
+      }
+    },
+    {
+      "src": "assets/img/gallery/gallery-4.jpg",
+      "alt": {
+        "en": "Bees on wild blossoms",
+        "hi": "जंगली पुष्पों पर मधुमक्खियाँ"
+      }
+    },
+    {
+      "src": "assets/img/gallery/gallery-5.jpg",
+      "alt": {
+        "en": "Traceable small-batch honey",
+        "hi": "ट्रेसेबल छोटे बैच का शहद"
+      }
+    },
+    {
+      "src": "assets/img/gallery/gallery-6.jpg",
+      "alt": {
+        "en": "Artisanal packaging",
+        "hi": "हस्तशिल्प पैकेजिंग"
+      }
+    },
+    {
+      "src": "assets/img/gallery/gallery-7.jpg",
+      "alt": {
+        "en": "Community trainings",
+        "hi": "समुदाय प्रशिक्षण"
+      }
+    },
+    {
+      "src": "assets/img/gallery/gallery-8.jpg",
+      "alt": {
+        "en": "Himalayan sunset over hives",
+        "hi": "मधुमक्खी छत्तों पर हिमालयी सूर्यास्त"
+      }
+    }
+  ]
+}

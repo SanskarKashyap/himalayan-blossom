@@ -270,66 +270,17 @@
           </p>
         </div>
         <div class="container">
-          <div class="row gy-4">
-            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-              <div class="card h-100 border-0 shadow-sm p-4">
-                <h3 class="h5" data-en="Immunity Dawn Tonic" data-hi="इम्युनिटी डॉन टॉनिक">Immunity Dawn Tonic</h3>
-                <p data-en="Blend Van Amrit wild honey with warm water, ginger, and tulsi leaves to energise mornings and support breathing." data-hi="वैन अमृत वाइल्ड हनी को गुनगुने पानी, अदरक और तुलसी पत्तियों के साथ मिलाकर सुबह को ऊर्जा दें और श्वसन का समर्थन करें।">
-                  Blend Van Amrit wild honey with warm water, ginger, and tulsi leaves to energise mornings and support breathing.
-                </p>
-                <ul class="list-unstyled small mb-0">
-                  <li data-en="• 1 tsp honey stirred into 150 ml warm water" data-hi="• 1 चम्मच शहद 150 मि.ली. गुनगुने पानी में">
-                    • 1 tsp honey stirred into 150 ml warm water
-                  </li>
-                  <li data-en="• Add crushed ginger + 3 tulsi leaves" data-hi="• कुटा हुआ अदरक + 3 तुलसी पत्ते मिलाएं">
-                    • Add crushed ginger + 3 tulsi leaves
-                  </li>
-                  <li data-en="• Sip mindfully before breakfast" data-hi="• नाश्ते से पहले mindful तरीके से पिएं">
-                    • Sip mindfully before breakfast
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
-              <div class="card h-100 border-0 shadow-sm p-4">
-                <h3 class="h5" data-en="Radiance Skin Mask" data-hi="रैडिएंस स्किन मास्क">Radiance Skin Mask</h3>
-                <p data-en="Use Him Kanti white honey with saffron and sandalwood to calm and brighten skin during weekly at-home rituals." data-hi="हिम कांती व्हाइट हनी को केसर और चंदन के साथ उपयोग करें ताकि साप्ताहिक घर के अनुष्ठानों के दौरान त्वचा शांत और उजली बने।">
-                  Use Him Kanti white honey with saffron and sandalwood to calm and brighten skin during weekly at-home rituals.
-                </p>
-                <ul class="list-unstyled small mb-0">
-                  <li data-en="• 1 tsp honey + 1 pinch saffron" data-hi="• 1 चम्मच शहद + 1 चुटकी केसर">
-                    • 1 tsp honey + 1 pinch saffron
-                  </li>
-                  <li data-en="• Add sandalwood for a soothing paste" data-hi="• शीतल पेस्ट के लिए चंदन मिलाएं">
-                    • Add sandalwood for a soothing paste
-                  </li>
-                  <li data-en="• Apply 10 minutes before rinse" data-hi="• धोने से 10 मिनट पहले लगाएं">
-                    • Apply 10 minutes before rinse
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
-              <div class="card h-100 border-0 shadow-sm p-4">
-                <h3 class="h5" data-en="Moonlight Wind-Down" data-hi="मूनलाइट विंड-डाउन">Moonlight Wind-Down</h3>
-                <p data-en="Stir Kashtha Bal chestnut honey into chamomile tea with a dash of nutmeg to relax muscles and mind." data-hi="काष्ठ बल चेस्टनट हनी को कैमोमाइल चाय में जायफल के साथ मिलाकर मांसपेशियों और मन को शांत करें।">
-                  Stir Kashtha Bal chestnut honey into chamomile tea with a dash of nutmeg to relax muscles and mind.
-                </p>
-                <ul class="list-unstyled small mb-0">
-                  <li data-en="• Brew caffeine-free chamomile" data-hi="• कैफीन-रहित कैमोमाइल बनाएं">
-                    • Brew caffeine-free chamomile
-                  </li>
-                  <li data-en="• Sweeten with 1 tsp honey" data-hi="• 1 चम्मच शहद से मिठास दें">
-                    • Sweeten with 1 tsp honey
-                  </li>
-                  <li data-en="• Sprinkle nutmeg &amp; breathe deep" data-hi="• जायफल छिड़कें और गहरी सांस लें">
-                    • Sprinkle nutmeg &amp; breathe deep
-                  </li>
-                </ul>
-              </div>
+          <div class="row gy-4" data-content="rituals"></div>
+        </div>
+        <template id="ritual-card-template">
+          <div class="col-lg-4" data-aos="fade-up">
+            <div class="card h-100 border-0 shadow-sm p-4">
+              <h3 class="h5"></h3>
+              <p></p>
+              <ul class="list-unstyled small mb-0"></ul>
             </div>
           </div>
-        </div>
+        </template>
       </section>
 
     </main>
@@ -413,13 +364,13 @@
 
     <script src="assets/vendor/aos/aos.js"></script>
     <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
     <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/site.js"></script>
+    <script src="assets/js/content.js"></script>
     <script src="assets/js/router.js"></script>
   </body>
 </html>

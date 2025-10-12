@@ -1,0 +1,55 @@
+{
+  "articles": [
+    {
+      "title": {
+        "en": "Founder Q&A: Deen Dayal",
+        "hi": "संस्थापक प्रश्नोत्तर: दीन दयाल"
+      },
+      "summary": {
+        "en": "Deen shares how traditional beekeeping blends with AI hive monitoring across Himalayan slopes.",
+        "hi": "दीन साझा करते हैं कि पारंपरिक मधुमक्खी पालन कैसे हिमालयी ढलानों पर एआई हाइव मॉनिटरिंग के साथ जुड़ता है।"
+      },
+      "link": {
+        "href": "about.html",
+        "text": {
+          "en": "Meet the Team",
+          "hi": "टीम से मिलें"
+        }
+      }
+    },
+    {
+      "title": {
+        "en": "Pairing Guide: Honey & Tea",
+        "hi": "पेयरिंग गाइड: शहद और चाय"
+      },
+      "summary": {
+        "en": "Create mindful tasting rituals with floral teas, spices, and our limited-batch honey flights.",
+        "hi": "फूलों वाली चाय, मसालों और हमारे सीमित बैच हनी फ्लाइट्स के साथ mindful स्वाद अनुष्ठान बनाएं।"
+      },
+      "link": {
+        "href": "wellness.html",
+        "text": {
+          "en": "Explore Rituals",
+          "hi": "अनुष्ठान खोजें"
+        }
+      }
+    },
+    {
+      "title": {
+        "en": "Community Harvest Nights",
+        "hi": "समुदाय की फसल रातें"
+      },
+      "summary": {
+        "en": "Step inside our moonlit harvests and see how each jar is hand-signed before it leaves the valley.",
+        "hi": "हमारी चांदनी फसलों के अंदर कदम रखें और देखें कि हर जार घाटी से निकलने से पहले कैसे हस्ताक्षरित होता है।"
+      },
+      "link": {
+        "href": "gallery.html",
+        "text": {
+          "en": "View the Gallery",
+          "hi": "गैलरी देखें"
+        }
+      }
+    }
+  ]
+}

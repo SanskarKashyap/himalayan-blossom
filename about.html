@@ -530,88 +530,14 @@
                 }
               }
             </script>
-            <div class="swiper-wrapper">
-              <div
-                class="swiper-slide event-item d-flex flex-column justify-content-end"
-                style="background-image: url(assets/img/events-1.jpg)"
-              >
-                <h3
-                  data-en="Farmer Training Camps"
-                  data-hi="किसान प्रशिक्षण शिविर"
-                >
-                  Farmer Training Camps
-                </h3>
-                <div
-                  class="price align-self-start"
-                  data-en="Community"
-                  data-hi="समुदाय"
-                >
-                  Community
-                </div>
-                <p
-                  class="description"
-                  data-en="Hands-on beekeeping workshops bringing new income streams to Himalayan farms."
-                  data-hi="हिमालयी खेतों में नई आय धाराएं लाने वाली व्यावहारिक मधुमक्खी पालन कार्यशालाएं।"
-                >
-                  Hands-on beekeeping workshops bringing new income streams to
-                  Himalayan farms.
-                </p>
+            <div class="swiper-wrapper" data-content="events"></div>
+            <template id="event-slide-template">
+              <div class="swiper-slide event-item d-flex flex-column justify-content-end">
+                <h3></h3>
+                <div class="price align-self-start"></div>
+                <p class="description"></p>
               </div>
-              <!-- End Event item -->
-
-              <div
-                class="swiper-slide event-item d-flex flex-column justify-content-end"
-                style="background-image: url(assets/img/events-2.jpg)"
-              >
-                <h3
-                  data-en="School Bee Projects"
-                  data-hi="स्कूल मधुमक्खी परियोजनाएं"
-                >
-                  School Bee Projects
-                </h3>
-                <div
-                  class="price align-self-start"
-                  data-en="Education"
-                  data-hi="शिक्षा"
-                >
-                  Education
-                </div>
-                <p
-                  class="description"
-                  data-en="Introducing children to the importance of pollinators through school apiary programs."
-                  data-hi="स्कूल मधुमक्खी पालन कार्यक्रमों के माध्यम से बच्चों को परागणकर्ताओं के महत्व से परिचित कराना।"
-                >
-                  Introducing children to the importance of pollinators through
-                  school apiary programs.
-                </p>
-              </div>
-              <!-- End Event item -->
-
-              <div
-                class="swiper-slide event-item d-flex flex-column justify-content-end"
-                style="background-image: url(assets/img/events-3.jpg)"
-              >
-                <h3 data-en="Harvest Stories" data-hi="फसल की कहानियां">
-                  Harvest Stories
-                </h3>
-                <div
-                  class="price align-self-start"
-                  data-en="Limited Batches"
-                  data-hi="सीमित बैच"
-                >
-                  Limited Batches
-                </div>
-                <p
-                  class="description"
-                  data-en="Read the harvest stories and batch notes from each valley and season."
-                  data-hi="प्रत्येक घाटी और मौसम की फसल की कहानियां और बैच नोट्स पढ़ें।"
-                >
-                  Read the harvest stories and batch notes from each valley and
-                  season.
-                </p>
-              </div>
-              <!-- End Event item -->
-            </div>
+            </template>
             <div class="swiper-pagination"></div>
           </div>
         </div>
@@ -638,116 +564,23 @@
         <!-- End Section Title -->
 
         <div class="container">
-          <div class="row gy-4">
-            <div
-              class="col-lg-4 d-flex align-items-stretch"
-              data-aos="fade-up"
-              data-aos-delay="100"
-            >
-              <div class="team-member">
-                <div class="member-img">
-                  <img
-                    src="assets/img/chefs/chefs-1.jpg"
-                    class="img-fluid"
-                    alt="Beekeeper Ramesh"
-                  />
-                  <div class="social">
-                    <a href="#"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                    <a href="#"><i class="bi bi-linkedin"></i></a>
-                  </div>
-                </div>
-                <div class="member-info">
-                  <h4 data-en="Ramesh" data-hi="रमेश">Ramesh</h4>
-                  <span data-en="Lead Beekeeper" data-hi="मुख्य मधुमक्खी पालक"
-                    >Lead Beekeeper</span
-                  >
-                  <p
-                    data-en="Ramesh manages our high-altitude apiaries and ensures every batch is hand-checked at harvest."
-                    data-hi="रमेश हमारी उच्च आल्टिट्यूड मधुमक्खी पालन का प्रबंधन करता है और यह सुनिश्चित करता है कि हर बैच को फसल के समय हाथ से जांचा जाए।"
-                  >
-                    Ramesh manages our high-altitude apiaries and ensures every
-                    batch is hand-checked at harvest.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <!-- End Member -->
-
-            <div
-              class="col-lg-4 d-flex align-items-stretch"
-              data-aos="fade-up"
-              data-aos-delay="200"
-            >
-              <div class="team-member">
-                <div class="member-img">
-                  <img
-                    src="assets/img/chefs/chefs-2.jpg"
-                    class="img-fluid"
-                    alt="Beekeeper Sita"
-                  />
-                  <div class="social">
-                    <a href="#"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                    <a href="#"><i class="bi bi-linkedin"></i></a>
-                  </div>
-                </div>
-                <div class="member-info">
-                  <h4 data-en="Sita" data-hi="सीता">Sita</h4>
-                  <span data-en="Training Lead" data-hi="प्रशिक्षण प्रमुख"
-                    >Training Lead</span
-                  >
-                  <p
-                    data-en="Sita runs our farmer-training sessions and school outreach, bringing beekeeping to local communities."
-                    data-hi="सीता हमारे किसान-प्रशिक्षण सत्र और स्कूल आउटरीच चलाती है, स्थानीय समुदायों में मधुमक्खी पालन लाती है।"
-                  >
-                    Sita runs our farmer-training sessions and school outreach,
-                    bringing beekeeping to local communities.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <!-- End Member -->
-
-            <div
-              class="col-lg-4 d-flex align-items-stretch"
-              data-aos="fade-up"
-              data-aos-delay="300"
-            >
-              <div class="team-member">
-                <div class="member-img">
-                  <img
-                    src="assets/img/chefs/chefs-3.jpg"
-                    class="img-fluid"
-                    alt="Beekeeper Mohan"
-                  />
-                  <div class="social">
-                    <a href="#"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                    <a href="#"><i class="bi bi-linkedin"></i></a>
-                  </div>
-                </div>
-                <div class="member-info">
-                  <h4 data-en="Mohan" data-hi="मोहन">Mohan</h4>
-                  <span data-en="Quality Steward" data-hi="गुणवत्ता प्रबंधक"
-                    >Quality Steward</span
-                  >
-                  <p
-                    data-en="Mohan handles sampling and AI monitoring integration to guarantee purity and traceability."
-                    data-hi="मोहन नमूना लेने और AI मॉनिटरिंग इंटीग्रेशन का काम संभालता है ताकि शुद्धता और पता लगाने की गारंटी दी जा सके।"
-                  >
-                    Mohan handles sampling and AI monitoring integration to
-                    guarantee purity and traceability.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <!-- End Member -->
-          </div>
+          <div class="row gy-4" data-content="team"></div>
         </div>
+        <template id="team-member-template">
+          <div class="col-lg-4 d-flex align-items-stretch" data-aos="fade-up">
+            <div class="team-member">
+              <div class="member-img">
+                <img class="img-fluid" alt="" />
+                <div class="social"></div>
+              </div>
+              <div class="member-info">
+                <h4></h4>
+                <span></span>
+                <p></p>
+              </div>
+            </div>
+          </div>
+        </template>
       </section>
       <!-- /Team Section -->
 
@@ -843,13 +676,13 @@
 
     <script src="assets/vendor/aos/aos.js"></script>
     <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
     <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/site.js"></script>
+    <script src="assets/js/content.js"></script>
     <script src="assets/js/router.js"></script>
   </body>
 </html>
