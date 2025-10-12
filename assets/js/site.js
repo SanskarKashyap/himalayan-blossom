@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  const HBSite = window.HBSite || (window.HBSite = {});
+
   const storage = window.localStorage;
   const PREFILL_KEY = 'hb_preorder_prefill_v1';
   const PRODUCT_ASSETS_KEY = 'hb_product_assets_v1';
@@ -21,6 +23,8 @@
     theme: storage.getItem('theme') || 'light',
     productAssets: { ...DEFAULT_PRODUCT_ASSETS },
   };
+
+  let globalsInitialized = false;
 
   try {
     const storedAssets = storage.getItem(PRODUCT_ASSETS_KEY);
@@ -112,25 +116,29 @@
   }
 
   function initLanguageToggle() {
-    const toggle = qs('#lang-toggle');
-    if (!toggle) {
-      updateLanguage(state.language);
-      return;
-    }
-
     updateLanguage(state.language);
 
-    toggle.addEventListener('click', (event) => {
-      event.preventDefault();
-      const nextLang = state.language === 'en' ? 'hi' : 'en';
-      updateLanguage(nextLang);
-    });
+    const toggle = qs('#lang-toggle');
+    if (toggle && !toggle.dataset.hbBound) {
+      toggle.dataset.hbBound = 'true';
+      toggle.addEventListener('click', (event) => {
+        event.preventDefault();
+        const nextLang = state.language === 'en' ? 'hi' : 'en';
+        updateLanguage(nextLang);
+      });
+    }
 
     const mobileToggle = qs('#mobile-lang-toggle');
-    if (mobileToggle) {
+    if (mobileToggle && !mobileToggle.dataset.hbBound) {
+      mobileToggle.dataset.hbBound = 'true';
       mobileToggle.addEventListener('click', (event) => {
         event.preventDefault();
-        toggle.dispatchEvent(new Event('click', { bubbles: false, cancelable: true }));
+        if (toggle) {
+          toggle.dispatchEvent(new Event('click', { bubbles: false, cancelable: true }));
+        } else {
+          const nextLang = state.language === 'en' ? 'hi' : 'en';
+          updateLanguage(nextLang);
+        }
       });
     }
   }
@@ -172,7 +180,8 @@
     applyTheme(state.theme);
 
     const toggle = qs('#theme-toggle');
-    if (toggle) {
+    if (toggle && !toggle.dataset.hbBound) {
+      toggle.dataset.hbBound = 'true';
       toggle.addEventListener('click', (event) => {
         event.preventDefault();
         const nextTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
@@ -181,10 +190,16 @@
     }
 
     const mobileToggle = qs('#mobile-theme-toggle');
-    if (mobileToggle && toggle) {
+    if (mobileToggle && !mobileToggle.dataset.hbBound) {
+      mobileToggle.dataset.hbBound = 'true';
       mobileToggle.addEventListener('click', (event) => {
         event.preventDefault();
-        toggle.dispatchEvent(new Event('click', { bubbles: false, cancelable: true }));
+        if (toggle) {
+          toggle.dispatchEvent(new Event('click', { bubbles: false, cancelable: true }));
+        } else {
+          const nextTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+          applyTheme(nextTheme);
+        }
       });
     }
   }
@@ -196,16 +211,21 @@
 
     const icon = toggle.querySelector('i');
 
-    toggle.addEventListener('click', () => {
-      const isActive = mobileNav.classList.toggle('active');
-      document.body.classList.toggle('mobile-nav-active', isActive);
-      if (icon) {
-        icon.classList.toggle('bi-list', !isActive);
-        icon.classList.toggle('bi-x', isActive);
-      }
-    });
+    if (!toggle.dataset.hbBound) {
+      toggle.dataset.hbBound = 'true';
+      toggle.addEventListener('click', () => {
+        const isActive = mobileNav.classList.toggle('active');
+        document.body.classList.toggle('mobile-nav-active', isActive);
+        if (icon) {
+          icon.classList.toggle('bi-list', !isActive);
+          icon.classList.toggle('bi-x', isActive);
+        }
+      });
+    }
 
     qsa('.mobile-nav-menu a').forEach((link) => {
+      if (link.dataset.hbBound) return;
+      link.dataset.hbBound = 'true';
       link.addEventListener('click', () => {
         mobileNav.classList.remove('active');
         document.body.classList.remove('mobile-nav-active');
@@ -218,6 +238,10 @@
   }
 
   function closeModal(modal, overlay) {
+    if (overlay && overlay._hbEscapeHandler) {
+      window.removeEventListener('keyup', overlay._hbEscapeHandler);
+      delete overlay._hbEscapeHandler;
+    }
     if (overlay) overlay.style.display = 'none';
     if (modal) modal.style.display = 'none';
   }
@@ -232,6 +256,8 @@
     if (!modal || !overlay) return;
 
     qsa('.menu-item').forEach((item) => {
+      if (item.dataset.hbModalBound) return;
+      item.dataset.hbModalBound = 'true';
       registerProductAsset(item);
       item.addEventListener('click', (event) => {
         if (event.target.closest('a[href="#preorder"]')) {
@@ -294,26 +320,34 @@
 
         overlay.style.display = 'block';
         modal.style.display = 'flex';
+        if (overlay._hbEscapeHandler) {
+          window.removeEventListener('keyup', overlay._hbEscapeHandler);
+        }
+        const escapeHandler = (event) => {
+          if (event.key === 'Escape') {
+            closeModal(modal, overlay);
+          }
+        };
+        overlay._hbEscapeHandler = escapeHandler;
+        window.addEventListener('keyup', escapeHandler);
         updateModalThemes();
       });
     });
 
     const closeBtn = qs('#productModal .modal-close');
-    if (closeBtn) {
+    if (closeBtn && !closeBtn.dataset.hbBound) {
+      closeBtn.dataset.hbBound = 'true';
       closeBtn.addEventListener('click', () => closeModal(modal, overlay));
     }
 
-    overlay.addEventListener('click', (event) => {
-      if (event.target === overlay) {
-        closeModal(modal, overlay);
-      }
-    });
-
-    window.addEventListener('keyup', (event) => {
-      if (event.key === 'Escape' && overlay.style.display === 'block') {
-        closeModal(modal, overlay);
-      }
-    });
+    if (!overlay.dataset.hbBound) {
+      overlay.dataset.hbBound = 'true';
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+          closeModal(modal, overlay);
+        }
+      });
+    }
   }
 
   function initPreorderModal() {
@@ -339,6 +373,8 @@
     }
 
     qsa('.menu-item a[href="#preorder"]').forEach((button) => {
+      if (button.dataset.hbPreorderBound) return;
+      button.dataset.hbPreorderBound = 'true';
       registerProductAsset(button.closest('.menu-item'));
       button.addEventListener('click', (event) => {
         event.preventDefault();
@@ -374,66 +410,89 @@
         resetModal();
         overlay.style.display = 'block';
         modal.style.display = 'flex';
+        if (overlay._hbEscapeHandler) {
+          window.removeEventListener('keyup', overlay._hbEscapeHandler);
+        }
+        const escapeHandler = (event) => {
+          if (event.key === 'Escape') {
+            hideModal();
+          }
+        };
+        overlay._hbEscapeHandler = escapeHandler;
+        window.addEventListener('keyup', escapeHandler);
         updateModalThemes();
       });
     });
 
     sizeInputs.forEach((input) => {
+      if (input.dataset.hbBound) return;
+      input.dataset.hbBound = 'true';
       input.addEventListener('change', () => {
         confirmBtn.disabled = !sizeInputs.some((radio) => radio.checked);
       });
     });
 
-    confirmBtn.addEventListener('click', () => {
-      const selected = sizeInputs.find((radio) => radio.checked);
-      if (!selected || !activeItem) return;
+    if (!confirmBtn.dataset.hbBound) {
+      confirmBtn.dataset.hbBound = 'true';
+      confirmBtn.addEventListener('click', () => {
+        const selected = sizeInputs.find((radio) => radio.checked);
+        if (!selected || !activeItem) return;
 
-      const productTitle = activeItem.getAttribute('data-title') || '';
-      const productTitleHi = activeItem.getAttribute('data-title-hi') || '';
-      const productImg = activeItem.getAttribute('data-img') || '';
-      const payload = {
-        product: productTitle,
-        productHi: productTitleHi,
-        size: selected.value,
-        img: productImg,
-      };
+        const productTitle = activeItem.getAttribute('data-title') || '';
+        const productTitleHi = activeItem.getAttribute('data-title-hi') || '';
+        const productImg = activeItem.getAttribute('data-img') || '';
+        const payload = {
+          product: productTitle,
+          productHi: productTitleHi,
+          size: selected.value,
+          img: productImg,
+        };
 
-      try {
-        storage.setItem(PREFILL_KEY, JSON.stringify(payload));
-      } catch (error) {
-        /* ignore */
-      }
+        try {
+          storage.setItem(PREFILL_KEY, JSON.stringify(payload));
+        } catch (error) {
+          /* ignore */
+        }
 
-      const params = new URLSearchParams();
-      if (productTitle) params.set('product', productTitle);
-      if (selected.value) params.set('size', selected.value);
-      window.location.href = `preorder.html?${params.toString()}`;
-    });
+        const params = new URLSearchParams();
+        if (productTitle) params.set('product', productTitle);
+        if (selected.value) params.set('size', selected.value);
+        const targetUrl = `preorder.html?${params.toString()}`;
+        if (window.HBRouter && typeof window.HBRouter.navigate === 'function') {
+          window.HBRouter.navigate(targetUrl);
+        } else {
+          window.location.href = targetUrl;
+        }
+      });
+    }
 
     function hideModal() {
+      if (overlay && overlay._hbEscapeHandler) {
+        window.removeEventListener('keyup', overlay._hbEscapeHandler);
+        delete overlay._hbEscapeHandler;
+      }
       overlay.style.display = 'none';
       modal.style.display = 'none';
       resetModal();
     }
 
-    if (cancelBtn) {
+    if (cancelBtn && !cancelBtn.dataset.hbBound) {
+      cancelBtn.dataset.hbBound = 'true';
       cancelBtn.addEventListener('click', hideModal);
     }
-    if (closeBtn) {
+    if (closeBtn && !closeBtn.dataset.hbBound) {
+      closeBtn.dataset.hbBound = 'true';
       closeBtn.addEventListener('click', hideModal);
     }
 
-    overlay.addEventListener('click', (event) => {
-      if (event.target === overlay) {
-        hideModal();
-      }
-    });
-
-    window.addEventListener('keyup', (event) => {
-      if (event.key === 'Escape' && overlay.style.display === 'block') {
-        hideModal();
-      }
-    });
+    if (!overlay.dataset.hbBound) {
+      overlay.dataset.hbBound = 'true';
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+          hideModal();
+        }
+      });
+    }
   }
 
   function loadPreorderSeed() {
@@ -491,7 +550,8 @@
 
     updateReservationImage(reservationImg, productSelect ? productSelect.value : initialProduct);
 
-    if (productSelect) {
+    if (productSelect && !productSelect.dataset.hbBound) {
+      productSelect.dataset.hbBound = 'true';
       productSelect.addEventListener('change', () => {
         updateReservationImage(reservationImg, productSelect.value);
       });
@@ -514,16 +574,31 @@
     };
   }
 
-  function init() {
-    collectProductAssets();
+  function initGlobals() {
+    if (globalsInitialized) return;
     initLanguageToggle();
     initThemeToggle();
     initMobileNav();
+    globalsInitialized = true;
+  }
+
+  function refreshPageFeatures() {
+    collectProductAssets();
+    updateLanguage(state.language);
+    applyTheme(state.theme);
     initProductModal();
     initPreorderModal();
     initPreorderForm();
     initContactForm();
   }
+
+  function init() {
+    initGlobals();
+    refreshPageFeatures();
+  }
+
+  HBSite.refreshPage = refreshPageFeatures;
+  document.addEventListener('hb:spa:pagechange', refreshPageFeatures);
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

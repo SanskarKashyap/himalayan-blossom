@@ -65,15 +65,71 @@
         display: none !important;
       }
 
+      .auth-login-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: rgba(255, 255, 255, 0.06);
+        color: #ffffff;
+        padding: 0.35rem 0.95rem 0.35rem 0.75rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+      }
+
+      .auth-login-btn:hover,
+      .auth-login-btn:focus-visible {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+        text-decoration: none;
+      }
+
+      .auth-login-btn .bi {
+        font-size: 1rem;
+      }
+
+      body.dark-theme .auth-login-btn {
+        border-color: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+      }
+
+      .auth-state.auth-signed-out {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .auth-user-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        font-size: 0.82rem;
+        letter-spacing: 0.03em;
+      }
+
+      .auth-user-chip .bi {
+        font-size: 1rem;
+      }
+
+      body.dark-theme .auth-user-chip {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+      }
+
       .auth-user-name {
         font-weight: 600;
-        color: #ffffff;
-        font-size: 0.85rem;
         letter-spacing: 0.02em;
       }
 
       .auth-role-badge {
-        background: rgba(212, 175, 55, 0.28);
+        background: rgba(212, 175, 55, 0.32);
         color: #f4d27a;
         border-radius: 999px;
         font-size: 0.65rem;
@@ -94,7 +150,8 @@
         transition: all 0.2s ease;
       }
 
-      .auth-logout-btn:hover {
+      .auth-logout-btn:hover,
+      .auth-logout-btn:focus-visible {
         background: rgba(255, 255, 255, 0.16);
         color: #ffffff;
       }
@@ -108,14 +165,21 @@
         color: #1a1a1a;
       }
 
-      .header-auth .google-signin-anchor {
-        display: flex;
-        align-items: center;
+      .auth-status-message {
+        width: 100%;
+        margin: 0;
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.75);
       }
 
-      .header-auth .google-signin-anchor > div {
-        transform: scale(0.88);
-        transform-origin: left center;
+      .auth-status-message[hidden] {
+        display: none !important;
+      }
+
+      .auth-status-message[data-status-type='error'] {
+        color: #f29fa5;
       }
 
       .mobile-nav .auth-wrapper {
@@ -135,8 +199,41 @@
         gap: 0.75rem;
       }
 
-      .mobile-nav .auth-user-name {
+      .mobile-nav .auth-login-btn {
+        width: 100%;
+        justify-content: center;
+        border-color: rgba(0, 0, 0, 0.45);
+        background: rgba(0, 0, 0, 0.04);
         color: inherit;
+        padding: 0.55rem 1rem;
+        font-size: 0.82rem;
+      }
+
+      .mobile-nav .auth-login-btn .bi {
+        font-size: 1.05rem;
+      }
+
+      body.dark-theme .mobile-nav .auth-login-btn {
+        border-color: rgba(255, 255, 255, 0.35);
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+      }
+
+      .mobile-nav .auth-status-message {
+        color: rgba(0, 0, 0, 0.65);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+      }
+
+      body.dark-theme .mobile-nav .auth-status-message {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .mobile-nav .auth-user-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        width: 100%;
       }
 
       .mobile-nav .auth-logout-btn {
@@ -150,23 +247,6 @@
         color: #ffffff;
       }
 
-      .mobile-nav .auth-user-summary {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-      }
-
-      .mobile-nav .google-signin-anchor {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .mobile-nav .google-signin-anchor > div {
-        width: 100%;
-        transform: scale(1);
-        transform-origin: center;
-      }
-
       .form-status-inline {
         margin-top: 0.75rem;
       }
@@ -177,18 +257,6 @@
 
       .auth-logout-btn-mobile {
         align-self: flex-start;
-      }
-
-      .auth-warning {
-        color: #f4d27a;
-        font-size: 0.7rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        opacity: 0.85;
-      }
-
-      body.dark-theme .auth-warning {
-        color: #f8e89c;
       }
     </style>
 
@@ -258,17 +326,29 @@
               id="authSignedOutDesktop"
               class="auth-state auth-signed-out"
             >
-              <div
-                id="googleSignInButtonDesktop"
-                class="google-signin-anchor"
-              ></div>
+              <button
+                type="button"
+                id="authLoginTriggerDesktop"
+                class="auth-login-btn"
+              >
+                <i class="bi bi-person-circle"></i>
+                <span>Login / Signup</span>
+              </button>
+              <p
+                id="authStatusMessageDesktop"
+                class="auth-status-message"
+                hidden
+              ></p>
             </div>
             <div
               id="authSignedInDesktop"
               class="auth-state auth-signed-in"
               hidden
             >
-              <span id="authUserNameDesktop" class="auth-user-name"></span>
+              <div class="auth-user-chip">
+                <i class="bi bi-person-circle"></i>
+                <span id="authUserNameDesktop" class="auth-user-name"></span>
+              </div>
               <span id="authUserRoleDesktop" class="auth-role-badge"></span>
               <button
                 type="button"
@@ -285,13 +365,6 @@
           <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
             <i class="bi bi-sun"></i>
           </a>
-          <a
-            class="btn-getstarted ms-3"
-            href="preorder.html"
-            data-en="Pre-order"
-            data-hi="ऑर्डर करें"
-            >Pre-order</a
-          >
         </div>
 
         <!-- Mobile Menu Toggle -->
@@ -346,22 +419,24 @@
               <a id="mobile-theme-toggle" class="btn-theme-toggle" href="#">
                 <i class="bi bi-sun"></i>
               </a>
-              <a
-                class="btn-getstarted"
-                href="preorder.html"
-                data-en="Pre-order Now"
-                data-hi="अभी ऑर्डर करें"
-                >Pre-order Now</a
-              >
               <div class="auth-wrapper">
                 <div
                   id="authSignedOutMobile"
                   class="auth-state auth-signed-out"
                 >
-                  <div
-                    id="googleSignInButtonMobile"
-                    class="google-signin-anchor"
-                  ></div>
+                  <button
+                    type="button"
+                    id="authLoginTriggerMobile"
+                    class="auth-login-btn auth-login-btn-mobile"
+                  >
+                    <i class="bi bi-person-circle"></i>
+                    <span>Login / Signup</span>
+                  </button>
+                  <p
+                    id="authStatusMessageMobile"
+                    class="auth-status-message"
+                    hidden
+                  ></p>
                 </div>
                 <div
                   id="authSignedInMobile"
@@ -369,10 +444,13 @@
                   hidden
                 >
                   <div class="auth-user-summary">
-                    <span
-                      id="authUserNameMobile"
-                      class="auth-user-name"
-                    ></span>
+                    <div class="auth-user-chip">
+                      <i class="bi bi-person-circle"></i>
+                      <span
+                        id="authUserNameMobile"
+                        class="auth-user-name"
+                      ></span>
+                    </div>
                     <span
                       id="authUserRoleMobile"
                       class="auth-role-badge"
@@ -394,182 +472,6 @@
     </header>
 
     <main class="main">
-      <!-- Page Hero -->
-      <section class="page-hero section light-background">
-        <div class="container">
-          <div class="row gy-4 align-items-center">
-            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-              <span class="badge text-bg-light px-3 py-2 mb-3" data-en="Visual Journey" data-hi="दृश्य यात्रा">Visual Journey</span>
-              <h1 class="display-5 mb-3" data-en="Travel Through Himalayan Blossom" data-hi="हिमालयन ब्लॉसम की यात्रा करें">
-                Travel Through Himalayan Blossom
-              </h1>
-              <p class="lead" data-en="From bloom-drenched valleys to moonlit harvest nights, explore the people and places behind each jar." data-hi="फूलों से भरी घाटियों से लेकर चांदनी फसल की रातों तक, हर जार के पीछे के लोग और स्थानों को खोजें।">
-                From bloom-drenched valleys to moonlit harvest nights, explore the people and places behind each jar.
-              </p>
-              <div class="d-flex flex-wrap gap-3">
-                <a href="about.html" class="btn-get-started" data-en="Meet the Beekeepers" data-hi="मधुमक्खी पालकों से मिलें">
-                  Meet the Beekeepers
-                </a>
-                <a href="preorder.html" class="btn btn-outline-primary px-4" data-en="Reserve Your Jar" data-hi="अपना जार आरक्षित करें">
-                  Reserve Your Jar
-                </a>
-              </div>
-            </div>
-            <div class="col-lg-6" data-aos="zoom-out" data-aos-delay="200">
-              <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-lg">
-                <img
-                  src="assets/img/gallery/gallery-3.jpg"
-                  class="w-100 h-100 object-fit-cover"
-                  alt="Moonlit honey harvest preparation"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- About Section -->
-      
-      <!-- /About Section -->
-
-      <!-- Why Us Section -->
-      <!-- Why Us Section -->
-      
-      <!-- /Why Us Section -->
-
-      <!-- Collection / Products Section -->
-      
-      <!-- /Collection Section -->
-
-      <!-- Testimonials Section -->
-      
-      <!-- /Testimonials Section -->
-
-      <!-- Events / Stories Section -->
-      <section id="events" class="events section">
-        <div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
-          <div class="swiper init-swiper">
-            <script type="application/json" class="swiper-config">
-              {
-                "loop": true,
-                "speed": 600,
-                "autoplay": {
-                  "delay": 5000
-                },
-                "slidesPerView": "auto",
-                "pagination": {
-                  "el": ".swiper-pagination",
-                  "type": "bullets",
-                  "clickable": true
-                },
-                "breakpoints": {
-                  "320": {
-                    "slidesPerView": 1,
-                    "spaceBetween": 40
-                  },
-                  "1200": {
-                    "slidesPerView": 3,
-                    "spaceBetween": 1
-                  }
-                }
-              }
-            </script>
-            <div class="swiper-wrapper">
-              <div
-                class="swiper-slide event-item d-flex flex-column justify-content-end"
-                style="background-image: url(assets/img/events-1.jpg)"
-              >
-                <h3
-                  data-en="Farmer Training Camps"
-                  data-hi="किसान प्रशिक्षण शिविर"
-                >
-                  Farmer Training Camps
-                </h3>
-                <div
-                  class="price align-self-start"
-                  data-en="Community"
-                  data-hi="समुदाय"
-                >
-                  Community
-                </div>
-                <p
-                  class="description"
-                  data-en="Hands-on beekeeping workshops bringing new income streams to Himalayan farms."
-                  data-hi="हिमालयी खेतों में नई आय धाराएं लाने वाली व्यावहारिक मधुमक्खी पालन कार्यशालाएं।"
-                >
-                  Hands-on beekeeping workshops bringing new income streams to
-                  Himalayan farms.
-                </p>
-              </div>
-              <!-- End Event item -->
-
-              <div
-                class="swiper-slide event-item d-flex flex-column justify-content-end"
-                style="background-image: url(assets/img/events-2.jpg)"
-              >
-                <h3
-                  data-en="School Bee Projects"
-                  data-hi="स्कूल मधुमक्खी परियोजनाएं"
-                >
-                  School Bee Projects
-                </h3>
-                <div
-                  class="price align-self-start"
-                  data-en="Education"
-                  data-hi="शिक्षा"
-                >
-                  Education
-                </div>
-                <p
-                  class="description"
-                  data-en="Introducing children to the importance of pollinators through school apiary programs."
-                  data-hi="स्कूल मधुमक्खी पालन कार्यक्रमों के माध्यम से बच्चों को परागणकर्ताओं के महत्व से परिचित कराना।"
-                >
-                  Introducing children to the importance of pollinators through
-                  school apiary programs.
-                </p>
-              </div>
-              <!-- End Event item -->
-
-              <div
-                class="swiper-slide event-item d-flex flex-column justify-content-end"
-                style="background-image: url(assets/img/events-3.jpg)"
-              >
-                <h3 data-en="Harvest Stories" data-hi="फसल की कहानियां">
-                  Harvest Stories
-                </h3>
-                <div
-                  class="price align-self-start"
-                  data-en="Limited Batches"
-                  data-hi="सीमित बैच"
-                >
-                  Limited Batches
-                </div>
-                <p
-                  class="description"
-                  data-en="Read the harvest stories and batch notes from each valley and season."
-                  data-hi="प्रत्येक घाटी और मौसम की फसल की कहानियां और बैच नोट्स पढ़ें।"
-                >
-                  Read the harvest stories and batch notes from each valley and
-                  season.
-                </p>
-              </div>
-              <!-- End Event item -->
-            </div>
-            <div class="swiper-pagination"></div>
-          </div>
-        </div>
-      </section>
-      <!-- /Events Section -->
-
-      <!-- Team / Craftspeople Section (Chefs replaced with Beekeepers) -->
-      
-      <!-- /Team Section -->
-
-      <!-- Pre-order Section (replaces Book A Table) -->
-      
-      <!-- /Pre-order Section -->
 
       <!-- Gallery Section -->
       <section id="gallery" class="gallery section light-background">
@@ -802,5 +704,6 @@
     <script src="assets/js/main.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/site.js"></script>
+    <script src="assets/js/router.js"></script>
   </body>
 </html>

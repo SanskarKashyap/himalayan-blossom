@@ -65,15 +65,71 @@
         display: none !important;
       }
 
+      .auth-login-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: rgba(255, 255, 255, 0.06);
+        color: #ffffff;
+        padding: 0.35rem 0.95rem 0.35rem 0.75rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+      }
+
+      .auth-login-btn:hover,
+      .auth-login-btn:focus-visible {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+        text-decoration: none;
+      }
+
+      .auth-login-btn .bi {
+        font-size: 1rem;
+      }
+
+      body.dark-theme .auth-login-btn {
+        border-color: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+      }
+
+      .auth-state.auth-signed-out {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .auth-user-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        font-size: 0.82rem;
+        letter-spacing: 0.03em;
+      }
+
+      .auth-user-chip .bi {
+        font-size: 1rem;
+      }
+
+      body.dark-theme .auth-user-chip {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+      }
+
       .auth-user-name {
         font-weight: 600;
-        color: #ffffff;
-        font-size: 0.85rem;
         letter-spacing: 0.02em;
       }
 
       .auth-role-badge {
-        background: rgba(212, 175, 55, 0.28);
+        background: rgba(212, 175, 55, 0.32);
         color: #f4d27a;
         border-radius: 999px;
         font-size: 0.65rem;
@@ -94,7 +150,8 @@
         transition: all 0.2s ease;
       }
 
-      .auth-logout-btn:hover {
+      .auth-logout-btn:hover,
+      .auth-logout-btn:focus-visible {
         background: rgba(255, 255, 255, 0.16);
         color: #ffffff;
       }
@@ -108,14 +165,21 @@
         color: #1a1a1a;
       }
 
-      .header-auth .google-signin-anchor {
-        display: flex;
-        align-items: center;
+      .auth-status-message {
+        width: 100%;
+        margin: 0;
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.75);
       }
 
-      .header-auth .google-signin-anchor > div {
-        transform: scale(0.88);
-        transform-origin: left center;
+      .auth-status-message[hidden] {
+        display: none !important;
+      }
+
+      .auth-status-message[data-status-type='error'] {
+        color: #f29fa5;
       }
 
       .mobile-nav .auth-wrapper {
@@ -135,8 +199,41 @@
         gap: 0.75rem;
       }
 
-      .mobile-nav .auth-user-name {
+      .mobile-nav .auth-login-btn {
+        width: 100%;
+        justify-content: center;
+        border-color: rgba(0, 0, 0, 0.45);
+        background: rgba(0, 0, 0, 0.04);
         color: inherit;
+        padding: 0.55rem 1rem;
+        font-size: 0.82rem;
+      }
+
+      .mobile-nav .auth-login-btn .bi {
+        font-size: 1.05rem;
+      }
+
+      body.dark-theme .mobile-nav .auth-login-btn {
+        border-color: rgba(255, 255, 255, 0.35);
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+      }
+
+      .mobile-nav .auth-status-message {
+        color: rgba(0, 0, 0, 0.65);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+      }
+
+      body.dark-theme .mobile-nav .auth-status-message {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .mobile-nav .auth-user-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        width: 100%;
       }
 
       .mobile-nav .auth-logout-btn {
@@ -150,23 +247,6 @@
         color: #ffffff;
       }
 
-      .mobile-nav .auth-user-summary {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-      }
-
-      .mobile-nav .google-signin-anchor {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .mobile-nav .google-signin-anchor > div {
-        width: 100%;
-        transform: scale(1);
-        transform-origin: center;
-      }
-
       .form-status-inline {
         margin-top: 0.75rem;
       }
@@ -177,18 +257,6 @@
 
       .auth-logout-btn-mobile {
         align-self: flex-start;
-      }
-
-      .auth-warning {
-        color: #f4d27a;
-        font-size: 0.7rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        opacity: 0.85;
-      }
-
-      body.dark-theme .auth-warning {
-        color: #f8e89c;
       }
     </style>
 
@@ -258,17 +326,29 @@
               id="authSignedOutDesktop"
               class="auth-state auth-signed-out"
             >
-              <div
-                id="googleSignInButtonDesktop"
-                class="google-signin-anchor"
-              ></div>
+              <button
+                type="button"
+                id="authLoginTriggerDesktop"
+                class="auth-login-btn"
+              >
+                <i class="bi bi-person-circle"></i>
+                <span>Login / Signup</span>
+              </button>
+              <p
+                id="authStatusMessageDesktop"
+                class="auth-status-message"
+                hidden
+              ></p>
             </div>
             <div
               id="authSignedInDesktop"
               class="auth-state auth-signed-in"
               hidden
             >
-              <span id="authUserNameDesktop" class="auth-user-name"></span>
+              <div class="auth-user-chip">
+                <i class="bi bi-person-circle"></i>
+                <span id="authUserNameDesktop" class="auth-user-name"></span>
+              </div>
               <span id="authUserRoleDesktop" class="auth-role-badge"></span>
               <button
                 type="button"
@@ -285,13 +365,6 @@
           <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
             <i class="bi bi-sun"></i>
           </a>
-          <a
-            class="btn-getstarted ms-3"
-            href="preorder.html"
-            data-en="Pre-order"
-            data-hi="ऑर्डर करें"
-            >Pre-order</a
-          >
         </div>
 
         <!-- Mobile Menu Toggle -->
@@ -352,22 +425,24 @@
               <a id="mobile-theme-toggle" class="btn-theme-toggle" href="#">
                 <i class="bi bi-sun"></i>
               </a>
-              <a
-                class="btn-getstarted"
-                href="preorder.html"
-                data-en="Pre-order Now"
-                data-hi="अभी ऑर्डर करें"
-                >Pre-order Now</a
-              >
               <div class="auth-wrapper">
                 <div
                   id="authSignedOutMobile"
                   class="auth-state auth-signed-out"
                 >
-                  <div
-                    id="googleSignInButtonMobile"
-                    class="google-signin-anchor"
-                  ></div>
+                  <button
+                    type="button"
+                    id="authLoginTriggerMobile"
+                    class="auth-login-btn auth-login-btn-mobile"
+                  >
+                    <i class="bi bi-person-circle"></i>
+                    <span>Login / Signup</span>
+                  </button>
+                  <p
+                    id="authStatusMessageMobile"
+                    class="auth-status-message"
+                    hidden
+                  ></p>
                 </div>
                 <div
                   id="authSignedInMobile"
@@ -375,10 +450,13 @@
                   hidden
                 >
                   <div class="auth-user-summary">
-                    <span
-                      id="authUserNameMobile"
-                      class="auth-user-name"
-                    ></span>
+                    <div class="auth-user-chip">
+                      <i class="bi bi-person-circle"></i>
+                      <span
+                        id="authUserNameMobile"
+                        class="auth-user-name"
+                      ></span>
+                    </div>
                     <span
                       id="authUserRoleMobile"
                       class="auth-role-badge"
@@ -985,5 +1063,6 @@
     <script src="assets/js/main.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/site.js"></script>
+    <script src="assets/js/router.js"></script>
   </body>
 </html>

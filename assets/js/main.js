@@ -9,6 +9,8 @@
 (function() {
   "use strict";
 
+  const HBPage = window.HBPage || (window.HBPage = {});
+
   /**
    * Apply .scrolled class to the body as the page is scrolled down
    */
@@ -111,20 +113,39 @@
   /**
    * Initiate glightbox
    */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
+  let glightboxInstance = null;
+
+  function initLightbox() {
+    if (glightboxInstance && typeof glightboxInstance.destroy === 'function') {
+      glightboxInstance.destroy();
+    }
+    glightboxInstance = GLightbox({
+      selector: '.glightbox'
+    });
+  }
+
+  initLightbox();
 
   /**
    * Initiate Pure Counter
    */
-  new PureCounter();
+  function initPureCounter() {
+    if (typeof PureCounter === 'function') {
+      new PureCounter();
+    }
+  }
+
+  initPureCounter();
 
   /**
    * Init swiper sliders
    */
   function initSwiper() {
     document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
+      if (swiperElement.dataset.hbSwiperInitialized === 'true') {
+        return;
+      }
+
       let config = JSON.parse(
         swiperElement.querySelector(".swiper-config").innerHTML.trim()
       );
@@ -134,6 +155,8 @@
       } else {
         new Swiper(swiperElement, config);
       }
+
+      swiperElement.dataset.hbSwiperInitialized = 'true';
     });
   }
 
@@ -193,5 +216,19 @@
     mapContainer.innerHTML = '';
     mapContainer.appendChild(iframe);
   };
+
+  function refreshInteractiveComponents() {
+    initSwiper();
+    initPureCounter();
+    if (window.AOS && typeof window.AOS.refreshHard === 'function') {
+      window.AOS.refreshHard();
+    }
+    initLightbox();
+    navmenuScrollspy();
+    toggleScrollTop();
+  }
+
+  HBPage.refresh = refreshInteractiveComponents;
+  document.addEventListener('hb:spa:pagechange', refreshInteractiveComponents);
 
 })();

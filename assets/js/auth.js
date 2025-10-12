@@ -27,7 +27,6 @@
     access: null,
     refresh: null,
     googleInitialized: false,
-    googleButtonsRendered: false,
   };
 
   const dom = {};
@@ -52,8 +51,6 @@
   }
 
   function queryDom() {
-    dom.googleDesktop = document.getElementById('googleSignInButtonDesktop');
-    dom.googleMobile = document.getElementById('googleSignInButtonMobile');
     dom.signedOutDesktop = document.getElementById('authSignedOutDesktop');
     dom.signedInDesktop = document.getElementById('authSignedInDesktop');
     dom.signedOutMobile = document.getElementById('authSignedOutMobile');
@@ -64,6 +61,10 @@
     dom.userRoleMobile = document.getElementById('authUserRoleMobile');
     dom.logoutDesktop = document.getElementById('authLogoutButtonDesktop');
     dom.logoutMobile = document.getElementById('authLogoutButtonMobile');
+    dom.loginTriggerDesktop = document.getElementById('authLoginTriggerDesktop');
+    dom.loginTriggerMobile = document.getElementById('authLoginTriggerMobile');
+    dom.loginMessageDesktop = document.getElementById('authStatusMessageDesktop');
+    dom.loginMessageMobile = document.getElementById('authStatusMessageMobile');
   }
 
   function loadState() {
@@ -175,6 +176,12 @@
         signOut();
       });
     }
+    if (dom.loginTriggerDesktop) {
+      dom.loginTriggerDesktop.addEventListener('click', handleLoginTrigger);
+    }
+    if (dom.loginTriggerMobile) {
+      dom.loginTriggerMobile.addEventListener('click', handleLoginTrigger);
+    }
 
     window.addEventListener('storage', (event) => {
       if (event.key === STORAGE_KEY) {
@@ -182,6 +189,69 @@
         updateUI();
       }
     });
+  }
+
+  function triggerLoginPrompt() {
+    updateStatusMessages('Opening sign-in options...', { type: 'info' });
+    ensureGoogleInitialized()
+      .then(() => {
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+          try {
+            window.google.accounts.id.prompt();
+            clearStatusMessages();
+          } catch (error) {
+            console.debug('Google prompt not available', error);
+            updateStatusMessages('Google sign-in is temporarily unavailable.', {
+              type: 'error',
+              title: error && error.message ? error.message : String(error),
+            });
+          }
+        } else {
+          updateStatusMessages('Google sign-in is temporarily unavailable.', {
+            type: 'error',
+          });
+        }
+      })
+      .catch((error) => {
+        renderGoogleFallback(error);
+      });
+  }
+
+  function updateStatusMessages(text, options) {
+    const elements = [dom.loginMessageDesktop, dom.loginMessageMobile];
+    elements.forEach((element) => {
+      if (!element) return;
+      if (text) {
+        element.textContent = text;
+        if (options && options.title) {
+          element.title = options.title;
+        } else {
+          element.removeAttribute('title');
+        }
+        if (options && options.type) {
+          element.dataset.statusType = options.type;
+        } else {
+          delete element.dataset.statusType;
+        }
+        element.removeAttribute('hidden');
+      } else {
+        element.textContent = '';
+        element.setAttribute('hidden', 'hidden');
+        element.removeAttribute('title');
+        delete element.dataset.statusType;
+      }
+    });
+  }
+
+  function clearStatusMessages() {
+    updateStatusMessages('', {});
+  }
+
+  function handleLoginTrigger(event) {
+    if (event) {
+      event.preventDefault();
+    }
+    triggerLoginPrompt();
   }
 
   function dispatchAuthEvent(eventName, detail) {
@@ -227,53 +297,14 @@
     }
   }
 
-  function renderGoogleButtons() {
-    if (!window.google || !window.google.accounts || !window.google.accounts.id) {
-      return;
-    }
-    if (state.googleButtonsRendered) {
-      return;
-    }
-    if (dom.googleDesktop) {
-      dom.googleDesktop.innerHTML = '';
-      window.google.accounts.id.renderButton(dom.googleDesktop, {
-        type: 'standard',
-        theme: 'outline',
-        size: 'medium',
-        text: 'signin_with',
-        shape: 'pill',
-        logo_alignment: 'left',
-      });
-    }
-    if (dom.googleMobile) {
-      dom.googleMobile.innerHTML = '';
-      window.google.accounts.id.renderButton(dom.googleMobile, {
-        type: 'standard',
-        theme: 'filled_blue',
-        size: 'large',
-        text: 'signin_with',
-        shape: 'pill',
-        width: 240,
-      });
-    }
-    state.googleButtonsRendered = true;
-  }
-
   function renderGoogleFallback(error) {
     const message = CONFIG.googleClientId
       ? 'Google sign-in is temporarily unavailable.'
       : 'Set APP_GOOGLE_CLIENT_ID to enable Google login.';
 
-    [dom.googleDesktop, dom.googleMobile].forEach((anchor) => {
-      if (!anchor) return;
-      anchor.innerHTML = '';
-      const notice = document.createElement('span');
-      notice.className = 'auth-warning';
-      notice.textContent = message;
-      if (error && CONFIG.googleClientId) {
-        notice.title = error.message || String(error);
-      }
-      anchor.appendChild(notice);
+    updateStatusMessages(message, {
+      type: 'error',
+      title: error && error.message ? error.message : undefined,
     });
   }
 
@@ -315,7 +346,7 @@
           use_fedcm_for_prompt: true,
         });
         state.googleInitialized = true;
-        renderGoogleButtons();
+        clearStatusMessages();
         try {
           window.google.accounts.id.prompt();
         } catch (error) {
