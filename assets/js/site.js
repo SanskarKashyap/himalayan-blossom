@@ -351,6 +351,8 @@
   }
 
   function initPreorderModal() {
+    console.log('[hb debug] initPreorderModal: Initializing preorder modal.');
+
     const overlay = qs('#preorderModalOverlay');
     const modal = qs('#preorderSelectionModal');
     const modalImg = qs('#preorderModalImg');
@@ -360,56 +362,89 @@
     const closeBtn = qs('#preorderModalClose');
     const sizeInputs = qsa('input[name="preorderSize"]', modal || undefined);
 
-    if (!overlay || !modal || !confirmBtn) return;
+    console.log('[hb debug] initPreorderModal: DOM elements selection:', {
+      overlay: !!overlay,
+      modal: !!modal,
+      modalImg: !!modalImg,
+      modalTitle: !!modalTitle,
+      confirmBtn: !!confirmBtn,
+      cancelBtn: !!cancelBtn,
+      closeBtn: !!closeBtn,
+      sizeInputs: sizeInputs.length
+    });
+
+    if (!overlay || !modal || !confirmBtn) {
+      console.error('[hb debug] initPreorderModal: Critical elements missing. Aborting initialization.');
+      return;
+    }
 
     let activeItem = null;
 
-    function resetModal() {
-      activeItem = null;
+    function setActiveItem(item) {
+      activeItem = item || null;
+      if (modal) {
+        modal._hbActiveItem = activeItem;
+      }
+    }
+
+    function getActiveItem() {
+      if (modal && modal._hbActiveItem) {
+        return modal._hbActiveItem;
+      }
+      return activeItem;
+    }
+
+    function resetModal(options = {}) {
+      const { preserveActive = false } = options;
+      console.log('[hb debug] resetModal: Resetting modal state.', { preserveActive });
+      if (!preserveActive) {
+        setActiveItem(null);
+      }
       confirmBtn.disabled = true;
       sizeInputs.forEach((input) => {
         input.checked = false;
       });
     }
 
-    qsa('.menu-item a[href="#preorder"]').forEach((button) => {
-      if (button.dataset.hbPreorderBound) return;
+    const preorderButtons = qsa('.menu-item a[href="#preorder"]');
+    console.log(`[hb debug] initPreorderModal: Found ${preorderButtons.length} preorder buttons.`);
+
+    preorderButtons.forEach((button, index) => {
+      if (button.dataset.hbPreorderBound) {
+        console.log(`[hb debug] initPreorderModal: Button ${index} already bound.`);
+        return;
+      }
       button.dataset.hbPreorderBound = 'true';
+      console.log(`[hb debug] initPreorderModal: Binding click event to preorder button ${index}.`);
       registerProductAsset(button.closest('.menu-item'));
+
       button.addEventListener('click', (event) => {
         event.preventDefault();
+        console.log(`[hb debug] Preorder button ${index} clicked.`);
         const menuItem = button.closest('.menu-item');
-        if (!menuItem) return;
-        activeItem = menuItem;
+        if (!menuItem) {
+          console.error('[hb debug] Click handler: Could not find parent .menu-item.');
+          return;
+        }
+        setActiveItem(menuItem);
+        console.log('[hb debug] Click handler: Active item set.', getActiveItem());
 
         const titleEn = menuItem.getAttribute('data-title') || '';
-        const titleHi = menuItem.getAttribute('data-title-hi') || titleEn;
         const imageSrc = menuItem.getAttribute('data-img') || '';
-        const productImgEl = menuItem.querySelector('img');
-        const altEn = productImgEl
-          ? productImgEl.getAttribute('data-alt-en') || productImgEl.getAttribute('alt') || titleEn
-          : titleEn;
-        const altHi = productImgEl
-          ? productImgEl.getAttribute('data-alt-hi') || titleHi
-          : titleHi;
-        const isHindi = state.language === 'hi';
+        console.log(`[hb debug] Click handler: Extracted data: title='${titleEn}', image='${imageSrc}'`);
 
         if (modalImg) {
           modalImg.src = imageSrc;
-          modalImg.setAttribute('data-alt-en', altEn);
-          modalImg.setAttribute('data-alt-hi', altHi);
-          modalImg.alt = isHindi && altHi ? altHi : altEn;
         }
-
         if (modalTitle) {
-          modalTitle.setAttribute('data-en', titleEn);
-          modalTitle.setAttribute('data-hi', titleHi);
-          modalTitle.textContent = isHindi && titleHi ? titleHi : titleEn;
+          modalTitle.textContent = titleEn; // Simplified for debugging
         }
 
-        resetModal();
+        resetModal({ preserveActive: true });
         overlay.style.display = 'block';
         modal.style.display = 'flex';
+        console.log('[hb debug] Click handler: Modal displayed.');
+
         if (overlay._hbEscapeHandler) {
           window.removeEventListener('keyup', overlay._hbEscapeHandler);
         }
@@ -424,55 +459,85 @@
       });
     });
 
-    sizeInputs.forEach((input) => {
-      if (input.dataset.hbBound) return;
+    console.log(`[hb debug] initPreorderModal: Found ${sizeInputs.length} size inputs.`);
+    sizeInputs.forEach((input, index) => {
+      if (input.dataset.hbBound) {
+        console.log(`[hb debug] initPreorderModal: Size input ${index} already bound.`);
+        return;
+      }
       input.dataset.hbBound = 'true';
+      console.log(`[hb debug] initPreorderModal: Binding change event to size input ${index}.`);
       input.addEventListener('change', () => {
-        confirmBtn.disabled = !sizeInputs.some((radio) => radio.checked);
+        const isAnyChecked = sizeInputs.some((radio) => radio.checked);
+        console.log(`[hb debug] Size input change: Any size checked? ${isAnyChecked}`);
+        confirmBtn.disabled = !isAnyChecked;
+        console.log(`[hb debug] Size input change: Confirm button disabled state: ${confirmBtn.disabled}`);
       });
     });
 
-    if (!confirmBtn.dataset.hbBound) {
-      confirmBtn.dataset.hbBound = 'true';
-      confirmBtn.addEventListener('click', () => {
-        const selected = sizeInputs.find((radio) => radio.checked);
-        if (!selected || !activeItem) return;
-
-        const productTitle = activeItem.getAttribute('data-title') || '';
-        const productTitleHi = activeItem.getAttribute('data-title-hi') || '';
-        const productImg = activeItem.getAttribute('data-img') || '';
-        const payload = {
-          product: productTitle,
-          productHi: productTitleHi,
-          size: selected.value,
-          img: productImg,
-        };
-
-        try {
-          storage.setItem(PREFILL_KEY, JSON.stringify(payload));
-        } catch (error) {
-          /* ignore */
-        }
-
-        const params = new URLSearchParams();
-        if (productTitle) params.set('product', productTitle);
-        if (selected.value) params.set('size', selected.value);
-        const targetUrl = `preorder.html?${params.toString()}`;
-        if (window.HBRouter && typeof window.HBRouter.navigate === 'function') {
-          window.HBRouter.navigate(targetUrl);
-        } else {
-          window.location.href = targetUrl;
-        }
-      });
+    if (confirmBtn.dataset.hbBound) {
+      console.log('[hb debug] initPreorderModal: Confirm button already bound.');
+      return;
     }
+    confirmBtn.dataset.hbBound = 'true';
+    console.log('[hb debug] initPreorderModal: Binding click event to confirm button.');
+    confirmBtn.addEventListener('click', () => {
+      console.log('[hb debug] Confirm button clicked.');
+      const selected = sizeInputs.find((radio) => radio.checked);
+      const currentItem = getActiveItem();
+      if (!selected || !currentItem) {
+        console.error('[hb debug] Confirm click: Missing selected size or active item.', {
+          hasSelected: !!selected,
+          hasActiveItem: !!currentItem
+        });
+        return;
+      }
+
+      const productTitle = currentItem.getAttribute('data-title') || '';
+      const productTitleHi = currentItem.getAttribute('data-title-hi') || '';
+      const productImg = currentItem.getAttribute('data-img') || '';
+      const payload = {
+        product: productTitle,
+        productHi: productTitleHi,
+        size: selected.value,
+        img: productImg,
+      };
+
+      console.log('[hb debug] Confirm click: Created payload:', payload);
+
+      try {
+        storage.setItem(PREFILL_KEY, JSON.stringify(payload));
+        console.log('[hb debug] Confirm click: Payload saved to localStorage.');
+      } catch (error) {
+        console.error('[hb debug] Confirm click: Error saving to localStorage.', error);
+      }
+
+      const params = new URLSearchParams();
+      if (productTitle) params.set('product', productTitle);
+      if (productTitleHi) params.set('productHi', productTitleHi);
+      if (selected.value) params.set('size', selected.value);
+      const targetUrl = `preorder.html?${params.toString()}`;
+      console.log(`[hb debug] Confirm click: Generated target URL: ${targetUrl}`);
+
+      hideModal();
+
+      if (window.HBRouter && typeof window.HBRouter.navigate === 'function') {
+        console.log('[hb debug] Confirm click: Navigating via HBRouter.');
+        window.HBRouter.navigate(targetUrl);
+      } else {
+        console.log('[hb debug] Confirm click: Navigating via window.location.href.');
+        window.location.href = targetUrl;
+      }
+    });
 
     function hideModal() {
+      console.log('[hb debug] hideModal: Hiding modal.');
       if (overlay && overlay._hbEscapeHandler) {
         window.removeEventListener('keyup', overlay._hbEscapeHandler);
         delete overlay._hbEscapeHandler;
       }
-      overlay.style.display = 'none';
-      modal.style.display = 'none';
+      if(overlay) overlay.style.display = 'none';
+      if(modal) modal.style.display = 'none';
       resetModal();
     }
 
@@ -485,7 +550,7 @@
       closeBtn.addEventListener('click', hideModal);
     }
 
-    if (!overlay.dataset.hbBound) {
+    if (overlay && !overlay.dataset.hbBound) {
       overlay.dataset.hbBound = 'true';
       overlay.addEventListener('click', (event) => {
         if (event.target === overlay) {
@@ -532,23 +597,68 @@
     const seed = loadPreorderSeed();
 
     const initialProduct = params.get('product') || (seed && seed.product) || '';
+    const initialProductHi = params.get('productHi') || (seed && seed.productHi) || '';
     const initialSize = params.get('size') || (seed && seed.size) || '';
 
-    if (productSelect && initialProduct) {
-      const option = qsa('option', productSelect).find((opt) => opt.value === initialProduct);
-      if (option) {
-        productSelect.value = initialProduct;
-      }
+    const normalizeForMatch = (value) => (value || '')
+      .toString()
+      .trim()
+      .replace(/\s+/g, ' ')
+      .replace(/—/g, '-')
+      .toLowerCase();
+
+    const findMatchingOption = (selectEl, candidates) => {
+      if (!selectEl) return null;
+      const normalizedCandidates = candidates
+        .filter((candidate) => candidate && candidate.toString().trim().length)
+        .map((candidate) => normalizeForMatch(candidate));
+      if (!normalizedCandidates.length) return null;
+      const options = qsa('option', selectEl).filter((option) => option.value.trim().length);
+      return options.find((option) => {
+        const valuesToCheck = [
+          option.value,
+          option.textContent,
+          option.getAttribute('data-en'),
+          option.getAttribute('data-hi'),
+        ]
+          .filter((value) => value != null)
+          .map((value) => normalizeForMatch(value));
+        return normalizedCandidates.some((candidate) => valuesToCheck.includes(candidate));
+      }) || null;
+    };
+
+    let resolvedProduct = initialProduct || initialProductHi;
+    const matchedProductOption = findMatchingOption(productSelect, [
+      initialProduct,
+      initialProductHi,
+      seed && seed.product,
+      seed && seed.productHi,
+    ]);
+    if (productSelect && matchedProductOption) {
+      productSelect.value = matchedProductOption.value;
+      resolvedProduct = matchedProductOption.value;
+      productSelect.dataset.hbPrefilled = 'true';
     }
 
-    if (sizeSelect && initialSize) {
-      const option = qsa('option', sizeSelect).find((opt) => opt.value === initialSize);
-      if (option) {
-        sizeSelect.value = initialSize;
-      }
+    const matchedSizeOption = findMatchingOption(sizeSelect, [
+      initialSize,
+      seed && seed.size,
+    ]);
+    if (sizeSelect && matchedSizeOption) {
+      sizeSelect.value = matchedSizeOption.value;
+      sizeSelect.dataset.hbPrefilled = 'true';
     }
 
-    updateReservationImage(reservationImg, productSelect ? productSelect.value : initialProduct);
+    const productForImage = (productSelect && productSelect.value)
+      || resolvedProduct
+      || (seed && seed.product)
+      || initialProduct
+      || initialProductHi;
+    updateReservationImage(reservationImg, productForImage);
+
+    if ((matchedProductOption || matchedSizeOption) && !preorderSection.classList.contains('hb-prefilled')) {
+      preorderSection.classList.add('hb-prefilled');
+    }
 
     if (productSelect && !productSelect.dataset.hbBound) {
       productSelect.dataset.hbBound = 'true';
