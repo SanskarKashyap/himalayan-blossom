@@ -63,6 +63,180 @@
     qsa('.menu-item').forEach(registerProductAsset);
   }
 
+  function ensureProductModalStructure() {
+    let overlay = qs('#modalOverlay');
+    let modal = qs('#productModal');
+
+    if (overlay && modal) {
+      return { overlay, modal };
+    }
+
+    if (overlay) {
+      overlay.remove();
+      overlay = null;
+    }
+    if (modal) {
+      modal.remove();
+      modal = null;
+    }
+
+    const template = document.createElement('template');
+    template.innerHTML = `
+      <div id="modalOverlay" class="modal-overlay"></div>
+      <div id="productModal" class="modal product-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="row g-0">
+              <div class="col-md-6">
+                <img
+                  id="modalImg"
+                  src=""
+                  alt=""
+                  class="img-fluid rounded-start"
+                />
+              </div>
+              <div class="col-md-6 d-flex flex-column justify-content-center">
+                <div class="modal-body-right">
+                  <h4 id="modalTitle"></h4>
+                  <div id="modalDesc"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `.trim();
+
+    document.body.appendChild(template.content);
+    return {
+      overlay: qs('#modalOverlay'),
+      modal: qs('#productModal'),
+    };
+  }
+
+  function ensurePreorderModalStructure() {
+    let overlay = qs('#preorderModalOverlay');
+    let modal = qs('#preorderSelectionModal');
+
+    if (overlay && modal) {
+      return { overlay, modal };
+    }
+
+    if (overlay) {
+      overlay.remove();
+      overlay = null;
+    }
+    if (modal) {
+      modal.remove();
+      modal = null;
+    }
+
+    const template = document.createElement('template');
+    template.innerHTML = `
+      <div
+        id="preorderModalOverlay"
+        class="modal-overlay"
+      ></div>
+      <div
+        id="preorderSelectionModal"
+        class="modal preorder-modal"
+        tabindex="-1"
+      >
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <button
+              type="button"
+              class="modal-close"
+              id="preorderModalClose"
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <div class="row g-0">
+              <div class="col-md-5">
+                <img
+                  id="preorderModalImg"
+                  src=""
+                  alt=""
+                  class="img-fluid rounded-start"
+                />
+              </div>
+              <div class="col-md-7 d-flex flex-column justify-content-center">
+                <div class="modal-body-right">
+                  <h4 id="preorderModalTitle"></h4>
+                  <p
+                    id="preorderModalSubtitle"
+                    data-en="Select your preferred jar size to continue."
+                    data-hi="जारी रखने के लिए अपना पसंदीदा जार आकार चुनें।"
+                  >
+                    Select your preferred jar size to continue.
+                  </p>
+                  <div class="size-options" id="preorderSizeOptions">
+                    <label class="size-option" for="preorder-size-250">
+                      <input
+                        type="radio"
+                        name="preorderSize"
+                        id="preorder-size-250"
+                        value="250 gram"
+                      />
+                      <span data-en="250 gram" data-hi="250 ग्राम">250 gram</span>
+                    </label>
+                    <label class="size-option" for="preorder-size-500">
+                      <input
+                        type="radio"
+                        name="preorderSize"
+                        id="preorder-size-500"
+                        value="500 gram"
+                      />
+                      <span data-en="500 gram" data-hi="500 ग्राम">500 gram</span>
+                    </label>
+                    <label class="size-option" for="preorder-size-1000">
+                      <input
+                        type="radio"
+                        name="preorderSize"
+                        id="preorder-size-1000"
+                        value="1000 gram"
+                      />
+                      <span data-en="1000 gram" data-hi="1000 ग्राम">1000 gram</span>
+                    </label>
+                  </div>
+                  <div class="modal-actions">
+                    <button
+                      type="button"
+                      class="modal-action-btn ghost"
+                      id="preorderModalCancel"
+                      data-en="Cancel"
+                      data-hi="रद्द करें"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      class="modal-action-btn primary"
+                      id="preorderModalConfirm"
+                      data-en="Continue to Pre-order"
+                      data-hi="प्री-ऑर्डर पर जाएँ"
+                      disabled
+                    >
+                      Continue to Pre-order
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `.trim();
+
+    document.body.appendChild(template.content);
+    return {
+      overlay: qs('#preorderModalOverlay'),
+      modal: qs('#preorderSelectionModal'),
+    };
+  }
+
   function updateLanguage(lang) {
     state.language = lang;
     storage.setItem('language', lang);
@@ -247,8 +421,7 @@
   }
 
   function initProductModal() {
-    const modal = qs('#productModal');
-    const overlay = qs('#modalOverlay');
+    const { modal, overlay } = ensureProductModalStructure();
     const modalImg = qs('#modalImg');
     const modalTitle = qs('#modalTitle');
     const descContainer = qs('#modalDesc');
@@ -353,8 +526,7 @@
   function initPreorderModal() {
     console.log('[hb debug] initPreorderModal: Initializing preorder modal.');
 
-    const overlay = qs('#preorderModalOverlay');
-    const modal = qs('#preorderSelectionModal');
+    const { overlay, modal } = ensurePreorderModalStructure();
     const modalImg = qs('#preorderModalImg');
     const modalTitle = qs('#preorderModalTitle');
     const confirmBtn = qs('#preorderModalConfirm');
