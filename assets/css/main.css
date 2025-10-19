@@ -79,6 +79,11 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+html[lang="hi"],
+html[lang="hi"] * {
+  letter-spacing: 0 !important;
+}
+
 .mobile-nav {
   display: none;
 }

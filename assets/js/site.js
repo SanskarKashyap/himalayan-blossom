@@ -239,6 +239,9 @@
   function updateLanguage(lang) {
     state.language = lang;
     storage.setItem('language', lang);
+    if (lang === 'en' || lang === 'hi') {
+      document.documentElement.setAttribute('lang', lang);
+    }
 
     qsa('[data-en][data-hi]').forEach((el) => {
       const value = lang === 'hi' ? el.getAttribute('data-hi') : el.getAttribute('data-en');
