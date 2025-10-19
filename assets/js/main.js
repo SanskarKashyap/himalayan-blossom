@@ -29,29 +29,55 @@
    */
   const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
   const mobileNavToggleIcon = mobileNavToggleBtn ? mobileNavToggleBtn.querySelector('i') : null;
+  const mobileNavPanel = document.querySelector('.mobile-nav');
 
-  function mobileNavToogle() {
-    const body = document.querySelector('body');
-    body.classList.toggle('mobile-nav-active');
-    if (!mobileNavToggleIcon) return;
-    const menuIsOpen = body.classList.contains('mobile-nav-active');
-    mobileNavToggleIcon.classList.toggle('bi-list', !menuIsOpen);
-    mobileNavToggleIcon.classList.toggle('bi-x', menuIsOpen);
+  function setMobileNavState(isActive) {
+    const body = document.body;
+    body.classList.toggle('mobile-nav-active', isActive);
+
+    if (mobileNavPanel) {
+      mobileNavPanel.classList.toggle('active', isActive);
+      mobileNavPanel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    }
+
+    if (mobileNavToggleBtn) {
+      mobileNavToggleBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+    }
+
+    if (mobileNavToggleIcon) {
+      mobileNavToggleIcon.classList.toggle('bi-list', !isActive);
+      mobileNavToggleIcon.classList.toggle('bi-x', isActive);
+    }
   }
+
+  function toggleMobileNav(forceState) {
+    const body = document.body;
+    const isActive = typeof forceState === 'boolean'
+      ? forceState
+      : !body.classList.contains('mobile-nav-active');
+
+    setMobileNavState(isActive);
+    return isActive;
+  }
+
+  HBPage.toggleMobileNav = toggleMobileNav;
+
   if (mobileNavToggleBtn) {
-    mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+    mobileNavToggleBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      toggleMobileNav();
+    });
   }
 
   /**
    * Hide mobile nav on same-page/hash links
    */
-  document.querySelectorAll('#navmenu a').forEach(navmenu => {
-    navmenu.addEventListener('click', () => {
-      if (document.querySelector('.mobile-nav-active')) {
-        mobileNavToogle();
+  document.querySelectorAll('#navmenu a, .mobile-nav-menu a').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (document.body.classList.contains('mobile-nav-active')) {
+        toggleMobileNav(false);
       }
     });
-
   });
 
   /**

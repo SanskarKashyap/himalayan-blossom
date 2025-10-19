@@ -159,13 +159,16 @@
         <!-- Mobile Menu Toggle -->
         <button
           class="mobile-nav-toggle d-xl-none"
-          aria-label="Toggle Navigation"
+          type="button"
+          aria-label="Toggle navigation"
+          aria-controls="mobileNav"
+          aria-expanded="false"
         >
-          <i class="bi bi-list"></i>
+          <i class="bi bi-list" aria-hidden="true"></i>
         </button>
 
         <!-- Mobile Menu -->
-        <div class="mobile-nav">
+        <div id="mobileNav" class="mobile-nav" aria-hidden="true">
           <div class="mobile-nav-wrapper">
             <ul class="mobile-nav-menu">
               <li>
@@ -451,7 +454,7 @@
               <h4 data-en="Contact" data-hi="संपर्क">Contact</h4>
               <p>
                 <strong data-en="Phone:" data-hi="फोन:">Phone:</strong>
-                <span>+91 98765 43210</span><br />
+                <span>+91 99308 15228</span><br />
                 <strong data-en="Email:" data-hi="ईमेल:">Email:</strong>
                 <span>hello@himalayanblossom.com</span><br />
               </p>

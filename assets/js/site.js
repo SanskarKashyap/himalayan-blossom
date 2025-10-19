@@ -385,28 +385,52 @@
 
     const icon = toggle.querySelector('i');
 
+    const setState = (isActive) => {
+      const hbToggle = window.HBPage && typeof window.HBPage.toggleMobileNav === 'function'
+        ? window.HBPage.toggleMobileNav
+        : null;
+
+      if (hbToggle) {
+        hbToggle(isActive);
+        return isActive;
+      }
+
+      document.body.classList.toggle('mobile-nav-active', isActive);
+      mobileNav.classList.toggle('active', isActive);
+      mobileNav.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+      toggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+      if (icon) {
+        icon.classList.toggle('bi-list', !isActive);
+        icon.classList.toggle('bi-x', isActive);
+      }
+
+      return isActive;
+    };
+
+    const toggleNav = (forceState) => {
+      const nextState = typeof forceState === 'boolean'
+        ? forceState
+        : !mobileNav.classList.contains('active');
+      return setState(nextState);
+    };
+
     if (!toggle.dataset.hbBound) {
       toggle.dataset.hbBound = 'true';
-      toggle.addEventListener('click', () => {
-        const isActive = mobileNav.classList.toggle('active');
-        document.body.classList.toggle('mobile-nav-active', isActive);
-        if (icon) {
-          icon.classList.toggle('bi-list', !isActive);
-          icon.classList.toggle('bi-x', isActive);
-        }
+      toggle.addEventListener('click', (event) => {
+        if (event.defaultPrevented) return;
+        event.preventDefault();
+        toggleNav();
       });
     }
+
+    toggleNav(false);
+    HBSite.toggleMobileNav = toggleNav;
 
     qsa('.mobile-nav-menu a').forEach((link) => {
       if (link.dataset.hbBound) return;
       link.dataset.hbBound = 'true';
       link.addEventListener('click', () => {
-        mobileNav.classList.remove('active');
-        document.body.classList.remove('mobile-nav-active');
-        if (icon) {
-          icon.classList.add('bi-list');
-          icon.classList.remove('bi-x');
-        }
+        toggleNav(false);
       });
     });
   }
@@ -849,7 +873,7 @@
       const email = (qs('#email') || { value: '' }).value.trim();
       const subject = (qs('#subject') || { value: '' }).value.trim();
       const message = (qs('#message') || { value: '' }).value.trim();
-      const phone = '919876543210';
+      const phone = '919930815228';
       const text = `Hello Himalayan Blossom, my name is ${name}.\nEmail: ${email}\nSubject: ${subject}\nMessage: ${message}`;
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
       window.open(url, '_blank');

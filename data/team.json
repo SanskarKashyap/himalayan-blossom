@@ -2,29 +2,41 @@
   "team": [
     {
       "name": {
-        "en": "Ramesh",
-        "hi": "रमेश"
+        "en": "Deen Dyal",
+        "hi": "दीन दयाल"
       },
       "role": {
         "en": "Lead Beekeeper",
         "hi": "मुख्य मधुमक्खी पालक"
       },
       "bio": {
-        "en": "Ramesh manages our high-altitude apiaries and ensures every batch is hand-checked at harvest.",
-        "hi": "रमेश हमारी उच्च आल्टिट्यूड मधुमक्खी पालन का प्रबंधन करता है और यह सुनिश्चित करता है कि हर बैच को फसल के समय हाथ से जांचा जाए।"
+        "en": "Deen Dyal manages our high-altitude apiaries and ensures every batch is hand-checked at harvest.",
+        "hi": "दीन दयाल हमारी उच्च आल्टिट्यूड मधुमक्खी पालन का प्रबंधन करता है और यह सुनिश्चित करता है कि हर बैच को फसल के समय हाथ से जांचा जाए।"
       },
       "image": {
         "src": "assets/img/chefs/chefs-1.jpg",
         "alt": {
-          "en": "Beekeeper Ramesh",
-          "hi": "मधुमक्खी पालक रमेश"
+          "en": "Beekeeper Deen Dyal",
+          "hi": "मधुमक्खी पालक दीन दयाल"
         }
       },
       "social": [
-        { "icon": "bi bi-twitter-x", "href": "#" },
-        { "icon": "bi bi-facebook", "href": "#" },
-        { "icon": "bi bi-instagram", "href": "#" },
-        { "icon": "bi bi-linkedin", "href": "#" }
+        {
+          "icon": "bi bi-twitter-x",
+          "href": "#"
+        },
+        {
+          "icon": "bi bi-facebook",
+          "href": "#"
+        },
+        {
+          "icon": "bi bi-instagram",
+          "href": "#"
+        },
+        {
+          "icon": "bi bi-linkedin",
+          "href": "#"
+        }
       ]
     },
     {
@@ -48,37 +60,61 @@
         }
       },
       "social": [
-        { "icon": "bi bi-twitter-x", "href": "#" },
-        { "icon": "bi bi-facebook", "href": "#" },
-        { "icon": "bi bi-instagram", "href": "#" },
-        { "icon": "bi bi-linkedin", "href": "#" }
+        {
+          "icon": "bi bi-twitter-x",
+          "href": "#"
+        },
+        {
+          "icon": "bi bi-facebook",
+          "href": "#"
+        },
+        {
+          "icon": "bi bi-instagram",
+          "href": "#"
+        },
+        {
+          "icon": "bi bi-linkedin",
+          "href": "#"
+        }
       ]
     },
     {
       "name": {
-        "en": "Mohan",
-        "hi": "मोहन"
+        "en": "Rahul Sud",
+        "hi": "राहुल सूद"
       },
       "role": {
         "en": "Quality Steward",
         "hi": "गुणवत्ता प्रबंधक"
       },
       "bio": {
-        "en": "Mohan handles sampling and AI monitoring integration to guarantee purity and traceability.",
-        "hi": "मोहन नमूना लेने और AI मॉनिटरिंग इंटीग्रेशन का काम संभालता है ताकि शुद्धता और पता लगाने की गारंटी दी जा सके।"
+        "en": "Rahul Sud handles sampling and AI monitoring integration to guarantee purity and traceability.",
+        "hi": "राहुल सूद नमूना लेने और AI मॉनिटरिंग इंटीग्रेशन का काम संभालता है ताकि शुद्धता और पता लगाने की गारंटी दी जा सके।"
       },
       "image": {
         "src": "assets/img/chefs/chefs-3.jpg",
         "alt": {
-          "en": "Beekeeper Mohan",
-          "hi": "मधुमक्खी पालक मोहन"
+          "en": "Beekeeper Rahul Sud",
+          "hi": "मधुमक्खी पालक राहुल सूद"
         }
       },
       "social": [
-        { "icon": "bi bi-twitter-x", "href": "#" },
-        { "icon": "bi bi-facebook", "href": "#" },
-        { "icon": "bi bi-instagram", "href": "#" },
-        { "icon": "bi bi-linkedin", "href": "#" }
+        {
+          "icon": "bi bi-twitter-x",
+          "href": "#"
+        },
+        {
+          "icon": "bi bi-facebook",
+          "href": "#"
+        },
+        {
+          "icon": "bi bi-instagram",
+          "href": "#"
+        },
+        {
+          "icon": "bi bi-linkedin",
+          "href": "#"
+        }
       ]
     }
   ]

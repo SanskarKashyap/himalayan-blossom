@@ -133,6 +133,33 @@ a:hover {
   transform: translateX(4px);
 }
 
+.btn-outline-accent,
+.btn-outline-accent:focus {
+  color: var(--accent-color);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 68%, transparent 32%);
+  background: color-mix(in srgb, var(--accent-color) 6%, transparent 94%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 30px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-outline-accent:hover,
+.btn-outline-accent:focus:hover {
+  color: var(--contrast-color);
+  background: var(--accent-color);
+  border-color: color-mix(in srgb, var(--accent-color) 85%, black 15%);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(212, 175, 55, 0.24);
+}
+
 .text-accent {
   color: var(--accent-color) !important;
 }
@@ -917,6 +944,11 @@ body.dark-theme .mobile-nav .auth-logout-btn {
     background-color: rgba(33, 37, 41, 0.03);
   }
 
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
   .mobile-nav-active {
     overflow: hidden;
   }
@@ -949,12 +981,15 @@ body.dark-theme .mobile-nav .auth-logout-btn {
     position: fixed;
     top: 0;
     right: -100%;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
     width: min(340px, 84vw);
     height: 100vh;
     background: linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(246, 241, 232, 0.96));
     padding: 70px 0 30px;
     overflow-y: auto;
-    transition: right 0.4s ease;
+    transition: right 0.4s ease, opacity 0.3s ease, visibility 0.3s ease;
     z-index: 10000;
     box-shadow: -24px 0 60px rgba(17, 15, 33, 0.24);
     border-left: 1px solid color-mix(in srgb, var(--accent-color) 28%, transparent 72%);
@@ -962,8 +997,12 @@ body.dark-theme .mobile-nav .auth-logout-btn {
     display: block;
   }
 
-  .mobile-nav.active {
+  .mobile-nav.active,
+  .mobile-nav-active .mobile-nav {
     right: 0;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .mobile-nav-wrapper {
@@ -1308,7 +1347,34 @@ section,
   letter-spacing: -0.01em;
 }
 
-.section-title p .description-title {
+.section-title .section-subtitle {
+  color: var(--heading-color);
+  margin: 12px 0 0;
+  font-size: clamp(1.35rem, 1.6vw + 0.6rem, 1.9rem);
+  font-weight: 600;
+  font-family: var(--heading-font);
+  letter-spacing: -0.01em;
+}
+
+.section-title .section-note {
+  margin-top: 12px;
+  color: color-mix(in srgb, var(--heading-color) 72%, transparent 28%);
+  font-size: clamp(1rem, 1.2vw + 0.45rem, 1.25rem);
+  line-height: 1.7;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title .section-note strong {
+  color: var(--accent-color);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85em;
+  margin-right: 6px;
+}
+
+.section-title .description-title {
   color: var(--accent-color);
 }
 
@@ -2808,11 +2874,21 @@ body.dark-theme .section-title h2 {
   color: rgba(255, 255, 255, 0.65);
 }
 
-body.dark-theme .section-title p {
+body.dark-theme .section-title p,
+body.dark-theme .section-title .section-subtitle {
   color: var(--heading-color);
 }
 
-body.dark-theme .section-title p .description-title {
+body.dark-theme .section-title p .description-title,
+body.dark-theme .section-title .description-title {
+  color: var(--accent-color);
+}
+
+body.dark-theme .section-title .section-note {
+  color: color-mix(in srgb, var(--default-color) 82%, transparent 18%);
+}
+
+body.dark-theme .section-title .section-note strong {
   color: var(--accent-color);
 }
 
@@ -2913,9 +2989,25 @@ body.dark-theme .menu .btn-primary {
   box-shadow: 0 26px 52px rgba(255, 215, 0, 0.32);
 }
 
+body.dark-theme .btn-outline-accent,
+body.dark-theme .btn-outline-accent:focus {
+  color: var(--accent-color);
+  border-color: color-mix(in srgb, var(--accent-color) 72%, rgba(255, 255, 255, 0.22));
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 18px 34px rgba(255, 215, 0, 0.12);
+}
+
 body.dark-theme .btn-get-started:hover,
 body.dark-theme .menu .btn-primary:hover {
   box-shadow: 0 34px 64px rgba(255, 215, 0, 0.4);
+}
+
+body.dark-theme .btn-outline-accent:hover,
+body.dark-theme .btn-outline-accent:focus:hover {
+  color: var(--contrast-color);
+  background: var(--accent-color);
+  border-color: color-mix(in srgb, var(--accent-color) 85%, black 15%);
+  box-shadow: 0 24px 46px rgba(255, 215, 0, 0.24);
 }
 
 body.dark-theme .testimonials .testimonial-item {

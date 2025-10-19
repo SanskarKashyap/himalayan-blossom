@@ -80,6 +80,15 @@
   }
 
   function closeMobileNav() {
+    const toggler =
+      (window.HBPage && typeof window.HBPage.toggleMobileNav === 'function' && window.HBPage.toggleMobileNav)
+      || (window.HBSite && typeof window.HBSite.toggleMobileNav === 'function' && window.HBSite.toggleMobileNav);
+
+    if (toggler) {
+      toggler(false);
+      return;
+    }
+
     const mobileNav = document.querySelector('.mobile-nav');
     const toggle = document.querySelector('.mobile-nav-toggle');
     const icon = toggle ? toggle.querySelector('i') : null;
@@ -88,6 +97,12 @@
       mobileNav.classList.remove('active');
     }
     document.body.classList.remove('mobile-nav-active');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+    if (mobileNav) {
+      mobileNav.setAttribute('aria-hidden', 'true');
+    }
     if (icon) {
       icon.classList.add('bi-list');
       icon.classList.remove('bi-x');
