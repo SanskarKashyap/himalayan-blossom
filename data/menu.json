@@ -223,34 +223,6 @@
           "एक्सफ़ोलीएटिंग बॉडी स्क्रब: क्रिस्टलीकृत होने पर, यह मृत कोशिकाओं को साफ़ करने और चमकदार त्वचा प्रकट करने के लिए एक प्राकृतिक एक्सफ़ोलिएंट के रूप में कार्य करता है।"
         ]
       }
-    },
-    {
-      "id": "kshudhra-madhu",
-      "title": {
-        "en": "Kshudhra Madhu — Stingless Bee Honey",
-        "hi": "क्षुद्र मधु — डंक रहित मधुमक्खी का शहद"
-      },
-      "image": {
-        "src": "assets/img/menu/menu-item-9.png",
-        "alt": {
-          "en": "Kshudhra Madhu — Stingless Bee Honey jar",
-          "hi": "क्षुद्र मधु — डंक रहित मधुमक्खी का शहद जार"
-        }
-      },
-      "tagline": {
-        "en": "The Natural First-Aid — Potent internal healing and eye health.",
-        "hi": "प्राकृतिक प्राथमिक चिकित्सा — शक्तिशाली आंतरिक उपचार और आंखों का स्वास्थ्य।"
-      },
-      "details": {
-        "en": [
-          "The Natural First-Aid: Potent internal healing and eye health.",
-          "Scar & Blemish Repair: Promotes skin cell regeneration, making it exceptional for reducing the appearance of scars and dark spots."
-        ],
-        "hi": [
-          "प्राकृतिक प्राथमिक चिकित्सा: शक्तिशाली आंतरिक उपचार और आंखों का स्वास्थ्य।",
-          "निशान और धब्बे की मरम्मत: त्वचा कोशिका पुनर्जनन को बढ़ावा देता है, जिससे यह निशान और काले धब्बों की उपस्थिति को कम करने के लिए असाधारण है।"
-        ]
-      }
     }
   ]
 }
