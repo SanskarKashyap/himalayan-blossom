@@ -3169,3 +3169,23 @@ body.dark-theme .why-us .icon-box h4,
 body.dark-theme .why-us .icon-box p {
   color: rgba(235, 232, 255, 0.88);
 }
+
+.cart-items-list .cart-item {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 0.75rem;
+}
+
+.cart-items-list .cart-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.cart-items-list .cart-quantity-control .cart-qty-input {
+  width: 64px;
+  text-align: center;
+}
+
+.cart-summary.disabled {
+  pointer-events: none;
+}
