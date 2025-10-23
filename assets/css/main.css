@@ -84,6 +84,15 @@ html[lang="hi"] * {
   letter-spacing: 0 !important;
 }
 
+html[lang="hi"] *::before,
+html[lang="hi"] *::after {
+  letter-spacing: 0 !important;
+}
+
+html[lang="hi"] [style*="letter-spacing"] {
+  letter-spacing: 0 !important;
+}
+
 .mobile-nav {
   display: none;
 }

@@ -2,11 +2,13 @@
   'use strict';
 
   const CONFIG = {
-    apiBaseUrl: (window.APP_API_BASE_URL || 'http://localhost:8000/api').replace(/\/$/, ''),
-    googleClientId: window.APP_GOOGLE_CLIENT_ID || '144658462401-2l7kms1j90v4jl9ovga4uvolunnhghpj.apps.googleusercontent.com',
+    apiBaseUrl: (window.APP_API_BASE_URL || '').replace(/\/$/, ''),
+    loginLogEndpoint: '/api/login-log',
+    cartEndpoint: '/api/cart',
+    firebaseConfig: window.APP_FIREBASE_CONFIG || null,
+    authCookieName: 'hbAuthToken',
   };
 
-  const STORAGE_KEY = 'hb_auth_state_v1';
   const DEFAULT_PRICING = Object.assign(
     {
       '250 gram': 1199,
@@ -15,39 +17,37 @@
     },
     typeof window.APP_PREORDER_PRICING === 'object' && !Array.isArray(window.APP_PREORDER_PRICING)
       ? Object.fromEntries(
-          Object.entries(window.APP_PREORDER_PRICING).filter(([, value]) =>
-            typeof value === 'number'
-          )
+          Object.entries(window.APP_PREORDER_PRICING).filter(([, value]) => typeof value === 'number')
         )
       : {}
   );
 
   const state = {
     user: null,
-    access: null,
-    refresh: null,
-    googleInitialized: false,
+    idToken: null,
+    tokenExpiresAt: null,
+    lastLoginAuthTime: null,
+    firebaseReady: false,
   };
 
   const dom = {};
-  let refreshPromise = null;
-  let googleInitPromise = null;
+  const observers = new Set();
+
+  let firebaseReadyPromise = null;
   let razorpayPromise = null;
 
   function init() {
     queryDom();
-    loadState();
-    updateUI();
     registerEvents();
+    updateUI();
 
-    if (!CONFIG.googleClientId) {
-      renderGoogleFallback(new Error('Missing Google Client ID configuration.'));
-    } else {
-      ensureGoogleInitialized().catch((error) => {
-        console.warn('Google sign-in failed to initialize:', error);
-        renderGoogleFallback(error);
+    ensureFirebaseReady().catch((error) => {
+      console.warn('Firebase initialization failed:', error);
+      updateStatusMessages('Login is temporarily unavailable.', {
+        type: 'error',
+        title: error && error.message ? error.message : undefined,
       });
-    }
+    });
   }
 
   function queryDom() {
@@ -67,87 +67,40 @@
     dom.loginMessageMobile = document.getElementById('authStatusMessageMobile');
   }
 
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (parsed && parsed.access && parsed.refresh && parsed.user) {
-        state.access = parsed.access;
-        state.refresh = parsed.refresh;
-        state.user = parsed.user;
-      }
-    } catch (error) {
-      console.warn('Failed to read stored auth state', error);
+  function registerEvents() {
+    if (dom.logoutDesktop && !dom.logoutDesktop.dataset.hbBound) {
+      dom.logoutDesktop.dataset.hbBound = 'true';
+      dom.logoutDesktop.addEventListener('click', (event) => {
+        event.preventDefault();
+        signOut();
+      });
     }
-  }
 
-  function persistState() {
-    try {
-      if (state.user && state.access && state.refresh) {
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({
-            user: state.user,
-            access: state.access,
-            refresh: state.refresh,
-          })
-        );
-      } else {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    } catch (error) {
-      console.warn('Unable to persist auth state', error);
+    if (dom.logoutMobile && !dom.logoutMobile.dataset.hbBound) {
+      dom.logoutMobile.dataset.hbBound = 'true';
+      dom.logoutMobile.addEventListener('click', (event) => {
+        event.preventDefault();
+        signOut();
+      });
     }
-  }
 
-  function isAuthenticated() {
-    return Boolean(state.access && state.refresh && state.user);
-  }
-
-  function setHidden(element, hidden) {
-    if (!element) return;
-    if (hidden) {
-      element.setAttribute('hidden', 'hidden');
-    } else {
-      element.removeAttribute('hidden');
+    if (dom.loginTriggerDesktop && !dom.loginTriggerDesktop.dataset.hbBound) {
+      dom.loginTriggerDesktop.dataset.hbBound = 'true';
+      dom.loginTriggerDesktop.addEventListener('click', handleLoginTrigger);
     }
-  }
 
-  function setText(element, text) {
-    if (!element) return;
-    element.textContent = text || '';
-  }
-
-  function getDisplayName(user) {
-    if (!user) return '';
-    const name = [user.first_name, user.last_name]
-      .filter(Boolean)
-      .join(' ')
-      .trim();
-    if (name) return name;
-    if (user.username) return user.username;
-    if (user.email) return user.email.split('@')[0];
-    return 'Guest';
-  }
-
-  function updateRoleBadge(element, role) {
-    if (!element) return;
-    if (role) {
-      element.textContent = role;
-      element.removeAttribute('hidden');
-    } else {
-      element.textContent = '';
-      element.setAttribute('hidden', 'hidden');
+    if (dom.loginTriggerMobile && !dom.loginTriggerMobile.dataset.hbBound) {
+      dom.loginTriggerMobile.dataset.hbBound = 'true';
+      dom.loginTriggerMobile.addEventListener('click', handleLoginTrigger);
     }
   }
 
   function updateUI() {
     const authed = isAuthenticated();
-    setHidden(dom.signedOutDesktop, authed);
-    setHidden(dom.signedInDesktop, !authed);
-    setHidden(dom.signedOutMobile, authed);
-    setHidden(dom.signedInMobile, !authed);
+    toggleHidden(dom.signedOutDesktop, authed);
+    toggleHidden(dom.signedInDesktop, !authed);
+    toggleHidden(dom.signedOutMobile, authed);
+    toggleHidden(dom.signedInMobile, !authed);
 
     if (authed && state.user) {
       const displayName = getDisplayName(state.user);
@@ -163,58 +116,40 @@
     }
   }
 
-  function registerEvents() {
-    if (dom.logoutDesktop) {
-      dom.logoutDesktop.addEventListener('click', (event) => {
-        event.preventDefault();
-        signOut();
-      });
+  function toggleHidden(element, hidden) {
+    if (!element) return;
+    if (hidden) {
+      element.setAttribute('hidden', 'hidden');
+    } else {
+      element.removeAttribute('hidden');
     }
-    if (dom.logoutMobile) {
-      dom.logoutMobile.addEventListener('click', (event) => {
-        event.preventDefault();
-        signOut();
-      });
-    }
-    if (dom.loginTriggerDesktop) {
-      dom.loginTriggerDesktop.addEventListener('click', handleLoginTrigger);
-    }
-    if (dom.loginTriggerMobile) {
-      dom.loginTriggerMobile.addEventListener('click', handleLoginTrigger);
-    }
-
-    window.addEventListener('storage', (event) => {
-      if (event.key === STORAGE_KEY) {
-        loadState();
-        updateUI();
-      }
-    });
   }
 
-  function triggerLoginPrompt() {
-    updateStatusMessages('Opening sign-in options...', { type: 'info' });
-    ensureGoogleInitialized()
-      .then(() => {
-        if (window.google && window.google.accounts && window.google.accounts.id) {
-          try {
-            window.google.accounts.id.prompt();
-            clearStatusMessages();
-          } catch (error) {
-            console.debug('Google prompt not available', error);
-            updateStatusMessages('Google sign-in is temporarily unavailable.', {
-              type: 'error',
-              title: error && error.message ? error.message : String(error),
-            });
-          }
-        } else {
-          updateStatusMessages('Google sign-in is temporarily unavailable.', {
-            type: 'error',
-          });
-        }
-      })
-      .catch((error) => {
-        renderGoogleFallback(error);
-      });
+  function setText(element, text) {
+    if (element) {
+      element.textContent = text || '';
+    }
+  }
+
+  function updateRoleBadge(element, role) {
+    if (!element) return;
+    if (role) {
+      element.textContent = role;
+      element.removeAttribute('hidden');
+    } else {
+      element.textContent = '';
+      element.setAttribute('hidden', 'hidden');
+    }
+  }
+
+  function getDisplayName(user) {
+    if (!user) return '';
+    if (user.displayName) return user.displayName;
+    if (user.first_name || user.last_name) {
+      return [user.first_name, user.last_name].filter(Boolean).join(' ').trim();
+    }
+    if (user.email) return user.email.split('@')[0];
+    return 'Guest';
   }
 
   function updateStatusMessages(text, options) {
@@ -247,38 +182,147 @@
     updateStatusMessages('', {});
   }
 
+  function dispatchAuthEvent(eventName, detail) {
+    const payload = detail || {};
+    window.dispatchEvent(new CustomEvent(`hb:auth:${eventName}`, { detail: payload }));
+    observers.forEach((callback) => {
+      try {
+        callback(eventName, payload);
+      } catch (error) {
+        console.warn('Auth observer callback failed', error);
+      }
+    });
+  }
+
   function handleLoginTrigger(event) {
     if (event) {
       event.preventDefault();
     }
-    triggerLoginPrompt();
+    signInWithFirebase().catch((error) => {
+      updateStatusMessages(error && error.message ? error.message : 'Unable to sign in right now.', {
+        type: 'error',
+      });
+    });
   }
 
-  function dispatchAuthEvent(eventName, detail) {
-    window.dispatchEvent(
-      new CustomEvent(`hb:auth:${eventName}`, {
-        detail: detail || {},
-      })
-    );
-  }
-
-  function applyAuthData(data) {
-    state.user = data?.user || null;
-    state.access = data?.access || null;
-    state.refresh = data?.refresh || null;
-    persistState();
-    updateUI();
-    dispatchAuthEvent('changed', { user: state.user });
-    if (state.user) {
-      dispatchAuthEvent('signed-in', { user: state.user });
+  function ensureFirebaseReady() {
+    if (state.firebaseReady && window.firebase) {
+      const firebase = window.firebase;
+      return Promise.resolve({
+        firebase,
+        app: firebase.app(),
+        auth: firebase.auth(),
+        firestore: firebase.firestore(),
+      });
     }
+    if (firebaseReadyPromise) {
+      return firebaseReadyPromise;
+    }
+
+    if (!CONFIG.firebaseConfig || !CONFIG.firebaseConfig.apiKey) {
+      return Promise.reject(new Error('Missing Firebase configuration. Set window.APP_FIREBASE_CONFIG before loading auth.js.'));
+    }
+
+    const scripts = [
+      'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+      'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js',
+      'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js',
+    ];
+
+    firebaseReadyPromise = scripts
+      .reduce((promise, src) => promise.then(() => loadScriptOnce(src)), Promise.resolve())
+      .then(() => {
+        const firebase = window.firebase;
+        if (!firebase || !firebase.initializeApp) {
+          throw new Error('Firebase SDK failed to load.');
+        }
+        if (!firebase.apps.length) {
+          firebase.initializeApp(CONFIG.firebaseConfig);
+        }
+        const app = firebase.app();
+        const auth = firebase.auth();
+        const firestore = firebase.firestore();
+
+        auth.onIdTokenChanged(handleFirebaseUser);
+        state.firebaseReady = true;
+
+        return { firebase, app, auth, firestore };
+      })
+      .catch((error) => {
+        firebaseReadyPromise = null;
+        throw error;
+      });
+
+    return firebaseReadyPromise;
+  }
+
+  function loadScriptOnce(src) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[data-hb-src="${src}"]`)) {
+        resolve();
+        return;
+      }
+
+      const existing = Array.from(document.querySelectorAll('script')).find((script) => script.src === src);
+      if (existing) {
+        if (existing.dataset.hbLoaded === 'true') {
+          resolve();
+          return;
+        }
+        existing.addEventListener('load', () => {
+          existing.dataset.hbLoaded = 'true';
+          resolve();
+        }, { once: true });
+        existing.addEventListener('error', reject, { once: true });
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.dataset.hbSrc = src;
+      script.addEventListener('load', () => {
+        script.dataset.hbLoaded = 'true';
+        resolve();
+      }, { once: true });
+      script.addEventListener('error', () => {
+        reject(new Error(`Failed to load script: ${src}`));
+      }, { once: true });
+      document.head.appendChild(script);
+    });
+  }
+
+  async function signInWithFirebase() {
+    updateStatusMessages('Opening sign-in...', { type: 'info' });
+    const resources = await ensureFirebaseReady();
+    clearStatusMessages();
+    const provider = new resources.firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await resources.auth.signInWithPopup(provider);
+    return resources.auth.currentUser;
+  }
+
+  function signOut() {
+    return ensureFirebaseReady()
+      .then(({ auth }) => auth.signOut())
+      .catch(() => {
+        clearAuthState({ silent: true });
+      })
+      .finally(() => {
+        clearAuthState({ silent: true });
+      });
+  }
+
+  function isAuthenticated() {
+    return Boolean(state.user && state.idToken);
   }
 
   function clearAuthState(options) {
     state.user = null;
-    state.access = null;
-    state.refresh = null;
-    persistState();
+    state.idToken = null;
+    state.tokenExpiresAt = null;
+    state.lastLoginAuthTime = null;
+    clearAuthCookie();
     updateUI();
     if (!options || !options.silent) {
       dispatchAuthEvent('changed', { user: null });
@@ -286,113 +330,103 @@
     }
   }
 
-  function signOut() {
-    clearAuthState();
-    if (window.google && window.google.accounts && window.google.accounts.id) {
-      try {
-        window.google.accounts.id.disableAutoSelect();
-      } catch (error) {
-        console.debug('Failed to disable Google auto select', error);
-      }
-    }
+  function clearAuthCookie() {
+    document.cookie = `${CONFIG.authCookieName}=; Max-Age=0; path=/; SameSite=Strict`;
   }
 
-  function renderGoogleFallback(error) {
-    const message = CONFIG.googleClientId
-      ? 'Google sign-in is temporarily unavailable.'
-      : 'Set APP_GOOGLE_CLIENT_ID to enable Google login.';
-
-    updateStatusMessages(message, {
-      type: 'error',
-      title: error && error.message ? error.message : undefined,
-    });
-  }
-
-  function waitForGoogleLibrary(maxAttempts = 60, intervalMs = 200) {
-    return new Promise((resolve, reject) => {
-      let attempts = 0;
-      const timer = window.setInterval(() => {
-        attempts += 1;
-        if (window.google && window.google.accounts && window.google.accounts.id) {
-          window.clearInterval(timer);
-          resolve(window.google.accounts.id);
-          return;
-        }
-        if (attempts >= maxAttempts) {
-          window.clearInterval(timer);
-          reject(new Error('Google Identity Services SDK failed to load.'));
-        }
-      }, intervalMs);
-    });
-  }
-
-  function ensureGoogleInitialized() {
-    if (state.googleInitialized) {
-      return Promise.resolve();
-    }
-    if (!CONFIG.googleClientId) {
-      return Promise.reject(new Error('Missing Google client ID.'));
-    }
-    if (googleInitPromise) {
-      return googleInitPromise;
-    }
-
-    googleInitPromise = waitForGoogleLibrary()
-      .then(() => {
-        window.google.accounts.id.initialize({
-          client_id: CONFIG.googleClientId,
-          callback: handleGoogleCredential,
-          cancel_on_tap_outside: true,
-          use_fedcm_for_prompt: true,
-        });
-        state.googleInitialized = true;
-        clearStatusMessages();
-        try {
-          window.google.accounts.id.prompt();
-        } catch (error) {
-          console.debug('Google prompt not available yet', error);
-        }
-      })
-      .catch((error) => {
-        renderGoogleFallback(error);
-        throw error;
-      })
-      .finally(() => {
-        googleInitPromise = null;
-      });
-
-    return googleInitPromise;
-  }
-
-  function handleGoogleCredential(response) {
-    if (!response || !response.credential) {
-      console.warn('Google credential response was empty.');
+  function persistAuthCookie(token, expiration) {
+    if (!token) {
+      clearAuthCookie();
       return;
     }
-    exchangeCredentialForTokens(response.credential).catch((error) => {
-      console.error('Google sign-in failed', error);
-      dispatchAuthEvent('error', { message: error.message });
-    });
+
+    let maxAge = 3600;
+    if (expiration instanceof Date) {
+      const diff = Math.floor((expiration.getTime() - Date.now()) / 1000);
+      if (Number.isFinite(diff) && diff > 0) {
+        maxAge = diff;
+      }
+    }
+
+    const attributes = ['path=/', 'SameSite=Strict', `Max-Age=${Math.max(300, maxAge)}`];
+    if (location.protocol === 'https:') {
+      attributes.push('Secure');
+    }
+
+    document.cookie = `${CONFIG.authCookieName}=${encodeURIComponent(token)}; ${attributes.join('; ')}`;
   }
 
-  async function exchangeCredentialForTokens(credential) {
-    const response = await fetch(
-      buildApiUrl('/auth/google/'),
-      prepareRequestInit({
-        method: 'POST',
-        body: { credential },
-      })
-    );
-    if (!response.ok) {
-      const message = await extractErrorMessage(response);
-      throw new Error(message);
+  async function handleFirebaseUser(user) {
+    if (!user) {
+      clearAuthState({ silent: false });
+      return;
     }
-    const data = await response.json();
-    if (!data?.access || !data?.refresh || !data?.user) {
-      throw new Error('Authentication response was incomplete.');
+
+    try {
+      const tokenResult = await user.getIdTokenResult();
+      const expiration = tokenResult.expirationTime ? new Date(tokenResult.expirationTime) : null;
+      state.user = {
+        uid: user.uid,
+        email: user.email || '',
+        displayName: user.displayName || '',
+        photoURL: user.photoURL || '',
+        role: user.role || '',
+      };
+      state.idToken = tokenResult.token;
+      state.tokenExpiresAt = expiration;
+      persistAuthCookie(tokenResult.token, expiration);
+      updateUI();
+      dispatchAuthEvent('changed', { user: state.user });
+      dispatchAuthEvent('signed-in', { user: state.user });
+
+      if (tokenResult.authTime && state.lastLoginAuthTime !== tokenResult.authTime) {
+        state.lastLoginAuthTime = tokenResult.authTime;
+        logLoginActivity({ tokenResult });
+      }
+    } catch (error) {
+      console.error('Failed to resolve Firebase user token', error);
+      updateStatusMessages('Authentication failed. Please try signing in again.', { type: 'error' });
+      clearAuthState({ silent: false });
     }
-    applyAuthData(data);
-    return data;
+  }
+
+  async function getIdToken(options) {
+    const { forceRefresh = false } = options || {};
+    await ensureFirebaseReady().catch(() => null);
+
+    const firebase = window.firebase;
+    if (!firebase) {
+      return null;
+    }
+
+    const auth = firebase.auth();
+    if (!auth.currentUser) {
+      return null;
+    }
+
+    try {
+      const token = await auth.currentUser.getIdToken(forceRefresh);
+      const tokenResult = await auth.currentUser.getIdTokenResult();
+      state.idToken = token;
+      state.tokenExpiresAt = tokenResult.expirationTime ? new Date(tokenResult.expirationTime) : null;
+      persistAuthCookie(token, state.tokenExpiresAt);
+      return token;
+    } catch (error) {
+      console.warn('Unable to obtain Firebase ID token', error);
+      return null;
+    }
+  }
+
+  function buildApiUrl(path) {
+    if (/^https?:/i.test(path)) {
+      return path;
+    }
+    const base = CONFIG.apiBaseUrl || '';
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    if (!base) {
+      return normalizedPath;
+    }
+    return `${base}${normalizedPath}`;
   }
 
   function prepareRequestInit(options) {
@@ -417,15 +451,38 @@
 
     init.headers = headers;
     init.body = body;
+    init.credentials = options && options.credentials ? options.credentials : 'include';
     return init;
   }
 
-  function buildApiUrl(path) {
-    if (/^https?:/i.test(path)) {
-      return path;
+  async function apiFetch(path, options) {
+    const init = prepareRequestInit(options || {});
+    const token = await getIdToken();
+    if (token) {
+      init.headers.set('Authorization', `Bearer ${token}`);
     }
-    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-    return `${CONFIG.apiBaseUrl}${normalizedPath}`;
+
+    const execute = () => fetch(buildApiUrl(path), init);
+    let response = await execute();
+
+    if (response.status === 401) {
+      const refreshedToken = await getIdToken({ forceRefresh: true });
+      if (refreshedToken) {
+        init.headers.set('Authorization', `Bearer ${refreshedToken}`);
+        response = await execute();
+      }
+    }
+
+    if (!response.ok) {
+      const message = await extractErrorMessage(response);
+      throw new Error(message);
+    }
+
+    const contentType = response.headers.get('Content-Type') || '';
+    if (contentType.includes('application/json')) {
+      return response.json();
+    }
+    return response.text();
   }
 
   async function extractErrorMessage(response) {
@@ -456,160 +513,28 @@
     return `Request failed with status ${response.status}`;
   }
 
-  async function refreshAccessToken() {
-    if (!state.refresh) {
-      signOut();
-      throw new Error('Session expired. Please sign in again.');
-    }
-    if (refreshPromise) {
-      return refreshPromise;
-    }
-
-    refreshPromise = fetch(
-      buildApiUrl('/auth/token/refresh/'),
-      prepareRequestInit({
+  async function logLoginActivity({ tokenResult }) {
+    try {
+      const token = await getIdToken();
+      if (!token) {
+        return;
+      }
+      const payload = {
+        event: 'login',
+        authTime: tokenResult ? tokenResult.authTime : new Date().toISOString(),
+      };
+      await fetch(CONFIG.loginLogEndpoint, {
         method: 'POST',
-        body: { refresh: state.refresh },
-      })
-    )
-      .then(async (response) => {
-        if (!response.ok) {
-          const message = await extractErrorMessage(response);
-          signOut();
-          throw new Error(message || 'Session expired. Please sign in again.');
-        }
-        const data = await response.json();
-        if (!data?.access) {
-          signOut();
-          throw new Error('Failed to refresh session.');
-        }
-        state.access = data.access;
-        persistState();
-        updateUI();
-        return state.access;
-      })
-      .finally(() => {
-        refreshPromise = null;
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload),
       });
-
-    return refreshPromise;
-  }
-
-  async function apiFetch(path, options, retry = true) {
-    const init = prepareRequestInit(options || {});
-    if (isAuthenticated() && !init.headers.has('Authorization')) {
-      init.headers.set('Authorization', `Bearer ${state.access}`);
+    } catch (error) {
+      console.warn('Failed to log login activity', error);
     }
-
-    const response = await fetch(buildApiUrl(path), init);
-
-    if (response.status === 401 && retry && state.refresh) {
-      try {
-        await refreshAccessToken();
-      } catch (error) {
-        throw error;
-      }
-      return apiFetch(path, options, false);
-    }
-
-    if (!response.ok) {
-      const message = await extractErrorMessage(response);
-      const error = new Error(message);
-      error.status = response.status;
-      throw error;
-    }
-
-    if (response.status === 204) {
-      return null;
-    }
-
-    const contentType = response.headers.get('content-type') || '';
-    if (contentType.includes('application/json')) {
-      return response.json();
-    }
-
-    return response.text();
-  }
-
-  function ensureRazorpayLoaded() {
-    if (window.Razorpay) {
-      return Promise.resolve(window.Razorpay);
-    }
-    if (razorpayPromise) {
-      return razorpayPromise;
-    }
-
-    razorpayPromise = new Promise((resolve, reject) => {
-      const existingScript = document.querySelector(
-        'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-      );
-
-      const handleLoad = () => {
-        if (window.Razorpay) {
-          resolve(window.Razorpay);
-        } else {
-          reject(new Error('Razorpay SDK loaded but unavailable.'));
-        }
-      };
-
-      const handleError = () => {
-        reject(new Error('Unable to load Razorpay SDK.'));
-      };
-
-      if (existingScript) {
-        existingScript.addEventListener('load', handleLoad, { once: true });
-        existingScript.addEventListener('error', handleError, { once: true });
-      } else {
-        const script = document.createElement('script');
-        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-        script.async = true;
-        script.onload = handleLoad;
-        script.onerror = handleError;
-        document.head.appendChild(script);
-      }
-
-      window.setTimeout(() => {
-        if (!window.Razorpay) {
-          reject(new Error('Timed out waiting for Razorpay SDK.'));
-        }
-      }, 10000);
-    }).finally(() => {
-      if (!window.Razorpay) {
-        razorpayPromise = null;
-      }
-    });
-
-    return razorpayPromise;
-  }
-
-  function resolvePreorderAmount(variant, size) {
-    const pricingConfig = typeof window.APP_PREORDER_PRICING === 'object' ? window.APP_PREORDER_PRICING : {};
-    const normalizedVariant = (variant || '').trim();
-    const normalizedSize = (size || '').trim();
-
-    let amount = null;
-    if (normalizedVariant && pricingConfig[normalizedVariant] && typeof pricingConfig[normalizedVariant] === 'object') {
-      const candidate = Number(pricingConfig[normalizedVariant][normalizedSize]);
-      if (Number.isFinite(candidate) && candidate > 0) {
-        amount = candidate;
-      }
-    }
-
-    if (!amount && normalizedSize) {
-      const candidate = Number(pricingConfig[normalizedSize]);
-      if (Number.isFinite(candidate) && candidate > 0) {
-        amount = candidate;
-      }
-    }
-
-    if (!amount && normalizedSize) {
-      const candidate = Number(DEFAULT_PRICING[normalizedSize]);
-      if (Number.isFinite(candidate) && candidate > 0) {
-        amount = candidate;
-      }
-    }
-
-    return amount;
   }
 
   function createFormStatusController(form) {
@@ -669,27 +594,94 @@
     return { idle, loading, success, error };
   }
 
-  function dispatchPaymentEvent(eventName, detail) {
-    window.dispatchEvent(
-      new CustomEvent(`hb:payment:${eventName}`, {
-        detail: detail || {},
-      })
-    );
+  function resolvePreorderAmount(variant, size) {
+    const pricingConfig = typeof window.APP_PREORDER_PRICING === 'object' ? window.APP_PREORDER_PRICING : {};
+    const normalizedVariant = (variant || '').trim();
+    const normalizedSize = (size || '').trim();
+
+    let amount = null;
+    if (normalizedVariant && pricingConfig[normalizedVariant] && typeof pricingConfig[normalizedVariant] === 'object') {
+      const candidate = Number(pricingConfig[normalizedVariant][normalizedSize]);
+      if (Number.isFinite(candidate) && candidate > 0) {
+        amount = candidate;
+      }
+    }
+
+    if (!amount && normalizedSize) {
+      const candidate = Number(pricingConfig[normalizedSize]);
+      if (Number.isFinite(candidate) && candidate > 0) {
+        amount = candidate;
+      }
+    }
+
+    if (!amount && normalizedSize) {
+      const candidate = Number(DEFAULT_PRICING[normalizedSize]);
+      if (Number.isFinite(candidate) && candidate > 0) {
+        amount = candidate;
+      }
+    }
+
+    return amount;
   }
 
-  function promptSignIn() {
-    return ensureGoogleInitialized()
-      .then(() => {
-        try {
-          window.google.accounts.id.prompt();
-        } catch (error) {
-          console.debug('Google prompt unavailable', error);
+  function ensureRazorpayLoaded() {
+    if (window.Razorpay) {
+      return Promise.resolve(window.Razorpay);
+    }
+    if (razorpayPromise) {
+      return razorpayPromise;
+    }
+
+    razorpayPromise = new Promise((resolve, reject) => {
+      const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+
+      const handleLoad = () => {
+        if (window.Razorpay) {
+          resolve(window.Razorpay);
+        } else {
+          reject(new Error('Razorpay SDK loaded but Razorpay is undefined.'));
         }
-      })
-      .catch((error) => {
-        renderGoogleFallback(error);
-        throw error;
+      };
+
+      const handleError = () => {
+        reject(new Error('Unable to load Razorpay SDK.'));
+      };
+
+      if (existingScript) {
+        existingScript.addEventListener('load', handleLoad, { once: true });
+        existingScript.addEventListener('error', handleError, { once: true });
+      } else {
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        script.onload = handleLoad;
+        script.onerror = handleError;
+        document.head.appendChild(script);
+      }
+
+      window.setTimeout(() => {
+        if (!window.Razorpay) {
+          reject(new Error('Timed out waiting for Razorpay SDK.'));
+        }
+      }, 10000);
+    }).finally(() => {
+      if (!window.Razorpay) {
+        razorpayPromise = null;
+      }
+    });
+
+    return razorpayPromise;
+  }
+
+  async function promptSignIn() {
+    try {
+      await signInWithFirebase();
+    } catch (error) {
+      updateStatusMessages(error && error.message ? error.message : 'Sign-in is unavailable.', {
+        type: 'error',
       });
+      throw error;
+    }
   }
 
   async function handlePreorderSubmit(event) {
@@ -802,21 +794,37 @@
     return false;
   }
 
+  function dispatchPaymentEvent(eventName, detail) {
+    window.dispatchEvent(
+      new CustomEvent(`hb:payment:${eventName}`, {
+        detail: detail || {},
+      })
+    );
+  }
+
+  const Auth = {
+    isAuthenticated,
+    getUser: () => (state.user ? Object.assign({}, state.user) : null),
+    signIn: () => signInWithFirebase(),
+    signOut,
+    apiFetch,
+    ensureFirebaseReady,
+    getIdToken,
+    on: (callback) => {
+      if (typeof callback === 'function') {
+        observers.add(callback);
+        return () => observers.delete(callback);
+      }
+      return () => {};
+    },
+  };
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
 
-  window.Auth = {
-    isAuthenticated,
-    getUser: () => state.user,
-    signIn: () => promptSignIn(),
-    signOut,
-    apiFetch,
-    ensureGoogleInitialized,
-    refreshAccessToken,
-  };
-
+  window.Auth = Auth;
   window.handlePreorderSubmit = handlePreorderSubmit;
 })();
