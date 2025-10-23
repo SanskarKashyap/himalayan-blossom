@@ -1,11 +1,46 @@
 (function () {
   'use strict';
 
+  function normalizeBaseUrl(value) {
+    if (typeof value !== 'string') {
+      return '';
+    }
+    return value.replace(/\/$/, '');
+  }
+
+  function coerceFirebaseConfig(value) {
+    if (!value) {
+      return null;
+    }
+    if (typeof value === 'object') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        console.warn('Auth: unable to parse Firebase config string', error);
+      }
+    }
+    return null;
+  }
+
   const CONFIG = {
-    apiBaseUrl: (window.APP_API_BASE_URL || '').replace(/\/$/, ''),
+    get apiBaseUrl() {
+      return normalizeBaseUrl(window.APP_API_BASE_URL || '');
+    },
     loginLogEndpoint: '/api/login-log',
     cartEndpoint: '/api/cart',
-    firebaseConfig: window.APP_FIREBASE_CONFIG || null,
+    get firebaseConfig() {
+      const direct = coerceFirebaseConfig(window.APP_FIREBASE_CONFIG);
+      if (direct) {
+        return direct;
+      }
+      if (window.HBEnv && typeof window.HBEnv.get === 'function') {
+        return coerceFirebaseConfig(window.HBEnv.get('APP_FIREBASE_CONFIG'));
+      }
+      return null;
+    },
     authCookieName: 'hbAuthToken',
   };
 
@@ -33,8 +68,31 @@
   const dom = {};
   const observers = new Set();
 
+  let envReadyPromise = null;
   let firebaseReadyPromise = null;
   let razorpayPromise = null;
+
+  function ensureEnvironmentReady() {
+    if (envReadyPromise) {
+      return envReadyPromise;
+    }
+
+    const loader = window.HBEnv;
+    if (loader && typeof loader.load === 'function') {
+      envReadyPromise = loader
+        .load()
+        .catch((error) => {
+          console.warn('Auth: environment file failed to load', error);
+        })
+        .then(() => {
+          return loader && loader.data ? loader.data : {};
+        });
+      return envReadyPromise;
+    }
+
+    envReadyPromise = Promise.resolve({});
+    return envReadyPromise;
+  }
 
   function init() {
     queryDom();
@@ -198,62 +256,62 @@
     if (event) {
       event.preventDefault();
     }
-    signInWithFirebase().catch((error) => {
-      updateStatusMessages(error && error.message ? error.message : 'Unable to sign in right now.', {
-        type: 'error',
-      });
-    });
+    signInWithFirebase({ redirectTo: window.location.href });
   }
 
   function ensureFirebaseReady() {
-    if (state.firebaseReady && window.firebase) {
-      const firebase = window.firebase;
-      return Promise.resolve({
-        firebase,
-        app: firebase.app(),
-        auth: firebase.auth(),
-        firestore: firebase.firestore(),
-      });
-    }
-    if (firebaseReadyPromise) {
-      return firebaseReadyPromise;
-    }
-
-    if (!CONFIG.firebaseConfig || !CONFIG.firebaseConfig.apiKey) {
-      return Promise.reject(new Error('Missing Firebase configuration. Set window.APP_FIREBASE_CONFIG before loading auth.js.'));
-    }
-
-    const scripts = [
-      'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
-      'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js',
-      'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js',
-    ];
-
-    firebaseReadyPromise = scripts
-      .reduce((promise, src) => promise.then(() => loadScriptOnce(src)), Promise.resolve())
-      .then(() => {
+    return ensureEnvironmentReady().then(() => {
+      if (state.firebaseReady && window.firebase) {
         const firebase = window.firebase;
-        if (!firebase || !firebase.initializeApp) {
-          throw new Error('Firebase SDK failed to load.');
-        }
-        if (!firebase.apps.length) {
-          firebase.initializeApp(CONFIG.firebaseConfig);
-        }
-        const app = firebase.app();
-        const auth = firebase.auth();
-        const firestore = firebase.firestore();
+        return {
+          firebase,
+          app: firebase.app(),
+          auth: firebase.auth(),
+          firestore: firebase.firestore(),
+        };
+      }
 
-        auth.onIdTokenChanged(handleFirebaseUser);
-        state.firebaseReady = true;
+      if (firebaseReadyPromise) {
+        return firebaseReadyPromise;
+      }
 
-        return { firebase, app, auth, firestore };
-      })
-      .catch((error) => {
-        firebaseReadyPromise = null;
-        throw error;
-      });
+      const firebaseConfig = CONFIG.firebaseConfig;
+      if (!firebaseConfig || !firebaseConfig.apiKey) {
+        return Promise.reject(new Error('Missing Firebase configuration. Set window.APP_FIREBASE_CONFIG before loading auth.js.'));
+      }
 
-    return firebaseReadyPromise;
+      const scripts = [
+        'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+        'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js',
+        'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js',
+      ];
+
+      firebaseReadyPromise = scripts
+        .reduce((promise, src) => promise.then(() => loadScriptOnce(src)), Promise.resolve())
+        .then(() => {
+          const firebase = window.firebase;
+          if (!firebase || !firebase.initializeApp) {
+            throw new Error('Firebase SDK failed to load.');
+          }
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          const app = firebase.app();
+          const auth = firebase.auth();
+          const firestore = firebase.firestore();
+
+          auth.onIdTokenChanged(handleFirebaseUser);
+          state.firebaseReady = true;
+
+          return { firebase, app, auth, firestore };
+        })
+        .catch((error) => {
+          firebaseReadyPromise = null;
+          throw error;
+        });
+
+      return firebaseReadyPromise;
+    });
   }
 
   function loadScriptOnce(src) {
@@ -292,14 +350,34 @@
     });
   }
 
-  async function signInWithFirebase() {
-    updateStatusMessages('Opening sign-in...', { type: 'info' });
-    const resources = await ensureFirebaseReady();
-    clearStatusMessages();
-    const provider = new resources.firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    await resources.auth.signInWithPopup(provider);
-    return resources.auth.currentUser;
+  function resolveRedirectTarget(target) {
+    const fallback = `${window.location.pathname}${window.location.search}${window.location.hash}` || 'index.html';
+    if (!target || typeof target !== 'string') {
+      return fallback;
+    }
+    try {
+      const url = new URL(target, window.location.origin);
+      if (url.origin !== window.location.origin) {
+        return fallback;
+      }
+      return `${url.pathname}${url.search}${url.hash}`;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function redirectToAuthPage(page, options) {
+    const redirectTo = resolveRedirectTarget(options && options.redirectTo);
+    const url = new URL(page, window.location.origin);
+    if (redirectTo) {
+      url.searchParams.set('redirect', redirectTo);
+    }
+    window.location.assign(`${url.pathname}${url.search}${url.hash}`);
+  }
+
+  function signInWithFirebase(options) {
+    redirectToAuthPage('login.html', options);
+    return Promise.resolve({ redirected: true });
   }
 
   function signOut() {
@@ -456,6 +534,7 @@
   }
 
   async function apiFetch(path, options) {
+    await ensureEnvironmentReady();
     const init = prepareRequestInit(options || {});
     const token = await getIdToken();
     if (token) {
@@ -673,15 +752,9 @@
     return razorpayPromise;
   }
 
-  async function promptSignIn() {
-    try {
-      await signInWithFirebase();
-    } catch (error) {
-      updateStatusMessages(error && error.message ? error.message : 'Sign-in is unavailable.', {
-        type: 'error',
-      });
-      throw error;
-    }
+  async function promptSignIn(options) {
+    signInWithFirebase(options);
+    throw new Error('Redirecting to sign-in.');
   }
 
   async function handlePreorderSubmit(event) {
@@ -694,8 +767,8 @@
     const status = createFormStatusController(form);
 
     if (!isAuthenticated()) {
-      status.error('Please sign in with Google to reserve your batch.');
-      promptSignIn().catch(() => {
+      status.error('Please sign in to reserve your batch.');
+      promptSignIn({ redirectTo: window.location.href }).catch(() => {
         // Swallow prompt errors — message already displayed
       });
       return false;
@@ -805,11 +878,12 @@
   const Auth = {
     isAuthenticated,
     getUser: () => (state.user ? Object.assign({}, state.user) : null),
-    signIn: () => signInWithFirebase(),
+    signIn: (options) => signInWithFirebase(options),
     signOut,
     apiFetch,
     ensureFirebaseReady,
     getIdToken,
+    redirectToAuthPage: (page, options) => redirectToAuthPage(page, options),
     on: (callback) => {
       if (typeof callback === 'function') {
         observers.add(callback);

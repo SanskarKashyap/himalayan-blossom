@@ -433,7 +433,8 @@ h6 {
 # Header Auth Controls
 --------------------------------------------------------------*/
 .header-auth {
-  display: none !important;
+  display: flex;
+  align-items: center;
 }
 
 .auth-state {
@@ -447,35 +448,18 @@ h6 {
 }
 
 .auth-login-btn {
-  display: none !important;
+  display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
-  padding: 0.35rem 0.95rem 0.35rem 0.75rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
+  letter-spacing: 0.12em;
 }
 
-.auth-login-btn:hover,
-.auth-login-btn:focus-visible {
-  background: rgba(255, 255, 255, 0.16);
-  color: #ffffff;
-  text-decoration: none;
+.auth-login-btn::after {
+  content: none !important;
 }
 
 .auth-login-btn .bi {
   font-size: 1rem;
-}
-
-body.dark-theme .auth-login-btn {
-  border-color: rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
 }
 
 .auth-state.auth-signed-out {
@@ -563,8 +547,162 @@ body.dark-theme .auth-role-badge {
   color: #f29fa5;
 }
 
+.auth-page {
+  background:
+    radial-gradient(900px circle at 90% 10%, rgba(212, 175, 55, 0.1), transparent 60%),
+    radial-gradient(820px circle at 0% 110%, rgba(27, 22, 53, 0.08), transparent 55%),
+    var(--background-color);
+}
+
+.auth-section {
+  padding: 4.5rem 0 6rem;
+}
+
+.auth-card {
+  background: var(--surface-color);
+  border-radius: var(--radius-large);
+  padding: 2.75rem 2.5rem;
+  border: 1px solid rgba(33, 27, 63, 0.06);
+  box-shadow: 0 20px 60px rgba(27, 22, 53, 0.08);
+}
+
+.auth-card h1 {
+  font-family: var(--heading-font);
+  color: var(--heading-color);
+  letter-spacing: 0.02em;
+}
+
+.auth-card p {
+  color: var(--default-color);
+}
+
+.auth-card .text-muted {
+  color: color-mix(in srgb, var(--muted-color) 92%, var(--heading-color) 8%) !important;
+}
+
+.auth-card .form-label {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--heading-color);
+}
+
+.auth-card .form-control {
+  border-radius: var(--radius-small);
+  border: 1px solid rgba(33, 27, 63, 0.08);
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+.auth-card .form-control:focus {
+  border-color: rgba(212, 175, 55, 0.55);
+  box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.18);
+}
+
+.auth-card .form-text {
+  font-size: 0.8rem;
+  color: var(--muted-color);
+}
+
+.auth-card .auth-submit-btn {
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.85rem 1rem;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.auth-card .auth-submit-btn:hover,
+.auth-card .auth-submit-btn:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px rgba(212, 175, 55, 0.32);
+}
+
+.auth-status.alert {
+  border: none;
+  border-radius: var(--radius-small);
+  font-size: 0.88rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.5rem;
+  background: rgba(27, 22, 53, 0.06);
+  color: var(--default-color);
+}
+
+.auth-card p a {
+  color: var(--accent-color);
+}
+
+.auth-card p a:hover {
+  text-decoration: underline;
+}
+
+body.dark-theme .auth-card {
+  background: rgba(24, 19, 37, 0.92);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 60px rgba(2, 0, 12, 0.5);
+}
+
+body.dark-theme .auth-card h1,
+body.dark-theme .auth-card p {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+body.dark-theme .auth-card .text-muted {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.dark-theme .auth-card .form-control {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--contrast-color);
+}
+
+body.dark-theme .auth-card .form-control:focus {
+  border-color: rgba(212, 175, 55, 0.65);
+  box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.24);
+}
+
+body.dark-theme .auth-card .form-label {
+  color: rgba(236, 206, 120, 0.95);
+}
+
+body.dark-theme .auth-card .form-text {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+body.dark-theme .auth-status.alert {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 575px) {
+  .auth-card {
+    padding: 2.25rem 1.75rem;
+  }
+}
+
 .mobile-nav .auth-wrapper {
-  display: none !important;
+  display: block;
+  margin-top: 1.5rem;
+}
+
+.mobile-nav .auth-login-btn-mobile {
+  width: 100%;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+
+.auth-login-btn-mobile::after {
+  content: none !important;
+}
+
+.auth-login-btn-mobile .bi {
+  font-size: 1rem;
 }
 
 .form-status-inline {

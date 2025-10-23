@@ -47,13 +47,9 @@
 
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet" />
-    <script>
-      window.APP_API_BASE_URL =
-        window.APP_API_BASE_URL || 'http://localhost:8000/api';
-      window.APP_GOOGLE_CLIENT_ID =
-        window.APP_GOOGLE_CLIENT_ID || 
-        '144658462401-2l7kms1j90v4jl9ovga4uvolunnhghpj.apps.googleusercontent.com';
-    </script>
+    <script src="assets/js/app-config.js"></script>
+    <script src="assets/js/app-config.js"></script>
+    <script src="assets/js/env-loader.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
 
@@ -104,68 +100,31 @@
 
       <!-- About Section -->
       <section id="about" class="about section">
-        <!-- Section Title -->
-        <div class="container section-title" data-aos="fade-up">
-          <h2 data-en="About Us" data-hi="हमारे बारे में">About Us</h2>
-          <p>
-            <span data-en="Meet" data-hi="मिलिए">Meet</span>
-            <span
-              class="description-title"
-              data-en="Deen Dayal & The Hive"
-              data-hi="दीन दयाल और द हाइव"
-              >Deen Dayal &amp; The Hive</span
-            >
-          </p>
-        </div>
-        <!-- End Section Title -->
-
         <div class="container">
-          <div class="row gy-4 align-items-center">
+          <div class="row gy-4">
             <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-              <img
-                src="assets/img/about.jpg"
-                class="img-fluid mb-4"
-                alt="Deen Dayal tending Himalayan beehives"
-              />
-              <div class="book-a-table">
-                <h3 data-en="Founder" data-hi="संस्थापक">Founder</h3>
-                <p
-                  data-en='Deen Dayal — the "Bee Father of India"'
-                  data-hi="दीन दयाल — भारत के मधुमक्खी पिता"
-                >
-                  Deen Dayal — the "Bee Father of India"
-                </p>
+              <div class="section-title">
+                <h2 data-en="Our Story" data-hi="हमारी कहानी">Our Story</h2>
+                <p><span data-en="A Journey of" data-hi="एक यात्रा">A Journey of</span> <span class="description-title" data-en="Passion &amp; Purity" data-hi="जुनून और शुद्धता">Passion &amp; Purity</span></p>
               </div>
+              <p class="fst-italic" data-en="The dawn mist curled around the cedar trees as I traced the same mountain path my grandfather once walked, my breath visible in the thin air and the hum of hidden hives guiding each step." data-hi="भोर की धुंध देवदार के वृक्षों से लिपट रही थी जब मैं उसी पहाड़ी पगडंडी पर चला जिस पर कभी मेरे दादा चले थे; पतली हवा में मेरी साँसें दिखाई दे रही थीं और छिपे छत्तों की गुनगुनाहट हर कदम का मार्गदर्शन कर रही थी।">
+                The dawn mist curled around the cedar trees as I traced the same mountain path my grandfather once walked, my breath visible in the thin air and the hum of hidden hives guiding each step.
+              </p>
+              <p data-en="He was Deen Dayal, the beekeeper-storyteller whose leather journal I uncovered in a cracked trunk; between sketches of cobalt poppies and notes on lunar blossoms, he whispered of a valley where bees moved to the rhythm of the stars." data-hi="वे थे दीन दयाल, मधुमक्खीपालक और कहानीकार, जिनकी चमड़े की डायरी मुझे एक पुरानी संदूक में मिली; नीले पोस्ता फूलों की रेखांकन और चंद्र खिलावटों पर नोट्स के बीच उन्होंने उस घाटी का ज़िक्र किया जहाँ मधुमक्खियाँ तारों की लय पर उड़ती हैं।">
+                He was Deen Dayal, the beekeeper-storyteller whose leather journal I uncovered in a cracked trunk; between sketches of cobalt poppies and notes on lunar blossoms, he whispered of a valley where bees moved to the rhythm of the stars.
+              </p>
+              <p data-en="When I reached the cliffside hamlet, elder Lhamo studied my city-calloused palms, testing whether they could honour a mountain craft; drawing water at midnight, sharing millet stew, and learning their harvest chants slowly turned curiosity into trust." data-hi="जब मैं चट्टानों के किनारे बसे गाँव पहुँचा, बुज़ुर्ग ल्हामो ने शहर से आई मेरी हथेलियों की कसौटी की, मानो जानना चाहती हों कि क्या वे पहाड़ों की कला का सम्मान कर सकती हैं; आधी रात को पानी ढोना, बाजरे की खिचड़ी बाँटना और उनकी फसल गीत सीखना धीरे-धीरे कौतूहल को विश्वास में बदल गया।">
+                When I reached the cliffside hamlet, elder Lhamo studied my city-calloused palms, testing whether they could honour a mountain craft; drawing water at midnight, sharing millet stew, and learning their harvest chants slowly turned curiosity into trust.
+              </p>
+              <p data-en="Then came the S.T.A.R. moment—our Situation was a dwindling bloom season, the Task to shield the alpine hives, the Action a moonlit vigil with Lhamo and her grandson Tenzin as we coaxed the bees to a slope bursting with wild thyme, and the Result a ribbon of honey that shimmered like sunrise and carried my grandfather's laughter back on the wind." data-hi="यहीं हमारा S.T.A.R. क्षण आया—स्थिति थी घटते फूलों का मौसम, कार्य था अल्पाइन छत्तों की रक्षा, कार्रवाई थी ल्हामो और उनके पोते तेंजिन के साथ चाँदनी चौकसी में मधुमक्खियों को जंगली अजवायन से भरी ढलान तक साधना, और परिणाम था सूर्योदय-सा चमकता शहद जिसने हवा में दादाजी की हँसी लौटा दी।">
+                Then came the S.T.A.R. moment—our Situation was a dwindling bloom season, the Task to shield the alpine hives, the Action a moonlit vigil with Lhamo and her grandson Tenzin as we coaxed the bees to a slope bursting with wild thyme, and the Result a ribbon of honey that shimmered like sunrise and carried my grandfather's laughter back on the wind.
+              </p>
+              <p class="fw-bold" data-en="Himalayan Blossom now carries that promise: every jar links devoted keepers, resilient pollinators, and families seeking mindful wellness; may this taste remind you that when heritage and community move in unison, the mountains share their sweetest secrets." data-hi="आज हिमालयन ब्लॉसम उसी वादे को संजोता है: हर जार समर्पित पालकों, जुझारू परागणकर्ताओं और सजग स्वास्थ्य तलाशती परिवारों को जोड़ता है; यह स्वाद याद दिलाए कि जब विरासत और समुदाय एक स्वर में चलते हैं, पहाड़ अपने सबसे मधुर रहस्य साझा करते हैं।">
+                Himalayan Blossom now carries that promise: every jar links devoted keepers, resilient pollinators, and families seeking mindful wellness; may this taste remind you that when heritage and community move in unison, the mountains share their sweetest secrets.
+              </p>
             </div>
-            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="250">
-              <div class="content ps-0 ps-lg-5">
-                <p
-                  class="fst-italic"
-                  data-en="Deen Dayal has spent over 20 years hand-tending Himalayan hives. Blending ancestral beekeeping with modern AI hive monitoring, he harvests honey that is pure, raw, and traceable to a single valley. Our mission is to empower local farmers with sustainable livelihoods, bring beekeeping education to schools, and deliver an ethical luxury honey to homes worldwide."
-                  data-hi="दीन दयाल ने 20 सालों से अधिक समय हिमालयी मधुमक्खियों की देखभाल की है। पैतृक मधुमक्खी पालन को आधुनिक AI मॉनिटरिंग के साथ मिलाकर, वह शुद्ध, कच्चा और एक ही घाटी से पता लगाने योग्य शहद का उत्पादन करता है।"
-                >
-                  Deen Dayal has spent over 20 years hand-tending Himalayan
-                  hives. Blending ancestral beekeeping with modern AI hive
-                  monitoring, he harvests honey that is pure, raw, and traceable
-                  to a single valley. Our mission is to empower local farmers
-                  with sustainable livelihoods, bring beekeeping education to
-                  schools, and deliver an ethical luxury honey to homes
-                  worldwide.
-                </p>
-
-                <div class="position-relative mt-4">
-                  <img
-                    src="assets/img/about-2.jpg"
-                    class="img-fluid"
-                    alt="Bees and bloom in Himalayan valley"
-                  />
-                  <a
-                    href="https://youtu.be/gURe4sclFzU"
-                    class="glightbox pulsating-play-btn"
-                    aria-label="Watch founder video"
-                  ></a>
-                </div>
-              </div>
+            <div class="col-lg-6 d-flex align-items-center" data-aos="fade-up" data-aos-delay="200">
+              <img src="assets/img/about-2.jpg" class="img-fluid rounded" alt="A picture of the founder with a local beekeeper in the Himalayas">
             </div>
           </div>
         </div>
