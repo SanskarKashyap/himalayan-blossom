@@ -1,21 +1,58 @@
 (function () {
   'use strict';
 
-  window.APP_API_BASE_URL =
-    window.APP_API_BASE_URL || 'http://localhost:5500/api';
+  var didLog = false;
+  var didWarnFirebase = false;
+  var envResolved = false;
 
-  window.APP_GOOGLE_CLIENT_ID =
-    window.APP_GOOGLE_CLIENT_ID ||
-    '144658462401-2l7kms1j90v4jl9ovga4uvolunnhghpj.apps.googleusercontent.com';
+  function applyEnvironment(overrides) {
+    var env = overrides && typeof overrides === 'object' ? overrides : window.__ENV || {};
 
-  window.APP_FIREBASE_CONFIG =
-    window.APP_FIREBASE_CONFIG || {
-      apiKey: 'AIzaSyDgQ8SvyJCTMd-QLmeayDdcx7EjwfnPr9U',
-      authDomain: 'himalayan-blossom.firebaseapp.com',
-      projectId: 'himalayan-blossom',
-      storageBucket: 'himalayan-blossom.firebasestorage.app',
-      messagingSenderId: '744535362855',
-      appId: '1:744535362855:web:c6eca1a7e4d24000692d02',
-      measurementId: 'G-B3PG8TM9YY',
-    };
+    if (!didLog && typeof console !== 'undefined' && console.log) {
+      console.log('[app-config] Loaded environment overrides:', env);
+      didLog = true;
+    }
+
+    window.APP_API_BASE_URL =
+      env.APP_API_BASE_URL || window.APP_API_BASE_URL || 'http://localhost:5500/api';
+
+    window.APP_GOOGLE_CLIENT_ID =
+      window.APP_GOOGLE_CLIENT_ID || env.APP_GOOGLE_CLIENT_ID || '';
+
+    window.APP_FIREBASE_CONFIG = env.APP_FIREBASE_CONFIG || window.APP_FIREBASE_CONFIG || null;
+
+    if (
+      envResolved &&
+      !window.APP_FIREBASE_CONFIG &&
+      typeof console !== 'undefined' &&
+      console.warn &&
+      !didWarnFirebase
+    ) {
+      console.warn(
+        'APP_FIREBASE_CONFIG is not set. Provide values via assets/js/env.js or window.__ENV.'
+      );
+      didWarnFirebase = true;
+    }
+
+    return env;
+  }
+
+  function handleEnvReady(event) {
+    var payload = (event && event.detail) || window.__ENV || {};
+    envResolved = true;
+    applyEnvironment(payload);
+  }
+
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('hb:env:ready', handleEnvReady, { once: true });
+  }
+
+  if (typeof window !== 'undefined' && window.HBEnv && typeof window.HBEnv.whenReady === 'function') {
+    window.HBEnv.whenReady(function (env) {
+      envResolved = true;
+      applyEnvironment(env);
+    });
+  }
+
+  applyEnvironment(window.__ENV || {});
 })();

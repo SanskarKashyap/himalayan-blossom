@@ -4,3 +4,5 @@ __pycache__/
 .env
 backend/.env
 backend/db.sqlite3
+assets/js/env.js
+assets/js/env.local.js
