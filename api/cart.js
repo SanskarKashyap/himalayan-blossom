@@ -114,6 +114,22 @@ function normalizeCartItem(rawItem) {
   };
 }
 
+function sanitizeCartItems(items) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+  return items
+    .map((raw) => {
+      try {
+        return normalizeCartItem(raw);
+      } catch (error) {
+        console.warn('[api/cart] Ignoring invalid cart item', raw, error);
+        return null;
+      }
+    })
+    .filter(Boolean);
+}
+
 function mergeCartItems(existingItems, incomingItem) {
   const map = new Map();
   (existingItems || []).forEach((item) => {
@@ -142,67 +158,96 @@ function mergeCartItems(existingItems, incomingItem) {
   return Array.from(map.values());
 }
 
-module.exports = async (req, res) => {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return send(res, 405, { error: 'Method not allowed' });
-  }
+async function handleGetCart(req, res, decoded) {
+  const db = getFirestore();
+  const cartRef = db.collection('carts').doc(decoded.uid);
+  const snapshot = await cartRef.get();
+  const data = snapshot.exists ? snapshot.data() : {};
+  return send(res, 200, {
+    uid: decoded.uid,
+    email: decoded.email || '',
+    updatedAt: data.updatedAt || null,
+    createdAt: data.createdAt || null,
+    items: Array.isArray(data.items) ? data.items : [],
+  });
+}
 
-  try {
-    const body = await readRequestBody(req);
-    const token = extractToken(req);
+async function handlePostCart(req, res, decoded) {
+  const body = await readRequestBody(req);
+  const replaceItems = Array.isArray(body && body.items);
+  const incomingItems = replaceItems ? sanitizeCartItems(body.items) : [];
+  const incomingItem = replaceItems ? null : normalizeCartItem(body && body.item ? body.item : body);
 
-    if (!token) {
-      return send(res, 401, { error: 'Missing Firebase ID token.' });
+  const db = getFirestore();
+  const cartRef = db.collection('carts').doc(decoded.uid);
+  const timestamp = new Date().toISOString();
+  let updatedItems = [];
+
+  await db.runTransaction(async (transaction) => {
+    const snapshot = await transaction.get(cartRef);
+    const existing = snapshot.exists ? snapshot.data() : {};
+    if (replaceItems) {
+      updatedItems = incomingItems;
+    } else {
+      updatedItems = mergeCartItems(existing.items || [], incomingItem);
     }
+    const payload = {
+      uid: decoded.uid,
+      email: decoded.email || existing.email || '',
+      updatedAt: timestamp,
+      items: updatedItems,
+    };
+    if (!snapshot.exists) {
+      payload.createdAt = timestamp;
+    }
+    transaction.set(cartRef, payload, { merge: true });
+  });
 
-    const decoded = await verifyIdToken(token);
-    const item = normalizeCartItem(body && body.item ? body.item : body);
-
-    const db = getFirestore();
-    const cartRef = db.collection('carts').doc(decoded.uid);
-    const timestamp = new Date().toISOString();
-    let updatedItems = [];
-
-    await db.runTransaction(async (transaction) => {
-      const snapshot = await transaction.get(cartRef);
-      const existing = snapshot.exists ? snapshot.data() : {};
-      updatedItems = mergeCartItems(existing.items || [], item);
-      transaction.set(
-        cartRef,
-        {
-          uid: decoded.uid,
-          email: decoded.email || '',
-          updatedAt: timestamp,
-          items: updatedItems,
-        },
-        { merge: true }
-      );
-    });
-
+  if (!replaceItems && incomingItem) {
     const cartRange = process.env.GOOGLE_SHEETS_CART_RANGE || 'CartLog!A:H';
     await appendSheetRow(cartRange, [
       timestamp,
       decoded.email || '',
       decoded.uid,
-      item.product,
-      item.size,
-      item.quantity,
-      item.price != null ? item.price : '',
-      JSON.stringify(item),
+      incomingItem.product,
+      incomingItem.size,
+      incomingItem.quantity,
+      incomingItem.price != null ? incomingItem.price : '',
+      JSON.stringify(incomingItem),
     ]);
+  }
 
-    return send(res, 200, {
-      status: 'ok',
-      cart: {
-        uid: decoded.uid,
-        email: decoded.email || '',
-        updatedAt: timestamp,
-        items: updatedItems,
-      },
-    });
+  return send(res, 200, {
+    status: 'ok',
+    cart: {
+      uid: decoded.uid,
+      email: decoded.email || '',
+      updatedAt: timestamp,
+      items: updatedItems,
+    },
+  });
+}
+
+module.exports = async (req, res) => {
+  try {
+    const token = extractToken(req);
+    if (!token) {
+      return send(res, 401, { error: 'Missing Firebase ID token.' });
+    }
+    const decoded = await verifyIdToken(token);
+
+    if (req.method === 'GET') {
+      return await handleGetCart(req, res, decoded);
+    }
+
+    if (req.method === 'POST') {
+      return await handlePostCart(req, res, decoded);
+    }
+
+    res.setHeader('Allow', 'GET, POST');
+    return send(res, 405, { error: 'Method not allowed' });
   } catch (error) {
-    console.error('Cart update failed:', error);
-    return send(res, 500, { error: error.message || 'Failed to update cart.' });
+    console.error('Cart handler failed:', error);
+    return send(res, 500, { error: error.message || 'Failed to process cart request.' });
   }
 };

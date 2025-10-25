@@ -501,6 +501,9 @@
     }
     const base = CONFIG.apiBaseUrl || '';
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    if (base.endsWith('/api') && normalizedPath.startsWith('/api/')) {
+      return `${base}${normalizedPath.slice(4)}`;
+    }
     if (!base) {
       return normalizedPath;
     }
@@ -554,7 +557,10 @@
 
     if (!response.ok) {
       const message = await extractErrorMessage(response);
-      throw new Error(message);
+      const error = new Error(message || `Request failed with status ${response.status}`);
+      error.status = response.status;
+      error.statusText = response.statusText;
+      throw error;
     }
 
     const contentType = response.headers.get('Content-Type') || '';

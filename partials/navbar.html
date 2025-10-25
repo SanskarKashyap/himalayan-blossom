@@ -34,6 +34,11 @@
 
     <!-- Desktop Header Buttons -->
     <div class="header-buttons d-none d-xl-flex align-items-center">
+      <a href="cart.html" class="btn-cart-indicator" id="headerCartButton" aria-label="View cart">
+        <i class="bi bi-bag"></i>
+        <span class="cart-label" data-en="Cart" data-hi="कार्ट">Cart</span>
+        <span class="cart-count" id="headerCartCount">0</span>
+      </a>
       <div class="header-auth ms-3">
         <div id="authSignedOutDesktop" class="auth-state auth-signed-out">
           <button type="button" id="authLoginTriggerDesktop" class="btn-get-started auth-login-btn">
@@ -99,6 +104,11 @@
           </li>
         </ul>
         <div class="mobile-nav-buttons">
+          <a href="cart.html" class="btn-cart-indicator" id="mobileCartButton" aria-label="View cart">
+            <i class="bi bi-bag"></i>
+            <span class="cart-label" data-en="Cart" data-hi="कार्ट">Cart</span>
+            <span class="cart-count" id="mobileCartCount">0</span>
+          </a>
           <a id="mobile-lang-toggle" class="btn-lang-toggle" href="#">
             <span>हिं</span>
           </a>

@@ -7,6 +7,8 @@
   const PREFILL_KEY = 'hb_preorder_prefill_v1';
   const PENDING_CART_KEY = 'hb_pending_cart_item_v1';
   const PRODUCT_ASSETS_KEY = 'hb_product_assets_v1';
+  const CART_STORAGE_KEY = 'hb_cart_state_v1';
+  const CART_API_ENDPOINT = '/api/cart';
   const DEFAULT_PRODUCT_ASSETS = {
     'Van Amrit — Wild Honey': { img: 'assets/img/menu/menu-item-1.png' },
     'Shila Madhu — Honey Dew': { img: 'assets/img/menu/menu-item-2.png' },
@@ -54,42 +56,184 @@
     return Array.from((context || document).querySelectorAll(selector));
   }
 
+  function getCartIndicatorTargets() {
+    return [
+      {
+        container: document.getElementById('headerCartButton'),
+        count: document.getElementById('headerCartCount'),
+      },
+      {
+        container: document.getElementById('mobileCartButton'),
+        count: document.getElementById('mobileCartCount'),
+      },
+    ];
+  }
+
+  function computeCartCount(cart) {
+    if (!cart || !Array.isArray(cart.items)) {
+      return 0;
+    }
+    return cart.items.reduce((total, item) => {
+      const qty = Number(item && item.quantity);
+      return total + (Number.isFinite(qty) && qty > 0 ? qty : 0);
+    }, 0);
+  }
+
+  function updateCartIndicators(cart) {
+    const count = computeCartCount(cart);
+    getCartIndicatorTargets().forEach((target) => {
+      if (!target || !target.count) {
+        return;
+      }
+      target.count.textContent = String(count);
+      if (target.container) {
+        target.container.classList.toggle('has-items', count > 0);
+      }
+    });
+  }
+
   function createCartManager() {
-    async function ensureAuthenticated() {
-      if (window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated()) {
-        return window.Auth.getUser();
-      }
-      if (window.Auth && typeof window.Auth.signIn === 'function') {
-        await window.Auth.signIn();
-        if (window.Auth.isAuthenticated()) {
-          return window.Auth.getUser();
-        }
-      }
-      throw new Error('Please sign in to continue.');
-    }
-
-    async function ensureFirestoreContext() {
-      if (window.Auth && typeof window.Auth.ensureFirebaseReady === 'function') {
-        const context = await window.Auth.ensureFirebaseReady();
-        if (context && context.firestore) {
-          return context;
-        }
-      }
-      if (window.firebase && typeof window.firebase.firestore === 'function') {
-        return {
-          firebase: window.firebase,
-          app: window.firebase.app ? window.firebase.app() : null,
-          auth: window.firebase.auth ? window.firebase.auth() : null,
-          firestore: window.firebase.firestore(),
-        };
-      }
-      throw new Error('Firebase is not initialized.');
-    }
-
     const subscribers = new Set();
-    let activeListenerUid = null;
-    let unsubscribeRealtime = null;
     let lastEmittedCart = undefined;
+    let syncPromise = null;
+    let cartState = loadStoredCart();
+    let remoteSyncDisabled = false;
+
+    function loadStoredCart() {
+      try {
+        const raw = storage.getItem(CART_STORAGE_KEY);
+        if (!raw) {
+          return { items: [], updatedAt: null };
+        }
+        const parsed = JSON.parse(raw);
+        const sanitizedItems = sanitizeCartItems(parsed.items || []);
+        return {
+          items: sanitizedItems,
+          updatedAt: parsed.updatedAt || null,
+          uid: parsed.uid || '',
+          email: parsed.email || '',
+        };
+      } catch (error) {
+        try {
+          storage.removeItem(CART_STORAGE_KEY);
+        } catch (removeError) {
+          /* ignore */
+        }
+        return { items: [], updatedAt: null };
+      }
+    }
+
+    function saveStoredCart(cart) {
+      try {
+        storage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+      } catch (error) {
+        console.warn('[HB Cart] Unable to persist cart locally', error);
+      }
+    }
+
+    function cloneCart(cart) {
+      if (cart === null || cart === undefined) {
+        return cart;
+      }
+      const items = Array.isArray(cart.items)
+        ? cart.items
+            .map((item) => (item && typeof item === 'object' ? Object.assign({}, item) : null))
+            .filter(Boolean)
+        : [];
+      return Object.assign({}, cart, { items });
+    }
+
+    function emitCartUpdate(cart) {
+      const snapshot = cloneCart(cart);
+      lastEmittedCart = snapshot;
+      updateCartIndicators(snapshot || { items: [] });
+      subscribers.forEach((callback) => {
+        if (typeof callback !== 'function') {
+          return;
+        }
+        try {
+          callback(snapshot);
+        } catch (error) {
+          console.warn('[HB Cart] Subscriber callback failed', error);
+        }
+      });
+      window.dispatchEvent(
+        new CustomEvent('hb:cart:updated', {
+          detail: {
+            cart: snapshot,
+          },
+        })
+      );
+    }
+
+    function disableRemoteSync(reason) {
+      if (remoteSyncDisabled) {
+        return;
+      }
+      remoteSyncDisabled = true;
+      if (reason) {
+        console.info('[HB Cart] Remote cart sync disabled:', reason);
+      } else {
+        console.info('[HB Cart] Remote cart sync disabled: API unavailable');
+      }
+    }
+
+    function isApiUnavailableError(error) {
+      if (!error) {
+        return false;
+      }
+      if (error.status === 404 || error.status === 405 || error.status === 501) {
+        return true;
+      }
+      const message = (error && error.message && error.message.toString()) || '';
+      return /cannot\s+get|not\s+found|failed to fetch/i.test(message);
+    }
+
+    function shouldSync() {
+      return Boolean(
+        window.Auth
+        && typeof window.Auth.isAuthenticated === 'function'
+        && typeof window.Auth.apiFetch === 'function'
+        && window.Auth.isAuthenticated()
+        && !remoteSyncDisabled
+      );
+    }
+
+    function scheduleCartSync(cart) {
+      if (!shouldSync()) {
+        return Promise.resolve(null);
+      }
+      const snapshot = cloneCart(cart);
+      syncPromise = (syncPromise || Promise.resolve())
+        .catch(() => undefined)
+        .then(() => syncCartSnapshot(snapshot));
+      return syncPromise;
+    }
+
+    async function syncCartSnapshot(cart) {
+      if (!cart || !Array.isArray(cart.items)) {
+        return;
+      }
+      try {
+        await window.Auth.apiFetch(CART_API_ENDPOINT, {
+          method: 'POST',
+          body: { items: cart.items },
+        });
+      } catch (error) {
+        if (isApiUnavailableError(error)) {
+          disableRemoteSync(error && error.message ? error.message : 'API unavailable');
+          return;
+        }
+        console.warn('[HB Cart] Failed to sync cart', error);
+        window.dispatchEvent(
+          new CustomEvent('hb:cart:error', {
+            detail: {
+              error: error && error.message ? error.message : 'Unable to sync your cart. Changes are saved locally.',
+            },
+          })
+        );
+      }
+    }
 
     function makeItemKey(item) {
       if (!item || typeof item !== 'object') {
@@ -116,100 +260,6 @@
         .filter(Boolean);
     }
 
-    function normalizeCartDocument(user, data) {
-      const items = sanitizeCartItems((data && data.items) || []);
-      return {
-        uid: user && user.uid ? user.uid : (data && data.uid) || '',
-        email: user && user.email ? user.email : (data && data.email) || '',
-        updatedAt: (data && data.updatedAt) || null,
-        createdAt: (data && data.createdAt) || null,
-        items,
-      };
-    }
-
-    function emitCartUpdate(cart) {
-      lastEmittedCart = cart;
-      subscribers.forEach((callback) => {
-        if (typeof callback !== 'function') {
-          return;
-        }
-        try {
-          callback(cart);
-        } catch (error) {
-          console.warn('[HB Cart] Subscriber callback failed', error);
-        }
-      });
-      window.dispatchEvent(
-        new CustomEvent('hb:cart:updated', {
-          detail: {
-            cart,
-          },
-        })
-      );
-    }
-
-    function teardownRealtimeListener() {
-      if (typeof unsubscribeRealtime === 'function') {
-        try {
-          unsubscribeRealtime();
-        } catch (error) {
-          console.warn('[HB Cart] Failed to teardown Firestore listener', error);
-        }
-      }
-      unsubscribeRealtime = null;
-      activeListenerUid = null;
-    }
-
-    async function ensureRealtimeListener(user, firestore) {
-      if (!user || !user.uid || !firestore) {
-        return;
-      }
-      if (unsubscribeRealtime && activeListenerUid === user.uid) {
-        return;
-      }
-      teardownRealtimeListener();
-      const cartRef = firestore.collection('carts').doc(user.uid);
-      unsubscribeRealtime = cartRef.onSnapshot(
-        (snapshot) => {
-          const data = snapshot.exists ? snapshot.data() : {};
-          emitCartUpdate(normalizeCartDocument(user, data));
-        },
-        (error) => {
-          console.error('[HB Cart] Real-time listener error', error);
-          window.dispatchEvent(
-            new CustomEvent('hb:cart:error', {
-              detail: {
-                error: error && error.message ? error.message : 'Unable to synchronize cart.',
-              },
-            })
-          );
-        }
-      );
-      activeListenerUid = user.uid;
-    }
-
-    async function fetchCartOnce(user, firestore) {
-      if (!user || !user.uid || !firestore) {
-        return null;
-      }
-      try {
-        const snapshot = await firestore.collection('carts').doc(user.uid).get();
-        if (!snapshot.exists) {
-          return {
-            uid: user.uid,
-            email: user.email || '',
-            updatedAt: null,
-            createdAt: new Date().toISOString(),
-            items: [],
-          };
-        }
-        return normalizeCartDocument(user, snapshot.data());
-      } catch (error) {
-        console.warn('[HB Cart] Failed to fetch cart', error);
-        return null;
-      }
-    }
-
     function findItemIndex(items, target) {
       if (!target) {
         return -1;
@@ -218,40 +268,44 @@
       return items.findIndex((candidate) => makeItemKey(candidate) === key);
     }
 
-    async function mutateCart(user, mutator) {
-      if (!user || !user.uid) {
-        throw new Error('Please sign in to continue.');
+    async function ensureAuthenticated() {
+      if (window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated()) {
+        return window.Auth.getUser();
       }
-      const { firestore } = await ensureFirestoreContext();
-      const cartRef = firestore.collection('carts').doc(user.uid);
-      const now = new Date().toISOString();
-      let mutationResult = null;
+      if (window.Auth && typeof window.Auth.signIn === 'function') {
+        await window.Auth.signIn({ redirectTo: window.location.href });
+      }
+      throw new Error('Please sign in to continue.');
+    }
 
-      await firestore.runTransaction(async (transaction) => {
-        const snapshot = await transaction.get(cartRef);
-        const existing = snapshot.exists ? snapshot.data() : {};
-        const items = Array.isArray(existing.items)
-          ? existing.items.map((raw) => (raw && typeof raw === 'object' ? Object.assign({}, raw) : {}))
-          : [];
-        const mutatedItems = typeof mutator === 'function' ? mutator(items) || items : items;
-        const sanitizedItems = sanitizeCartItems(mutatedItems);
-        const payload = {
-          uid: user.uid,
-          email: user.email || existing.email || '',
-          updatedAt: now,
+    function commitCart(items, meta, options) {
+      const sanitizedItems = sanitizeCartItems(items);
+      const nextCart = Object.assign(
+        {
           items: sanitizedItems,
-        };
-        if (existing.createdAt) {
-          payload.createdAt = existing.createdAt;
-        } else if (!snapshot.exists) {
-          payload.createdAt = now;
-        }
-        transaction.set(cartRef, payload, { merge: true });
-        mutationResult = Object.assign({}, existing, payload);
-      });
+          updatedAt: new Date().toISOString(),
+        },
+        meta && typeof meta === 'object' ? meta : {}
+      );
+      cartState = nextCart;
+      saveStoredCart(nextCart);
+      emitCartUpdate(nextCart);
+      if (!options || !options.skipSync) {
+        scheduleCartSync(nextCart);
+      }
+      return nextCart;
+    }
 
-      emitCartUpdate(mutationResult);
-      return mutationResult;
+    async function mutateCart(user, mutator, options) {
+      const currentItems = Array.isArray(cartState.items)
+        ? cartState.items.map((raw) => (raw && typeof raw === 'object' ? Object.assign({}, raw) : {}))
+        : [];
+      const mutatedItems = typeof mutator === 'function' ? mutator(currentItems) || currentItems : currentItems;
+      const meta = {
+        uid: (user && (user.uid || user.id)) || cartState.uid || '',
+        email: (user && user.email) || cartState.email || '',
+      };
+      return commitCart(mutatedItems, meta, options);
     }
 
     async function addItem(rawItem, options) {
@@ -328,7 +382,7 @@
           items.splice(index, 1);
           return items;
         }
-        existing.quantity = Math.max(1, nextQuantity);
+        existing.quantity = nextQuantity;
         items[index] = existing;
         return items;
       });
@@ -369,94 +423,80 @@
       });
     }
 
-    async function subscribe(callback) {
-      if (typeof callback === 'function') {
-        subscribers.add(callback);
-        if (lastEmittedCart !== undefined) {
-          try {
-            callback(lastEmittedCart);
-          } catch (error) {
-            console.warn('[HB Cart] Initial subscriber callback failed', error);
-          }
+    function subscribe(callback) {
+      if (typeof callback !== 'function') {
+        return () => {};
+      }
+      subscribers.add(callback);
+      if (lastEmittedCart !== undefined) {
+        try {
+          callback(lastEmittedCart);
+        } catch (error) {
+          console.warn('[HB Cart] Initial subscriber callback failed', error);
         }
       }
-
-      if (!window.Auth || typeof window.Auth.isAuthenticated !== 'function' || !window.Auth.isAuthenticated()) {
-        if (typeof callback === 'function') {
-          try {
-            callback(null);
-          } catch (error) {
-            console.warn('[HB Cart] Subscriber callback failed for unauthenticated state', error);
-          }
-        }
-        return () => {
-          subscribers.delete(callback);
-        };
-      }
-
-      try {
-        const user = await ensureAuthenticated();
-        const { firestore } = await ensureFirestoreContext();
-        ensureRealtimeListener(user, firestore);
-        if (lastEmittedCart === undefined) {
-          const initialCart = await fetchCartOnce(user, firestore);
-          if (initialCart) {
-            emitCartUpdate(initialCart);
-          }
-        }
-      } catch (error) {
-        console.warn('[HB Cart] Unable to subscribe to cart updates', error);
-      }
-
       return () => {
         subscribers.delete(callback);
-        if (!subscribers.size) {
-          teardownRealtimeListener();
-        }
       };
     }
 
-    window.addEventListener('hb:auth:signed-in', async () => {
-      if (!subscribers.size) {
-        return;
+    async function getCart() {
+      if (lastEmittedCart !== undefined) {
+        return lastEmittedCart;
+      }
+      emitCartUpdate(cartState);
+      return cartState;
+    }
+
+    async function syncFromServer() {
+      if (!window.Auth || typeof window.Auth.apiFetch !== 'function') {
+        return cartState;
+      }
+      if (!shouldSync()) {
+        return cartState;
       }
       try {
-        const user = await ensureAuthenticated();
-        const { firestore } = await ensureFirestoreContext();
-        const initialCart = await fetchCartOnce(user, firestore);
-        if (initialCart) {
-          emitCartUpdate(initialCart);
-        }
-        ensureRealtimeListener(user, firestore);
-      } catch (error) {
-        console.warn('[HB Cart] Failed to reattach listener after sign-in', error);
-      }
-    });
-
-    window.addEventListener('hb:auth:signed-out', () => {
-      teardownRealtimeListener();
-      emitCartUpdate(null);
-    });
-
-    async function getCart() {
-      const user = await ensureAuthenticated();
-      const { firestore } = await ensureFirestoreContext();
-      const snapshot = await firestore.collection('carts').doc(user.uid).get();
-      if (!snapshot.exists) {
-        const emptyCart = {
-          uid: user.uid,
-          email: user.email || '',
-          updatedAt: null,
-          createdAt: new Date().toISOString(),
-          items: [],
+        const response = await window.Auth.apiFetch(CART_API_ENDPOINT, { method: 'GET' });
+        const payload = response && typeof response === 'object' && response.cart ? response.cart : response;
+        const items = sanitizeCartItems((payload && payload.items) || []);
+        const meta = {
+          uid: (payload && (payload.uid || payload.user_id)) || cartState.uid || '',
+          email: (payload && payload.email) || cartState.email || '',
+          updatedAt: payload && payload.updatedAt ? payload.updatedAt : new Date().toISOString(),
         };
-        emitCartUpdate(emptyCart);
-        return emptyCart;
+        return commitCart(items, meta, { skipSync: true });
+      } catch (error) {
+        if (isApiUnavailableError(error)) {
+          disableRemoteSync(error && error.message ? error.message : 'API unavailable');
+          return cartState;
+        }
+        console.warn('[HB Cart] Failed to fetch cart from server', error);
+        window.dispatchEvent(
+          new CustomEvent('hb:cart:error', {
+            detail: {
+              error: error && error.message ? error.message : 'Unable to load your cart right now.',
+            },
+          })
+        );
+        return cartState;
       }
-      const cart = normalizeCartDocument(user, snapshot.data());
-      emitCartUpdate(cart);
-      return cart;
     }
+
+    function clearLocal(options) {
+      try {
+        storage.removeItem(CART_STORAGE_KEY);
+      } catch (error) {
+        /* ignore */
+      }
+      cartState = { items: [], updatedAt: null };
+      if (options && options.emitNull) {
+        emitCartUpdate(null);
+      } else {
+        emitCartUpdate(cartState);
+      }
+    }
+
+    emitCartUpdate(cartState);
 
     return {
       addItem,
@@ -466,6 +506,8 @@
       updateItem,
       subscribe,
       getCart,
+      syncFromServer,
+      clearLocal,
     };
   }
 
@@ -2198,7 +2240,16 @@
   }
 
   window.addEventListener('hb:auth:signed-in', () => {
+    if (HBCart && typeof HBCart.syncFromServer === 'function') {
+      HBCart.syncFromServer();
+    }
     processPendingCartItem();
+  });
+
+  window.addEventListener('hb:auth:signed-out', () => {
+    if (HBCart && typeof HBCart.clearLocal === 'function') {
+      HBCart.clearLocal({ emitNull: true });
+    }
   });
 
   window.addEventListener('hb:cart:added', (event) => {
