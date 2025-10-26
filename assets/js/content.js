@@ -31,6 +31,16 @@
     element.textContent = en;
   }
 
+  function slugify(value) {
+    return (value || '')
+      .toString()
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .replace(/-{2,}/g, '-');
+  }
+
   async function loadData(name) {
     if (!cache.has(name)) {
       const url = `${DATA_BASE_PATH}${name}.json`;
@@ -149,6 +159,7 @@
 
       card.setAttribute('data-title', titleEn);
       card.setAttribute('data-title-hi', titleHi);
+      card.setAttribute('data-product-id', product.id || slugify(titleEn));
       card.setAttribute('data-img', product.image ? product.image.src || '' : '');
       card.setAttribute('data-desc', descEn);
       card.setAttribute('data-desc-hi', descHi);

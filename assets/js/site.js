@@ -7,7 +7,12 @@
   const PREFILL_KEY = 'hb_preorder_prefill_v1';
   const PENDING_CART_KEY = 'hb_pending_cart_item_v1';
   const PRODUCT_ASSETS_KEY = 'hb_product_assets_v1';
-  const CART_API_ENDPOINT = '/api/cart';
+  const LOCAL_CART_KEY = 'hb_cart_guest_v2';
+  const USER_CART_STORAGE_PREFIX = 'hb_user_cart_v2_';
+  const FIRESTORE_CART_COLLECTION = 'carts';
+  const CART_SYNC_DEBOUNCE_MS = 900;
+  const CART_PRICE_SCALE = 100; // store price as paise for accuracy
+  const CART_CURRENCY = 'INR';
   const DEFAULT_PRODUCT_ASSETS = {
     'Van Amrit — Wild Honey': { img: 'assets/img/menu/menu-item-1.png' },
     'Shila Madhu — Honey Dew': { img: 'assets/img/menu/menu-item-2.png' },
@@ -31,12 +36,16 @@
     productAssets: { ...DEFAULT_PRODUCT_ASSETS },
   };
 
+  const CART_DISABLED_COPY = {
+    en: 'Online cart checkout is no longer available.',
+    hi: 'ऑनलाइन कार्ट सुविधा अब उपलब्ध नहीं है।',
+  };
+
   const HBCart = createCartManager();
   HBSite.cart = HBCart;
   window.HBCart = HBCart;
 
   let globalsInitialized = false;
-  let cartFeedbackTimer = null;
 
   try {
     const storedAssets = storage.getItem(PRODUCT_ASSETS_KEY);
@@ -53,6 +62,10 @@
 
   function qsa(selector, context) {
     return Array.from((context || document).querySelectorAll(selector));
+  }
+
+  function getCartDisabledMessage() {
+    return state.language === 'hi' ? CART_DISABLED_COPY.hi : CART_DISABLED_COPY.en;
   }
 
   function logCartStep(message, details) {
@@ -137,31 +150,188 @@
     });
   }
 
+
   function createCartManager() {
     const subscribers = new Set();
+    let cartState = loadGuestCart();
+    let mode = 'guest';
+    let user = null;
+    let firebaseResources = null;
+    let firebaseReadyPromise = null;
+    let remoteUnsubscribe = null;
+    let pendingWriteTimer = null;
+    let pendingWritePromise = null;
     let lastEmittedCart = undefined;
-    let syncPromise = null;
-    let cartState = loadStoredCart();
-    let remoteSyncDisabled = false;
+    let isApplyingRemoteSnapshot = false;
 
-    function loadStoredCart() {
-      return { items: [], updatedAt: null, uid: '', email: '' };
+    emitCartUpdate(cartState);
+    bootstrapAuthBridge();
+
+    return {
+      addItem,
+      setItemQuantity,
+      incrementItem,
+      removeItem,
+      updateItem,
+      subscribe,
+      getCart,
+      syncFromServer,
+      clearLocal,
+      getMode: () => mode,
+    };
+
+    function bootstrapAuthBridge() {
+      if (window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated()) {
+        const currentUser = window.Auth.getUser && window.Auth.getUser();
+        if (currentUser) {
+          connectRemoteCart(currentUser);
+        }
+      }
+      window.addEventListener('hb:auth:signed-in', (event) => {
+        const detailUser = event && event.detail && event.detail.user;
+        connectRemoteCart(detailUser || (window.Auth && window.Auth.getUser && window.Auth.getUser()));
+      });
+      window.addEventListener('hb:auth:signed-out', () => {
+        disconnectRemoteCart();
+      });
     }
 
-    function saveStoredCart() {
-      /* client-side cart caching disabled */
+    function connectRemoteCart(nextUser) {
+      if (!nextUser || !nextUser.uid) {
+        return;
+      }
+      if (user && user.uid === nextUser.uid && mode === 'remote') {
+        return;
+      }
+      user = nextUser;
+      mode = 'remote';
+      const cached = loadUserCartSnapshot(user.uid);
+      if (cached) {
+        cartState = cached;
+        emitCartUpdate(cartState);
+      }
+      subscribeToRemoteCart(user.uid).catch((error) => {
+        console.warn('[HB Cart] Failed to subscribe to Firestore cart', error);
+      });
+    }
+
+    function disconnectRemoteCart() {
+      if (remoteUnsubscribe) {
+        try {
+          remoteUnsubscribe();
+        } catch (error) {
+          console.warn('[HB Cart] Failed to cleanup Firestore listener', error);
+        }
+        remoteUnsubscribe = null;
+      }
+      firebaseResources = null;
+      firebaseReadyPromise = null;
+      user = null;
+      mode = 'guest';
+      cartState = loadGuestCart();
+      emitCartUpdate(cartState);
+    }
+
+    function loadGuestCart() {
+      try {
+        const raw = storage.getItem(LOCAL_CART_KEY);
+        if (raw) {
+          return hydrateCart(JSON.parse(raw), { meta: { mode: 'guest' } });
+        }
+      } catch (error) {
+        console.warn('[HB Cart] Failed to parse guest cart', error);
+      }
+      return hydrateCart(null, { meta: { mode: 'guest' } });
+    }
+
+    function persistGuestCart(cart) {
+      try {
+        storage.setItem(LOCAL_CART_KEY, JSON.stringify(cart));
+      } catch (error) {
+        console.warn('[HB Cart] Unable to persist guest cart', error);
+      }
+    }
+
+    function loadUserCartSnapshot(uid) {
+      if (!uid) {
+        return null;
+      }
+      try {
+        const raw = storage.getItem(`${USER_CART_STORAGE_PREFIX}${uid}`);
+        if (!raw) {
+          return null;
+        }
+        return hydrateCart(JSON.parse(raw), { meta: { mode: 'remote', source: 'cache' } });
+      } catch (error) {
+        console.warn('[HB Cart] Failed to load cached user cart', error);
+        return null;
+      }
+    }
+
+    function persistUserCartSnapshot(uid, cart) {
+      if (!uid) {
+        return;
+      }
+      try {
+        storage.setItem(`${USER_CART_STORAGE_PREFIX}${uid}`, JSON.stringify(cart));
+      } catch (error) {
+        console.warn('[HB Cart] Unable to persist user cart snapshot', error);
+      }
+    }
+
+    function hydrateCart(raw, overrides) {
+      if (!raw || typeof raw !== 'object') {
+        return emptyCart(overrides);
+      }
+      const items = sanitizeCartItems(raw.items);
+      const meta = Object.assign(
+        {
+          lastMutatedAt: Date.now(),
+          lastMergedAt: 0,
+          mode,
+        },
+        raw.meta || {},
+        overrides && overrides.meta ? overrides.meta : {}
+      );
+      return {
+        items,
+        updatedAt: raw.updatedAt || new Date().toISOString(),
+        currency: raw.currency || CART_CURRENCY,
+        meta,
+      };
+    }
+
+    function emptyCart(overrides) {
+      const base = {
+        items: [],
+        updatedAt: new Date().toISOString(),
+        currency: CART_CURRENCY,
+        meta: {
+          lastMutatedAt: Date.now(),
+          lastMergedAt: 0,
+          mode: overrides && overrides.meta && overrides.meta.mode ? overrides.meta.mode : mode,
+        },
+      };
+      if (overrides && overrides.meta) {
+        base.meta = Object.assign(base.meta, overrides.meta);
+      }
+      return base;
     }
 
     function cloneCart(cart) {
-      if (cart === null || cart === undefined) {
+      if (!cart) {
         return cart;
       }
-      const items = Array.isArray(cart.items)
-        ? cart.items
-            .map((item) => (item && typeof item === 'object' ? Object.assign({}, item) : null))
-            .filter(Boolean)
-        : [];
-      return Object.assign({}, cart, { items });
+      return {
+        items: Array.isArray(cart.items)
+          ? cart.items
+              .map((item) => (item && typeof item === 'object' ? Object.assign({}, item) : null))
+              .filter(Boolean)
+          : [],
+        updatedAt: cart.updatedAt,
+        currency: cart.currency || CART_CURRENCY,
+        meta: cart.meta ? Object.assign({}, cart.meta) : {},
+      };
     }
 
     function emitCartUpdate(cart) {
@@ -179,94 +349,17 @@
         }
       });
       logCartStep('Cart update emitted', {
+        mode,
         itemCount: snapshot && Array.isArray(snapshot.items) ? snapshot.items.length : 0,
       });
       window.dispatchEvent(
         new CustomEvent('hb:cart:updated', {
           detail: {
             cart: snapshot,
+            mode,
           },
         })
       );
-    }
-
-    function disableRemoteSync(reason) {
-      if (remoteSyncDisabled) {
-        return;
-      }
-      remoteSyncDisabled = true;
-      const detail = reason || 'API unavailable';
-      console.info('[HB Cart] Remote cart sync disabled:', detail);
-      logCartStep('Remote cart sync disabled', { reason: detail });
-    }
-
-    function isApiUnavailableError(error) {
-      if (!error) {
-        return false;
-      }
-      if (error.status === 404 || error.status === 405 || error.status === 501) {
-        return true;
-      }
-      const message = (error && error.message && error.message.toString()) || '';
-      if (error.status === 500 && /missing\s+firebase\s+service\s+account/i.test(message)) {
-        return true;
-      }
-      return /cannot\s+get|not\s+found|failed to fetch/i.test(message);
-    }
-
-    function shouldSync() {
-      return Boolean(
-        window.Auth
-        && typeof window.Auth.isAuthenticated === 'function'
-        && typeof window.Auth.apiFetch === 'function'
-        && window.Auth.isAuthenticated()
-        && !remoteSyncDisabled
-      );
-    }
-
-    function scheduleCartSync(cart) {
-      if (!shouldSync()) {
-        return Promise.resolve(null);
-      }
-      const snapshot = cloneCart(cart);
-      syncPromise = (syncPromise || Promise.resolve())
-        .catch(() => undefined)
-        .then(() => syncCartSnapshot(snapshot));
-      return syncPromise;
-    }
-
-    async function syncCartSnapshot(cart) {
-      if (!cart || !Array.isArray(cart.items)) {
-        return;
-      }
-      try {
-        await window.Auth.apiFetch(CART_API_ENDPOINT, {
-          method: 'POST',
-          body: { items: cart.items },
-        });
-      } catch (error) {
-        if (isApiUnavailableError(error)) {
-          disableRemoteSync(error && error.message ? error.message : 'API unavailable');
-          return;
-        }
-        console.warn('[HB Cart] Failed to sync cart', error);
-        window.dispatchEvent(
-          new CustomEvent('hb:cart:error', {
-            detail: {
-              error: error && error.message ? error.message : 'Unable to sync your cart. Changes are saved locally.',
-            },
-          })
-        );
-      }
-    }
-
-    function makeItemKey(item) {
-      if (!item || typeof item !== 'object') {
-        return '';
-      }
-      const productId = item.productId || slugify(item.product || '');
-      const size = item.size || 'default';
-      return `${productId}`.toLowerCase() + '::' + `${size}`.toLowerCase();
     }
 
     function sanitizeCartItems(items) {
@@ -285,167 +378,21 @@
         .filter(Boolean);
     }
 
+    function makeItemKey(item) {
+      if (!item || typeof item !== 'object') {
+        return '';
+      }
+      const productId = item.productId || slugify(item.product || '');
+      const size = item.size || 'default';
+      return `${productId}`.toLowerCase() + '::' + `${size}`.toLowerCase();
+    }
+
     function findItemIndex(items, target) {
       if (!target) {
         return -1;
       }
       const key = makeItemKey(target);
       return items.findIndex((candidate) => makeItemKey(candidate) === key);
-    }
-
-    async function ensureAuthenticated() {
-      if (window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated()) {
-        return window.Auth.getUser();
-      }
-      if (window.Auth && typeof window.Auth.signIn === 'function') {
-        await window.Auth.signIn({ redirectTo: window.location.href });
-      }
-      throw new Error('Please sign in to continue.');
-    }
-
-    function commitCart(items, meta, options) {
-      const sanitizedItems = sanitizeCartItems(items);
-      const nextCart = Object.assign(
-        {
-          items: sanitizedItems,
-          updatedAt: new Date().toISOString(),
-        },
-        meta && typeof meta === 'object' ? meta : {}
-      );
-      cartState = nextCart;
-      saveStoredCart(nextCart);
-      emitCartUpdate(nextCart);
-      if (!options || !options.skipSync) {
-        scheduleCartSync(nextCart);
-      }
-      return nextCart;
-    }
-
-    async function mutateCart(user, mutator, options) {
-      const currentItems = Array.isArray(cartState.items)
-        ? cartState.items.map((raw) => (raw && typeof raw === 'object' ? Object.assign({}, raw) : {}))
-        : [];
-      const mutatedItems = typeof mutator === 'function' ? mutator(currentItems) || currentItems : currentItems;
-      const meta = {
-        uid: (user && (user.uid || user.id)) || cartState.uid || '',
-        email: (user && user.email) || cartState.email || '',
-      };
-      return commitCart(mutatedItems, meta, options);
-    }
-
-    async function addItem(rawItem, options) {
-      const user = await ensureAuthenticated();
-      const item = normalizeCartItem(rawItem);
-      const action = (options && options.action) || 'add';
-
-      const cart = await mutateCart(user, (items) => {
-        const existingIndex = findItemIndex(items, item);
-        if (existingIndex >= 0) {
-          const current = Object.assign({}, items[existingIndex]);
-          const currentQuantity = Number(current.quantity) || 0;
-          const nextQuantity = action === 'replace' ? item.quantity : currentQuantity + item.quantity;
-          current.quantity = Math.max(1, nextQuantity);
-          current.price = item.price != null ? item.price : current.price;
-          current.notes = item.notes || current.notes || '';
-          current.metadata = item.metadata != null ? item.metadata : current.metadata || null;
-          current.language = item.language || current.language || state.language;
-          items[existingIndex] = current;
-        } else {
-          items.push(item);
-        }
-        return items;
-      });
-
-      window.dispatchEvent(
-        new CustomEvent('hb:cart:added', {
-          detail: {
-            user,
-            item,
-            cart,
-          },
-        })
-      );
-
-      return cart;
-    }
-
-    async function setItemQuantity(productId, size, quantity) {
-      const user = await ensureAuthenticated();
-      const desiredQuantity = Math.max(0, Math.floor(Number(quantity) || 0));
-      return mutateCart(user, (items) => {
-        const placeholderItem = { productId, product: productId, size };
-        const index = findItemIndex(items, placeholderItem);
-        if (index === -1) {
-          return items;
-        }
-        if (desiredQuantity <= 0) {
-          items.splice(index, 1);
-          return items;
-        }
-        const existing = Object.assign({}, items[index]);
-        existing.quantity = desiredQuantity;
-        items[index] = existing;
-        return items;
-      });
-    }
-
-    async function incrementItem(productId, size, delta) {
-      const user = await ensureAuthenticated();
-      const change = Math.floor(Number(delta) || 0);
-      if (!change) {
-        return mutateCart(user, (items) => items);
-      }
-      return mutateCart(user, (items) => {
-        const placeholderItem = { productId, product: productId, size };
-        const index = findItemIndex(items, placeholderItem);
-        if (index === -1) {
-          return items;
-        }
-        const existing = Object.assign({}, items[index]);
-        const nextQuantity = (Number(existing.quantity) || 0) + change;
-        if (nextQuantity <= 0) {
-          items.splice(index, 1);
-          return items;
-        }
-        existing.quantity = nextQuantity;
-        items[index] = existing;
-        return items;
-      });
-    }
-
-    async function removeItem(productId, size) {
-      const user = await ensureAuthenticated();
-      return mutateCart(user, (items) => {
-        const placeholderItem = { productId, product: productId, size };
-        const index = findItemIndex(items, placeholderItem);
-        if (index === -1) {
-          return items;
-        }
-        items.splice(index, 1);
-        return items;
-      });
-    }
-
-    async function updateItem(productId, size, updates) {
-      const user = await ensureAuthenticated();
-      return mutateCart(user, (items) => {
-        const placeholderItem = { productId, product: productId, size };
-        const index = findItemIndex(items, placeholderItem);
-        if (index === -1) {
-          return items;
-        }
-        const existing = Object.assign({}, items[index]);
-        if (updates && typeof updates === 'object') {
-          Object.keys(updates).forEach((key) => {
-            if (updates[key] === undefined) {
-              return;
-            }
-            existing[key] = updates[key];
-          });
-        }
-        items[index] = existing;
-        return items;
-      });
     }
 
     function subscribe(callback) {
@@ -473,34 +420,409 @@
       return cartState;
     }
 
-    async function syncFromServer(reason) {
-      if (!window.Auth || typeof window.Auth.apiFetch !== 'function') {
-        logCartStep('Cart fetch skipped: auth API unavailable');
+    async function addItem(rawItem, options) {
+      const item = normalizeCartItem(rawItem);
+      const action = (options && options.action) || 'add';
+      return applyMutation((items) => {
+        const existingIndex = findItemIndex(items, item);
+        if (existingIndex >= 0) {
+          const current = Object.assign({}, items[existingIndex]);
+          const currentQuantity = Number(current.quantity) || 0;
+          const nextQuantity = action === 'replace' ? item.quantity : currentQuantity + item.quantity;
+          current.quantity = Math.max(1, nextQuantity);
+          if (item.pricePaise != null) {
+            current.pricePaise = item.pricePaise;
+            current.price = item.price;
+          }
+          current.notes = item.notes || current.notes || '';
+          current.metadata = item.metadata != null ? item.metadata : current.metadata || null;
+          current.image = item.image || current.image || '';
+          items[existingIndex] = current;
+        } else {
+          items.push(item);
+        }
+        return items;
+      }, { reason: 'add-item' }).then((cart) => {
+        window.dispatchEvent(
+          new CustomEvent('hb:cart:added', {
+            detail: {
+              user,
+              item,
+              cart,
+            },
+          })
+        );
+        return cart;
+      });
+    }
+
+    async function setItemQuantity(productId, size, quantity) {
+      const desiredQuantity = Math.max(0, Math.floor(Number(quantity) || 0));
+      return applyMutation((items) => {
+        const placeholderItem = { productId, product: productId, size };
+        const index = findItemIndex(items, placeholderItem);
+        if (index === -1) {
+          return items;
+        }
+        if (desiredQuantity <= 0) {
+          items.splice(index, 1);
+          return items;
+        }
+        const existing = Object.assign({}, items[index]);
+        existing.quantity = desiredQuantity;
+        items[index] = existing;
+        return items;
+      }, { reason: 'set-quantity' });
+    }
+
+    async function incrementItem(productId, size, delta) {
+      const change = Math.floor(Number(delta) || 0);
+      if (!change) {
         return cartState;
       }
-      if (!shouldSync()) {
-        logCartStep('Cart fetch skipped: sync disabled or unauthenticated');
+      return applyMutation((items) => {
+        const placeholderItem = { productId, product: productId, size };
+        const index = findItemIndex(items, placeholderItem);
+        if (index === -1) {
+          return items;
+        }
+        const existing = Object.assign({}, items[index]);
+        const nextQuantity = (Number(existing.quantity) || 0) + change;
+        if (nextQuantity <= 0) {
+          items.splice(index, 1);
+          return items;
+        }
+        existing.quantity = nextQuantity;
+        items[index] = existing;
+        return items;
+      }, { reason: 'increment' });
+    }
+
+    async function removeItem(productId, size) {
+      return applyMutation((items) => {
+        const placeholderItem = { productId, product: productId, size };
+        const index = findItemIndex(items, placeholderItem);
+        if (index === -1) {
+          return items;
+        }
+        items.splice(index, 1);
+        return items;
+      }, { reason: 'remove' });
+    }
+
+    async function updateItem(productId, size, updates) {
+      return applyMutation((items) => {
+        const placeholderItem = { productId, product: productId, size };
+        const index = findItemIndex(items, placeholderItem);
+        if (index === -1) {
+          return items;
+        }
+        const existing = Object.assign({}, items[index]);
+        if (updates && typeof updates === 'object') {
+          Object.keys(updates).forEach((key) => {
+            if (updates[key] === undefined) {
+              return;
+            }
+            existing[key] = updates[key];
+          });
+        }
+        items[index] = existing;
+        return items;
+      }, { reason: 'update' });
+    }
+
+    async function applyMutation(mutator, options) {
+      const currentItems = Array.isArray(cartState.items)
+        ? cartState.items.map((raw) => (raw && typeof raw === 'object' ? Object.assign({}, raw) : {}))
+        : [];
+      const mutatedItems = typeof mutator === 'function' ? mutator(currentItems) || currentItems : currentItems;
+      const sanitizedItems = sanitizeCartItems(mutatedItems);
+      const nextCart = Object.assign({}, cartState, {
+        items: sanitizedItems,
+        updatedAt: new Date().toISOString(),
+      });
+
+      if (mode === 'guest') {
+        nextCart.meta = Object.assign({}, nextCart.meta, { lastMutatedAt: Date.now() });
+        cartState = nextCart;
+        persistGuestCart(nextCart);
+        emitCartUpdate(nextCart);
+        return nextCart;
+      }
+
+      cartState = nextCart;
+      persistUserCartSnapshot(user && user.uid, nextCart);
+      emitCartUpdate(nextCart);
+      scheduleRemoteWrite(nextCart, options && options.reason);
+      return nextCart;
+    }
+
+    function scheduleRemoteWrite(cart, reason) {
+      if (!user || !user.uid) {
+        return;
+      }
+      if (pendingWriteTimer) {
+        window.clearTimeout(pendingWriteTimer);
+      }
+      pendingWriteTimer = window.setTimeout(() => {
+        pendingWriteTimer = null;
+        pendingWritePromise = persistCartToFirestore(cart, reason).catch((error) => {
+          console.warn('[HB Cart] Firestore sync failed', error);
+          window.dispatchEvent(
+            new CustomEvent('hb:cart:error', {
+              detail: {
+                error: error && error.message ? error.message : 'Unable to sync your cart right now.',
+              },
+            })
+          );
+        });
+      }, CART_SYNC_DEBOUNCE_MS);
+      return pendingWritePromise;
+    }
+
+    async function persistCartToFirestore(cart, reason) {
+      if (!user || !user.uid) {
+        return;
+      }
+      const resources = await ensureFirebaseResources();
+      const firestore = resources.firestore;
+      if (!firestore) {
+        throw new Error('Firestore is not available.');
+      }
+      const docRef = firestore.collection(FIRESTORE_CART_COLLECTION).doc(user.uid);
+      const payload = serializeCartForFirestore(cart, resources);
+      isApplyingRemoteSnapshot = true;
+      try {
+        await docRef.set(payload, { merge: true });
+        logCartStep('Cart persisted to Firestore', { reason: reason || 'mutation', itemCount: cart.items.length });
+      } finally {
+        window.setTimeout(() => {
+          isApplyingRemoteSnapshot = false;
+        }, 50);
+      }
+    }
+
+    function ensureFirebaseResources() {
+      if (firebaseResources) {
+        return Promise.resolve(firebaseResources);
+      }
+      if (firebaseReadyPromise) {
+        return firebaseReadyPromise;
+      }
+      if (!window.Auth || typeof window.Auth.ensureFirebaseReady !== 'function') {
+        return Promise.reject(new Error('Firebase is not configured. Set APP_FIREBASE_CONFIG.'));
+      }
+      firebaseReadyPromise = window.Auth.ensureFirebaseReady()
+        .then((resources) => {
+          firebaseResources = resources;
+          return resources;
+        })
+        .catch((error) => {
+          firebaseReadyPromise = null;
+          throw error;
+        });
+      return firebaseReadyPromise;
+    }
+
+    async function subscribeToRemoteCart(uid) {
+      const resources = await ensureFirebaseResources();
+      const firestore = resources.firestore;
+      if (!firestore) {
+        throw new Error('Firestore is not available.');
+      }
+      if (remoteUnsubscribe) {
+        try {
+          remoteUnsubscribe();
+        } catch (error) {
+          console.warn('[HB Cart] Failed to dispose previous Firestore listener', error);
+        }
+        remoteUnsubscribe = null;
+      }
+      const docRef = firestore.collection(FIRESTORE_CART_COLLECTION).doc(uid);
+      const snapshot = await docRef.get();
+      let remoteCart = snapshot.exists ? deserializeCartDocument(snapshot.data()) : emptyCart({ meta: { mode: 'remote' } });
+      remoteCart = await maybeMergeGuestCart(docRef, remoteCart, resources);
+      cartState = remoteCart;
+      persistUserCartSnapshot(uid, remoteCart);
+      emitCartUpdate(remoteCart);
+
+      remoteUnsubscribe = docRef.onSnapshot((doc) => {
+        if (!doc.exists) {
+          const clearedCart = emptyCart({ meta: { mode: 'remote' } });
+          cartState = clearedCart;
+          persistUserCartSnapshot(uid, clearedCart);
+          emitCartUpdate(clearedCart);
+          return;
+        }
+        if (isApplyingRemoteSnapshot) {
+          return;
+        }
+        const nextCart = deserializeCartDocument(doc.data());
+        cartState = nextCart;
+        persistUserCartSnapshot(uid, nextCart);
+        emitCartUpdate(nextCart);
+      });
+    }
+
+    async function maybeMergeGuestCart(docRef, remoteCart, resources) {
+      const guestCart = loadGuestCart();
+      if (!hasGuestChanges(guestCart)) {
+        return remoteCart;
+      }
+      const mergedCart = mergeCarts(remoteCart, guestCart);
+      try {
+        await docRef.set(serializeCartForFirestore(mergedCart, resources), { merge: true });
+        markGuestCartMerged(guestCart);
+        persistGuestCart(guestCart);
+        logCartStep('Guest cart merged into Firestore cart', {
+          guestItems: guestCart.items.length,
+          mergedItems: mergedCart.items.length,
+        });
+      } catch (error) {
+        console.warn('[HB Cart] Failed to merge guest cart into Firestore', error);
+      }
+      return mergedCart;
+    }
+
+    function mergeCarts(remoteCart, guestCart) {
+      const map = new Map();
+      const combine = (item) => {
+        const key = makeItemKey(item);
+        if (!key) {
+          return;
+        }
+        if (map.has(key)) {
+          const existing = map.get(key);
+          existing.quantity = Math.max(1, (Number(existing.quantity) || 0) + (Number(item.quantity) || 0));
+          if (item.pricePaise != null && existing.pricePaise == null) {
+            existing.pricePaise = item.pricePaise;
+            existing.price = item.price;
+          }
+          if (!existing.image && item.image) {
+            existing.image = item.image;
+          }
+          if (!existing.notes && item.notes) {
+            existing.notes = item.notes;
+          }
+          return;
+        }
+        map.set(key, Object.assign({}, item));
+      };
+      (remoteCart && Array.isArray(remoteCart.items) ? remoteCart.items : []).forEach(combine);
+      (guestCart && Array.isArray(guestCart.items) ? guestCart.items : []).forEach(combine);
+      return {
+        items: Array.from(map.values()),
+        updatedAt: new Date().toISOString(),
+        currency: CART_CURRENCY,
+        meta: {
+          mode: 'remote',
+          source: 'merge',
+        },
+      };
+    }
+
+    function hasGuestChanges(cart) {
+      if (!cart || !Array.isArray(cart.items) || !cart.items.length) {
+        return false;
+      }
+      const lastMutated = Number(cart.meta && cart.meta.lastMutatedAt) || 0;
+      const lastMerged = Number(cart.meta && cart.meta.lastMergedAt) || 0;
+      return lastMutated >= lastMerged;
+    }
+
+    function markGuestCartMerged(cart) {
+      if (!cart || !cart.meta) {
+        return;
+      }
+      const timestamp = Date.now();
+      cart.meta.lastMergedAt = cart.meta.lastMutatedAt || timestamp;
+      cart.meta.lastMutatedAt = cart.meta.lastMutatedAt || timestamp;
+    }
+
+    function serializeCartForFirestore(cart, resources) {
+      const firebase = resources && resources.firebase;
+      const serverTimestamp = firebase && firebase.firestore && firebase.firestore.FieldValue
+        ? firebase.firestore.FieldValue.serverTimestamp()
+        : new Date().toISOString();
+      const items = {};
+      (cart.items || []).forEach((item) => {
+        const key = makeItemKey(item);
+        if (!key) {
+          return;
+        }
+        items[key] = {
+          productId: item.productId,
+          name: item.product || '',
+          size: item.size || '',
+          qty: item.quantity,
+          priceSnapshot: Number.isFinite(item.pricePaise) ? item.pricePaise : null,
+          currency: CART_CURRENCY,
+          image: item.image || '',
+          notes: item.notes || '',
+          metadata: item.metadata || null,
+          addedAt: item.addedAt || new Date().toISOString(),
+        };
+      });
+      return {
+        userId: user && user.uid,
+        currency: CART_CURRENCY,
+        updatedAt: serverTimestamp,
+        clientUpdatedAt: cart.updatedAt || new Date().toISOString(),
+        version: 2,
+        items,
+      };
+    }
+
+    function deserializeCartDocument(data) {
+      if (!data || typeof data !== 'object') {
+        return emptyCart({ meta: { mode: 'remote' } });
+      }
+      const collection = data.items && typeof data.items === 'object' ? data.items : {};
+      const items = Object.keys(collection).map((key) => {
+        const raw = collection[key] || {};
+        return normalizeCartItem({
+          productId: raw.productId || key,
+          product: raw.name || raw.product || '',
+          size: raw.size || '',
+          quantity: raw.qty || raw.quantity || 1,
+          pricePaise: raw.priceSnapshot != null ? raw.priceSnapshot : raw.price_paise,
+          price: raw.price,
+          image: raw.image || '',
+          notes: raw.notes || '',
+          metadata: raw.metadata || null,
+          addedAt: raw.addedAt || (raw.metadata && raw.metadata.addedAt) || new Date().toISOString(),
+        });
+      });
+      return {
+        items: sanitizeCartItems(items),
+        updatedAt: new Date().toISOString(),
+        currency: data.currency || CART_CURRENCY,
+        meta: {
+          mode: 'remote',
+          source: 'firestore',
+        },
+      };
+    }
+
+    async function syncFromServer(reason) {
+      if (mode !== 'remote' || !user || !user.uid) {
+        logCartStep('Cart fetch skipped', { reason: reason || 'guest-mode' });
+        emitCartUpdate(cartState);
         return cartState;
       }
       try {
-        logCartStep('Cart fetch started', { reason: reason || 'unspecified' });
-        const response = await window.Auth.apiFetch(CART_API_ENDPOINT, { method: 'GET' });
-        const payload = response && typeof response === 'object' && response.cart ? response.cart : response;
-        const items = sanitizeCartItems((payload && payload.items) || []);
-        const meta = {
-          uid: (payload && (payload.uid || payload.user_id)) || cartState.uid || '',
-          email: (payload && payload.email) || cartState.email || '',
-          updatedAt: payload && payload.updatedAt ? payload.updatedAt : new Date().toISOString(),
-        };
-        logCartStep('Cart fetch succeeded', { itemCount: items.length });
-        return commitCart(items, meta, { skipSync: true });
+        const resources = await ensureFirebaseResources();
+        const firestore = resources.firestore;
+        const docRef = firestore.collection(FIRESTORE_CART_COLLECTION).doc(user.uid);
+        logCartStep('Cart fetch started', { reason: reason || 'manual' });
+        const snapshot = await docRef.get();
+        const payload = snapshot.exists ? deserializeCartDocument(snapshot.data()) : emptyCart({ meta: { mode: 'remote' } });
+        cartState = payload;
+        persistUserCartSnapshot(user.uid, payload);
+        emitCartUpdate(payload);
+        return payload;
       } catch (error) {
-        if (isApiUnavailableError(error)) {
-          disableRemoteSync(error && error.message ? error.message : 'API unavailable');
-          return cartState;
-        }
-        console.warn('[HB Cart] Failed to fetch cart from server', error);
-        logCartStep('Cart fetch failed', { reason: error && error.message ? error.message : 'unknown error' });
+        console.warn('[HB Cart] Failed to fetch cart from Firestore', error);
         window.dispatchEvent(
           new CustomEvent('hb:cart:error', {
             detail: {
@@ -513,27 +835,17 @@
     }
 
     function clearLocal(options) {
-      cartState = { items: [], updatedAt: null };
-      if (options && options.emitNull) {
-        emitCartUpdate(null);
-      } else {
+      const nextCart = emptyCart({ meta: { mode: 'guest' } });
+      persistGuestCart(nextCart);
+      if (mode === 'guest') {
+        cartState = nextCart;
+        if (options && options.emitNull) {
+          emitCartUpdate(cartState);
+        }
+      } else if (options && options.emitNull) {
         emitCartUpdate(cartState);
       }
     }
-
-    emitCartUpdate(cartState);
-
-    return {
-      addItem,
-      setItemQuantity,
-      incrementItem,
-      removeItem,
-      updateItem,
-      subscribe,
-      getCart,
-      syncFromServer,
-      clearLocal,
-    };
   }
 
   function normalizeCartItem(item) {
@@ -546,7 +858,8 @@
     const quantityNumber = Number(item.quantity);
     const quantity = Number.isFinite(quantityNumber) && quantityNumber > 0 ? Math.floor(quantityNumber) : 1;
     const fallbackId = name ? slugify(`${name}-${size || 'default'}`) : `product-${Date.now()}`;
-    const priceValue = Number(item.price);
+    const pricePaise = resolveCartPricePaise(item, size);
+    const priceValue = Number.isFinite(pricePaise) ? pricePaise / CART_PRICE_SCALE : null;
 
     return {
       productId: item.productId || fallbackId,
@@ -554,12 +867,52 @@
       size,
       quantity,
       price: Number.isFinite(priceValue) && priceValue > 0 ? priceValue : null,
+      pricePaise: pricePaise,
       image: item.img || item.image || '',
       notes: item.notes || '',
       language: item.language || state.language,
       addedAt: item.addedAt || new Date().toISOString(),
       metadata: item.metadata || null,
     };
+  }
+
+  function resolveCartPricePaise(item, size) {
+    const candidates = [
+      item.pricePaise,
+      item.price_paise,
+      item.priceSnapshot,
+    ];
+    for (let index = 0; index < candidates.length; index += 1) {
+      const value = normalizePaiseValue(candidates[index]);
+      if (value !== null) {
+        return value;
+      }
+    }
+
+    if (item.price != null) {
+      const rupeeValue = Number(item.price);
+      if (Number.isFinite(rupeeValue) && rupeeValue > 0) {
+        const paiseFromPrice = normalizePaiseValue(rupeeValue * CART_PRICE_SCALE);
+        if (paiseFromPrice !== null) {
+          return paiseFromPrice;
+        }
+      }
+    }
+
+    const inferred = resolvePriceForSize(size);
+    if (Number.isFinite(inferred) && inferred > 0) {
+      return normalizePaiseValue(inferred * CART_PRICE_SCALE);
+    }
+
+    return null;
+  }
+
+  function normalizePaiseValue(candidate) {
+    const numeric = Number(candidate);
+    if (!Number.isFinite(numeric) || numeric <= 0) {
+      return null;
+    }
+    return Math.round(numeric);
   }
 
   function slugify(value) {
@@ -575,7 +928,7 @@
   const CART_TEXT = {
     en: {
       empty: 'Your cart is empty.',
-      signInPrompt: 'Please sign in to view and manage your cart.',
+      signInPrompt: 'Sign in to sync your cart and checkout securely.',
       signInButton: 'Sign in',
       unknownPrice: 'Price unavailable',
       quantity: 'Quantity',
@@ -588,13 +941,17 @@
       empty: 'Selected product',
       checkoutDisabled: 'Add items to your cart before proceeding to checkout.',
       checkoutRedirect: 'Redirecting you to checkout...',
+      checkoutCtaAuth: 'Sign in to checkout',
+      checkoutCta: 'Proceed to checkout',
+      summaryHintSignedIn: 'Adjust quantities or remove items at any time. Your cart stays in sync across devices.',
+      summaryHintGuest: 'Totals are estimates. Sign in to sync across devices and checkout securely.',
       updateError: 'Unable to update cart. Please try again.',
       decrementAria: 'Decrease quantity',
       incrementAria: 'Increase quantity',
     },
     hi: {
       empty: 'आपका कार्ट खाली है।',
-      signInPrompt: 'अपना कार्ट देखने और प्रबंधित करने के लिए कृपया साइन इन करें।',
+      signInPrompt: 'अपने कार्ट को सिंक करने और सुरक्षित रूप से चेकआउट पूरा करने के लिए साइन इन करें।',
       signInButton: 'साइन इन करें',
       unknownPrice: 'मूल्य उपलब्ध नहीं',
       quantity: 'मात्रा',
@@ -607,6 +964,10 @@
       empty: 'चयनित उत्पाद',
       checkoutDisabled: 'चेकआउट पर जाने से पहले उत्पाद जोड़ें।',
       checkoutRedirect: 'आपको चेकआउट पर भेजा जा रहा है...',
+      checkoutCtaAuth: 'चेकआउट के लिए साइन इन करें',
+      checkoutCta: 'चेकआउट पर जाएं',
+      summaryHintSignedIn: 'मात्रा बदलें या आइटम हटाएं। आपका कार्ट सभी उपकरणों पर सिंक रहता है।',
+      summaryHintGuest: 'कुल अनुमानित हैं। सुरक्षित चेकआउट के लिए साइन इन करें और सभी उपकरणों पर सिंक रखें।',
       updateError: 'कार्ट अपडेट नहीं हो पाया। कृपया पुनः प्रयास करें।',
       decrementAria: 'मात्रा घटाएं',
       incrementAria: 'मात्रा बढ़ाएं',
@@ -625,8 +986,9 @@
 
   const cartCurrencyFormatter = new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
+    currency: CART_CURRENCY,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   });
 
   function isCartPageActive() {
@@ -731,6 +1093,30 @@
     }, type === 'error' ? 6000 : 4000);
   }
 
+  function showCatalogCartFeedback(text, type) {
+    const feedback = document.getElementById('cartFeedback');
+    if (!feedback || !text) {
+      if (text) {
+        console.info('[HB Cart]', text);
+      }
+      return;
+    }
+    feedback.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-warning', 'alert-info');
+    const variant = type === 'error'
+      ? 'alert-danger'
+      : type === 'warning'
+        ? 'alert-warning'
+        : 'alert-success';
+    feedback.classList.add(variant);
+    feedback.textContent = text;
+    if (feedback._hbTimer) {
+      window.clearTimeout(feedback._hbTimer);
+    }
+    feedback._hbTimer = window.setTimeout(() => {
+      feedback.classList.add('d-none');
+    }, 4200);
+  }
+
   function resolveCartProductName(item, lang) {
     if (!item || typeof item !== 'object') {
       return cartText('unknownProduct');
@@ -806,19 +1192,21 @@
     actions.className = 'd-flex flex-column align-items-end gap-2 ms-md-auto';
     body.appendChild(actions);
 
-    const priceValue = Number(item.price);
+    const pricePaise = Number(item.pricePaise);
     const quantityValue = Number(item.quantity) || 0;
-    const lineTotal = Number.isFinite(priceValue) ? priceValue * quantityValue : Number.NaN;
+    const lineTotalPaise = Number.isFinite(pricePaise) ? pricePaise * quantityValue : Number.NaN;
 
     const totalLabel = document.createElement('div');
     totalLabel.className = 'cart-item-price fw-semibold';
-    totalLabel.textContent = Number.isFinite(lineTotal) ? formatCartCurrency(lineTotal) : cartText('unknownPrice');
+    totalLabel.textContent = Number.isFinite(lineTotalPaise)
+      ? formatCartCurrency(lineTotalPaise / CART_PRICE_SCALE)
+      : cartText('unknownPrice');
     actions.appendChild(totalLabel);
 
-    if (Number.isFinite(priceValue)) {
+    if (Number.isFinite(pricePaise)) {
       const unitLabel = document.createElement('small');
       unitLabel.className = 'text-muted';
-      unitLabel.textContent = `${formatCartCurrency(priceValue)} x ${quantityValue || 0}`;
+      unitLabel.textContent = `${formatCartCurrency(pricePaise / CART_PRICE_SCALE)} x ${quantityValue || 0}`;
       actions.appendChild(unitLabel);
     }
 
@@ -860,14 +1248,14 @@
     return (items || []).reduce(
       (accumulator, item) => {
         const quantity = Number(item.quantity) || 0;
-        const price = Number(item.price);
-        if (Number.isFinite(price) && quantity > 0) {
-          accumulator.subtotal += price * quantity;
+        const pricePaise = Number(item.pricePaise);
+        if (Number.isFinite(pricePaise) && quantity > 0) {
+          accumulator.subtotalPaise += pricePaise * quantity;
         }
         accumulator.itemCount += quantity > 0 ? quantity : 0;
         return accumulator;
       },
-      { subtotal: 0, itemCount: 0 }
+      { subtotalPaise: 0, itemCount: 0 }
     );
   }
 
@@ -886,29 +1274,13 @@
       elements.summaryCard.classList.remove('opacity-75', 'disabled');
     }
 
-    if (!isAuthenticated) {
-      if (elements.itemsList) {
-        elements.itemsList.innerHTML = '';
-      }
-      if (elements.emptyState) {
-        elements.emptyState.classList.add('d-none');
-      }
-      if (elements.summaryCard) {
-        elements.summaryCard.classList.add('opacity-75', 'disabled');
-      }
-      if (elements.checkoutButton) {
-        elements.checkoutButton.disabled = true;
-        elements.checkoutButton.setAttribute('aria-disabled', 'true');
-      }
-      if (elements.authPrompt) {
-        elements.authPrompt.classList.remove('d-none');
-      }
-      logCartStep('Cart render blocked: user not authenticated');
-      return;
+    if (elements.authPrompt) {
+      elements.authPrompt.classList.toggle('d-none', isAuthenticated);
     }
 
-    if (elements.authPrompt) {
-      elements.authPrompt.classList.add('d-none');
+    if (elements.summaryHint) {
+      const hintKey = isAuthenticated ? 'summaryHintSignedIn' : 'summaryHintGuest';
+      elements.summaryHint.textContent = cartText(hintKey);
     }
 
     if (elements.itemsList) {
@@ -933,7 +1305,7 @@
     }
 
     const totals = computeCartTotals(items);
-    const totalValue = totals.subtotal;
+    const totalValue = totals.subtotalPaise / CART_PRICE_SCALE;
     if (elements.subtotal) {
       elements.subtotal.textContent = formatCartTotal(totalValue);
     }
@@ -948,6 +1320,10 @@
       } else {
         elements.checkoutButton.removeAttribute('aria-disabled');
       }
+      elements.checkoutButton.dataset.requiresAuth = (!isAuthenticated).toString();
+      elements.checkoutButton.textContent = isAuthenticated
+        ? cartText('checkoutCta')
+        : cartText('checkoutCtaAuth');
     }
   }
 
@@ -1096,6 +1472,18 @@
       showCartStatus(cartText('checkoutDisabled'), 'warning');
       return;
     }
+    const isAuthenticated = window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated();
+    if (!isAuthenticated) {
+      showCartStatus(cartText('signInPrompt'), 'warning');
+      if (window.Auth && typeof window.Auth.signIn === 'function') {
+        window.Auth.signIn({ redirectTo: window.location.href }).catch(() => {
+          const loginUrl = new URL('login.html', window.location.origin);
+          loginUrl.searchParams.set('redirect', window.location.href);
+          window.location.assign(`${loginUrl.pathname}${loginUrl.search}${loginUrl.hash}`);
+        });
+      }
+      return;
+    }
     showCartStatus(cartText('checkoutRedirect'), 'info');
     window.setTimeout(() => {
       window.location.assign('preorder.html');
@@ -1152,10 +1540,10 @@
       logCartStep('Cart page fetch skipped: cart manager unavailable');
       return Promise.resolve(null);
     }
-    const isAuthenticated = window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated();
-    if (!isAuthenticated) {
-      logCartStep('Cart page fetch skipped: user not authenticated');
-      return Promise.resolve(null);
+    const cartMode = typeof HBCart.getMode === 'function' ? HBCart.getMode() : 'guest';
+    if (cartMode !== 'remote') {
+      logCartStep('Cart page fetch skipped: using local cart state', { reason });
+      return Promise.resolve(cartPageState.lastCart || null);
     }
     const fetchReason = reason || 'cart-page';
     logCartStep('Cart page fetch starting', { reason: fetchReason });
@@ -1244,132 +1632,21 @@
     return typeof fallback === 'number' ? fallback : null;
   }
 
-  function hideCartFeedback() {
-    const container = qs('#cartFeedback');
-    if (!container) {
-      return;
-    }
-    container.classList.add('d-none');
-    container.classList.remove('alert-success', 'alert-danger', 'alert-info');
-    container.textContent = '';
-    if (cartFeedbackTimer) {
-      window.clearTimeout(cartFeedbackTimer);
-      cartFeedbackTimer = null;
-    }
-  }
-
-  function showCartFeedback(message, options) {
-    const container = qs('#cartFeedback');
-    if (!container || !message) {
-      if (!container && message) {
-        console.info('[HB Cart]', message);
-      }
-      return;
-    }
-    const type = options && options.type === 'error'
-      ? 'alert-danger'
-      : options && options.type === 'info'
-        ? 'alert-info'
-        : 'alert-success';
-    container.classList.remove('alert-success', 'alert-danger', 'alert-info', 'd-none');
-    container.classList.add(type);
-    container.textContent = message;
-    if (cartFeedbackTimer) {
-      window.clearTimeout(cartFeedbackTimer);
-    }
-    const duration = options && Number.isFinite(options.duration)
-      ? Math.max(2000, Number(options.duration))
-      : 4000;
-    cartFeedbackTimer = window.setTimeout(() => {
-      hideCartFeedback();
-    }, duration);
-  }
-
-  function savePendingCartItem(item, context) {
-    if (!item || typeof item !== 'object') {
-      return;
-    }
-    const now = Date.now();
-    const payload = {
-      item,
-      context: context || 'collection',
-      createdAt: now,
-      expiresAt: now + 30 * 60 * 1000,
-      product: {
-        en: item.product || '',
-        hi: item.productHi || '',
-      },
-      size: item.size || '',
-    };
-    try {
-      storage.setItem(PENDING_CART_KEY, JSON.stringify(payload));
-    } catch (error) {
-      /* ignore persistence errors */
-    }
-  }
-
-  function loadPendingCartItem() {
+  function processPendingCartItem() {
     try {
       const raw = storage.getItem(PENDING_CART_KEY);
       if (!raw) {
-        return null;
+        return;
       }
-      const data = JSON.parse(raw);
-      if (!data || typeof data !== 'object') {
-        storage.removeItem(PENDING_CART_KEY);
-        return null;
+      storage.removeItem(PENDING_CART_KEY);
+      const pending = JSON.parse(raw);
+      if (pending && window.HBCart && typeof window.HBCart.addItem === 'function') {
+        window.HBCart.addItem(pending).catch(() => {
+          /* ignore failures */
+        });
       }
-      if (data.expiresAt && Number.isFinite(Number(data.expiresAt)) && Date.now() > Number(data.expiresAt)) {
-        storage.removeItem(PENDING_CART_KEY);
-        return null;
-      }
-      return data;
     } catch (error) {
       storage.removeItem(PENDING_CART_KEY);
-      return null;
-    }
-  }
-
-  function clearPendingCartItem() {
-    try {
-      storage.removeItem(PENDING_CART_KEY);
-    } catch (error) {
-      /* ignore */
-    }
-  }
-
-  let pendingCartProcessing = false;
-
-  async function processPendingCartItem() {
-    if (pendingCartProcessing) {
-      return;
-    }
-    const pending = loadPendingCartItem();
-    if (!pending || !pending.item) {
-      return;
-    }
-    if (!window.Auth || typeof window.Auth.isAuthenticated !== 'function' || !window.Auth.isAuthenticated()) {
-      return;
-    }
-
-    pendingCartProcessing = true;
-    try {
-      await HBCart.addItem(pending.item);
-    } catch (error) {
-      const message = error && error.message ? error.message : (state.language === 'hi'
-        ? 'कार्ट में आइटम जोड़ने में असमर्थ।'
-        : 'Unable to add item to cart.');
-      window.dispatchEvent(
-        new CustomEvent('hb:cart:error', {
-          detail: {
-            error: message,
-            item: pending.item,
-          },
-        })
-      );
-    } finally {
-      clearPendingCartItem();
-      pendingCartProcessing = false;
     }
   }
 
@@ -2013,132 +2290,58 @@
 
     if (!confirmBtn.dataset.hbBound) {
       confirmBtn.dataset.hbBound = 'true';
-      confirmBtn.addEventListener('click', async () => {
+      confirmBtn.addEventListener('click', () => {
         const selected = sizeInputs.find((radio) => radio.checked);
         const currentItem = getActiveItem();
         if (!selected || !currentItem) {
           return;
         }
-
-        hideCartFeedback();
-
-        const productTitle = currentItem.getAttribute('data-title') || '';
-        const productTitleHi = currentItem.getAttribute('data-title-hi') || '';
-        const productImg = currentItem.getAttribute('data-img') || '';
-        const cartItem = {
-          productId: currentItem.getAttribute('data-product-id') || slugify(`${productTitle}-${selected.value}`),
-          product: productTitle,
-          productHi: productTitleHi,
-          size: selected.value,
-          quantity: 1,
-          img: productImg,
-          price: resolvePriceForSize(selected.value),
-          language: state.language,
-        };
-        const payload = {
-          product: productTitle,
-          productHi: productTitleHi,
-          size: selected.value,
-          img: productImg,
-        };
-
-        try {
-          storage.setItem(PREFILL_KEY, JSON.stringify(payload));
-        } catch (error) {
-          /* ignore storage persistence errors */
+        const sizeValue = selected.value;
+        const price = resolvePriceForSize(sizeValue);
+        if (!Number.isFinite(price) || price <= 0) {
+          showCatalogCartFeedback(cartText('unknownPrice'), 'error');
+          return;
         }
-
-        const originalEn = confirmBtn.getAttribute('data-en') || confirmBtn.textContent;
-        const originalHi = confirmBtn.getAttribute('data-hi') || originalEn;
-        const loadingText = state.language === 'hi' ? 'कार्ट में जोड़ रहा है...' : 'Adding to cart...';
-        const successTextEn = productTitle
-          ? `Added ${productTitle}${selected.value ? ` (${selected.value})` : ''} to cart!`
-          : 'Added to cart!';
-        const successTextHi = productTitleHi
-          ? `${productTitleHi}${selected.value ? ` (${selected.value})` : ''} कार्ट में जोड़ दिया गया है!`
-          : 'कार्ट में जोड़ दिया गया!';
-        const restoreButtonState = () => {
-          confirmBtn.setAttribute('data-en', originalEn);
-          confirmBtn.setAttribute('data-hi', originalHi);
-          confirmBtn.textContent = state.language === 'hi' ? originalHi : originalEn;
-          confirmBtn.disabled = false;
-        };
-
-        confirmBtn.setAttribute('data-en', loadingText);
-        confirmBtn.setAttribute('data-hi', loadingText);
-        confirmBtn.textContent = loadingText;
+        const titleEn = currentItem.getAttribute('data-title') || '';
+        const titleHi = currentItem.getAttribute('data-title-hi') || titleEn;
+        const productId = currentItem.getAttribute('data-product-id') || slugify(titleEn || sizeValue);
+        const imageSrc = currentItem.getAttribute('data-img') || '';
         confirmBtn.disabled = true;
+        const payload = {
+          productId,
+          product: titleEn,
+          productHi: titleHi,
+          size: sizeValue,
+          quantity: 1,
+          price,
+          image: imageSrc,
+          metadata: {
+            productId,
+            source: 'preorder-modal',
+            titleHi,
+          },
+        };
 
-        const isAuthenticated = window.Auth
-          && typeof window.Auth.isAuthenticated === 'function'
-          && window.Auth.isAuthenticated();
-
-        if (!isAuthenticated) {
-          savePendingCartItem(cartItem, 'collection');
-          hideModal();
-          if (window.Auth && typeof window.Auth.signIn === 'function') {
-            window.Auth.signIn({ redirectTo: window.location.href }).catch(() => {
-              const loginUrl = new URL('login.html', window.location.origin);
-              loginUrl.searchParams.set('redirect', window.location.href);
-              window.location.assign(`${loginUrl.pathname}${loginUrl.search}${loginUrl.hash}`);
-            });
-          } else {
-            const loginUrl = new URL('login.html', window.location.origin);
-            loginUrl.searchParams.set('redirect', window.location.href);
-            window.location.assign(`${loginUrl.pathname}${loginUrl.search}${loginUrl.hash}`);
-          }
-          restoreButtonState();
+        if (!window.HBCart || typeof window.HBCart.addItem !== 'function') {
+          showCatalogCartFeedback(getCartDisabledMessage(), 'warning');
+          confirmBtn.disabled = false;
           return;
         }
 
-        try {
-          if (HBCart && typeof HBCart.addItem === 'function') {
-            await HBCart.addItem(cartItem);
-          }
-        } catch (error) {
-          console.error('Failed to add item to cart', error);
-          const message = error && error.message ? error.message : 'Unable to add item to cart.';
-          const isAuthError = /sign\s?in/i.test(message);
-          window.dispatchEvent(
-            new CustomEvent('hb:cart:error', {
-              detail: {
-                error: message,
-                item: cartItem,
-              },
-            })
-          );
-          if (isAuthError) {
-            savePendingCartItem(cartItem, 'collection');
+        window.HBCart.addItem(payload)
+          .then(() => {
+            const localizedTitle = state.language === 'hi' && titleHi ? titleHi : titleEn;
+            showCatalogCartFeedback(`${localizedTitle} (${sizeValue}) added to your cart.`, 'success');
             hideModal();
-            if (window.Auth && typeof window.Auth.signIn === 'function') {
-              window.Auth.signIn({ redirectTo: window.location.href }).catch(() => {
-                const loginUrl = new URL('login.html', window.location.origin);
-                loginUrl.searchParams.set('redirect', window.location.href);
-                window.location.assign(`${loginUrl.pathname}${loginUrl.search}${loginUrl.hash}`);
-              });
-            } else {
-              const loginUrl = new URL('login.html', window.location.origin);
-              loginUrl.searchParams.set('redirect', window.location.href);
-              window.location.assign(`${loginUrl.pathname}${loginUrl.search}${loginUrl.hash}`);
-            }
-          } else {
-            if (!qs('#cartFeedback')) {
-              window.alert(message);
-            }
-          }
-          restoreButtonState();
-          return;
-        }
-
-        clearPendingCartItem();
-        hideModal();
-        confirmBtn.setAttribute('data-en', successTextEn);
-        confirmBtn.setAttribute('data-hi', successTextHi);
-        confirmBtn.textContent = state.language === 'hi' ? successTextHi : successTextEn;
-
-        window.setTimeout(() => {
-          restoreButtonState();
-        }, 2000);
+          })
+          .catch((error) => {
+            const message = error && error.message ? error.message : cartText('updateError');
+            showCatalogCartFeedback(message, 'error');
+          })
+          .finally(() => {
+            const hasSelection = sizeInputs.some((radio) => radio.checked);
+            confirmBtn.disabled = !hasSelection;
+          });
       });
     }
 
@@ -2285,6 +2488,21 @@
     };
   }
 
+  function renderCartDisabledPage() {
+    if (!isCartPageActive()) {
+      return;
+    }
+    const root = document.getElementById('cartPageRoot');
+    if (!root) {
+      return;
+    }
+    const message = getCartDisabledMessage();
+    root.innerHTML = `
+      <div class="alert alert-info cart-disabled-alert" role="status">${message}</div>
+    `;
+  }
+
+
   function initGlobals(options) {
     const force = Boolean(options && options.force);
     if (globalsInitialized && !force) {
@@ -2309,46 +2527,20 @@
     initPreorderForm();
     initContactForm();
     initCartPage();
-    processPendingCartItem();
   }
 
   function init() {
     initGlobals();
     refreshPageFeatures();
+    processPendingCartItem();
   }
 
   window.addEventListener('hb:auth:signed-in', () => {
     refreshCartAuthState();
-    processPendingCartItem();
   });
 
   window.addEventListener('hb:auth:signed-out', () => {
     refreshCartAuthState();
-    if (HBCart && typeof HBCart.clearLocal === 'function') {
-      HBCart.clearLocal({ emitNull: true });
-    }
-  });
-
-  window.addEventListener('hb:cart:added', (event) => {
-    const detail = event && typeof event === 'object' ? (event.detail || {}) : {};
-    const item = detail.item || {};
-    const isHindi = state.language === 'hi';
-    const productName = isHindi
-      ? item.productHi || item.product || (detail.product && detail.product.hi) || ''
-      : item.product || (detail.product && detail.product.en) || '';
-    const sizeSuffix = item.size ? ` (${item.size})` : '';
-    const message = isHindi
-      ? `${productName || 'चयनित उत्पाद'}${sizeSuffix} कार्ट में जोड़ दिया गया है।`
-      : `${productName || 'Selected product'}${sizeSuffix} added to your cart.`;
-    showCartFeedback(message, { type: 'success' });
-  });
-
-  window.addEventListener('hb:cart:error', (event) => {
-    const detail = event && typeof event === 'object' ? (event.detail || {}) : {};
-    const message = detail.error || (state.language === 'hi'
-      ? 'कार्ट को अपडेट करने में समस्या आई।'
-      : 'There was a problem updating your cart.');
-    showCartFeedback(message, { type: 'error', duration: 6000 });
   });
 
   HBSite.refreshPage = refreshPageFeatures;

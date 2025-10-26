@@ -5,15 +5,7 @@ let firebaseApp = null;
 let sheetsClient = null;
 let sheetsAuth = null;
 
-function getFirebaseApp() {
-  if (firebaseApp) {
-    return firebaseApp;
-  }
-  if (admin.apps.length) {
-    firebaseApp = admin.app();
-    return firebaseApp;
-  }
-
+function buildFirebaseCredential() {
   const projectId =
     process.env.FIREBASE_PROJECT_ID ||
     process.env.GOOGLE_SERVICE_ACCOUNT_PROJECT_ID ||
@@ -24,19 +16,37 @@ function getFirebaseApp() {
   let privateKey =
     process.env.FIREBASE_PRIVATE_KEY || process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY;
 
-  if (!projectId || !clientEmail || !privateKey) {
-    throw new Error('Missing Firebase service account configuration.');
-  }
-
-  privateKey = privateKey.replace(/\\n/g, '\n');
-
-  firebaseApp = admin.initializeApp({
-    credential: admin.credential.cert({
+  if (projectId && clientEmail && privateKey) {
+    privateKey = privateKey.replace(/\\n/g, '\n');
+    return admin.credential.cert({
       projectId,
       clientEmail,
       privateKey,
-    }),
-  });
+    });
+  }
+
+  try {
+    return admin.credential.applicationDefault();
+  } catch (error) {
+    return null;
+  }
+}
+
+function getFirebaseApp() {
+  if (firebaseApp) {
+    return firebaseApp;
+  }
+  if (admin.apps.length) {
+    firebaseApp = admin.app();
+    return firebaseApp;
+  }
+
+  const credential = buildFirebaseCredential();
+  if (!credential) {
+    throw new Error('Missing Firebase service account configuration.');
+  }
+
+  firebaseApp = admin.initializeApp({ credential });
 
   return firebaseApp;
 }
@@ -67,19 +77,27 @@ async function getSheetsClient() {
   let privateKey =
     process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY;
 
-  if (!clientEmail || !privateKey) {
-    throw new Error('Missing Google Sheets service account credentials.');
+  if (clientEmail && privateKey) {
+    privateKey = privateKey.replace(/\\n/g, '\n');
+
+    sheetsAuth = new google.auth.JWT({
+      email: clientEmail,
+      key: privateKey,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+
+    await sheetsAuth.authorize();
+  } else {
+    try {
+      const googleAuth = new google.auth.GoogleAuth({
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      });
+      sheetsAuth = await googleAuth.getClient();
+    } catch (error) {
+      throw new Error('Missing Google Sheets service account credentials.');
+    }
   }
 
-  privateKey = privateKey.replace(/\\n/g, '\n');
-
-  sheetsAuth = new google.auth.JWT({
-    email: clientEmail,
-    key: privateKey,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
-
-  await sheetsAuth.authorize();
   sheetsClient = google.sheets({ version: 'v4', auth: sheetsAuth });
   return sheetsClient;
 }
