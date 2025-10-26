@@ -1,13 +1,109 @@
-<header id="header" class="header d-flex align-items-center sticky-top">
-  <div class="container position-relative d-flex align-items-center justify-content-between">
-    <a href="index.html" class="logo d-flex align-items-center me-auto">
-      <h1 class="sitename">Himalayan Blossom</h1>
-      <span>.</span>
-    </a>
+<header id="header" class="header sticky-top">
+  <div class="hb-top-bar">
+    <div class="container">
+      <div class="hb-top-bar-row">
+        <div class="hb-top-left d-flex align-items-center">
+          <button
+            class="mobile-nav-toggle d-xl-none"
+            type="button"
+            aria-label="Toggle navigation"
+            aria-controls="mobileNav"
+            aria-expanded="false"
+          >
+            <i class="bi bi-list" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="hb-top-center text-center">
+          <a href="index.html" class="logo d-inline-flex flex-column align-items-center justify-content-center">
+            <h1 class="sitename">Himalayan Blossom</h1>
+          </a>
+        </div>
+        <div class="hb-top-right">
+          <div class="hb-top-icons">
+            <a id="lang-toggle" class="btn-lang-toggle" href="#" aria-label="Toggle language">
+              <span>हिं</span>
+            </a>
+            <a id="theme-toggle" class="btn-theme-toggle" href="#" aria-label="Toggle theme">
+              <i class="bi bi-sun"></i>
+            </a>
+            <div class="header-auth">
+              <div id="authSignedOutDesktop" class="auth-state auth-signed-out">
+                <button type="button" id="authLoginTriggerDesktop" class="hb-icon-button auth-login-btn">
+                  <i class="bi bi-person"></i>
+                  <span class="visually-hidden">Login or Signup</span>
+                </button>
+                <p id="authStatusMessageDesktop" class="auth-status-message" hidden></p>
+              </div>
+              <div id="authSignedInDesktop" class="auth-state auth-signed-in" hidden>
+                <div class="auth-user-chip">
+                  <i class="bi bi-person"></i>
+                  <span id="authUserNameDesktop" class="auth-user-name"></span>
+                </div>
+                <span id="authUserRoleDesktop" class="auth-role-badge"></span>
+                <button type="button" id="authLogoutButtonDesktop" class="auth-logout-btn">
+                  Log out
+                </button>
+              </div>
+            </div>
+            <a
+              href="tel:+919930815228"
+              class="hb-icon-button hb-phone-link"
+              aria-label="Call Himalayan Blossom"
+            >
+              <i class="bi bi-telephone"></i>
+            </a>
+            <a href="cart.html" class="hb-icon-button hb-cart-button" id="headerCartButton" aria-label="View cart">
+              <i class="bi bi-bag"></i>
+              <span class="hb-cart-badge" id="headerCartCount">0</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Desktop Navigation -->
-    <nav id="navmenu" class="navmenu d-none d-xl-block">
-      <ul class="d-flex align-items-center mb-0">
+  <div class="hb-main-nav">
+    <div class="container">
+      <div class="hb-main-nav-row">
+        <nav id="navmenu" class="navmenu d-none d-xl-block">
+          <ul class="d-flex align-items-center justify-content-center mb-0">
+            <li>
+              <a href="index.html" data-page-target="home" data-en="Home" data-hi="होम">Home</a>
+            </li>
+            <li>
+              <a href="about.html" data-page-target="about" data-en="About" data-hi="हमारे बारे में">About</a>
+            </li>
+            <li class="nav-highlight">
+              <a href="collection.html" data-page-target="collection" data-en="Collection" data-hi="कलेक्शन">Collection</a>
+            </li>
+            <li>
+              <a href="cart.html" data-page-target="cart" data-en="Cart" data-hi="कार्ट">Cart</a>
+            </li>
+            <li>
+              <a href="wellness.html" data-page-target="wellness" data-en="Wellness" data-hi="स्वास्थ्य">Wellness</a>
+            </li>
+            <li>
+              <a href="gallery.html" data-page-target="gallery" data-en="Gallery" data-hi="गैलरी">Gallery</a>
+            </li>
+            <li>
+              <a href="contact.html" data-page-target="contact" data-en="Contact" data-hi="संपर्क">Contact</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="hb-breadcrumb-bar">
+    <div class="container">
+      <p class="hb-breadcrumb" id="hbBreadcrumbTrail" data-default="Home">Home</p>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobileNav" class="mobile-nav" aria-hidden="true">
+    <div class="mobile-nav-wrapper">
+      <ul class="mobile-nav-menu">
         <li>
           <a href="index.html" data-page-target="home" data-en="Home" data-hi="होम">Home</a>
         </li>
@@ -30,111 +126,37 @@
           <a href="contact.html" data-page-target="contact" data-en="Contact" data-hi="संपर्क">Contact</a>
         </li>
       </ul>
-    </nav>
-
-    <!-- Desktop Header Buttons -->
-    <div class="header-buttons d-none d-xl-flex align-items-center">
-      <a href="cart.html" class="btn-cart-indicator" id="headerCartButton" aria-label="View cart">
-        <i class="bi bi-bag"></i>
-        <span class="cart-label" data-en="Cart" data-hi="कार्ट">Cart</span>
-        <span class="cart-count" id="headerCartCount">0</span>
-      </a>
-      <div class="header-auth ms-3">
-        <div id="authSignedOutDesktop" class="auth-state auth-signed-out">
-          <button type="button" id="authLoginTriggerDesktop" class="btn-get-started auth-login-btn">
-            <i class="bi bi-person-circle"></i>
-            <span>Login / Signup</span>
-          </button>
-          <p id="authStatusMessageDesktop" class="auth-status-message" hidden></p>
-        </div>
-        <div id="authSignedInDesktop" class="auth-state auth-signed-in" hidden>
-          <div class="auth-user-chip">
-            <i class="bi bi-person-circle"></i>
-            <span id="authUserNameDesktop" class="auth-user-name"></span>
+      <div class="mobile-nav-buttons">
+        <a href="cart.html" class="btn-cart-indicator" id="mobileCartButton" aria-label="View cart">
+          <i class="bi bi-bag"></i>
+          <span class="cart-label" data-en="Cart" data-hi="कार्ट">Cart</span>
+          <span class="cart-count" id="mobileCartCount">0</span>
+        </a>
+        <a id="mobile-lang-toggle" class="btn-lang-toggle" href="#">
+          <span>हिं</span>
+        </a>
+        <a id="mobile-theme-toggle" class="btn-theme-toggle" href="#">
+          <i class="bi bi-sun"></i>
+        </a>
+        <div class="auth-wrapper">
+          <div id="authSignedOutMobile" class="auth-state auth-signed-out">
+            <button type="button" id="authLoginTriggerMobile" class="btn-get-started auth-login-btn-mobile">
+              <i class="bi bi-person-circle"></i>
+              <span>Login / Signup</span>
+            </button>
+            <p id="authStatusMessageMobile" class="auth-status-message" hidden></p>
           </div>
-          <span id="authUserRoleDesktop" class="auth-role-badge"></span>
-          <button type="button" id="authLogoutButtonDesktop" class="auth-logout-btn">
-            Log out
-          </button>
-        </div>
-      </div>
-      <a id="lang-toggle" class="btn-lang-toggle ms-3" href="#">
-        <span>हिं</span>
-      </a>
-      <a id="theme-toggle" class="btn-theme-toggle ms-3" href="#">
-        <i class="bi bi-sun"></i>
-      </a>
-    </div>
-
-    <!-- Mobile Menu Toggle -->
-    <button
-      class="mobile-nav-toggle d-xl-none"
-      type="button"
-      aria-label="Toggle navigation"
-      aria-controls="mobileNav"
-      aria-expanded="false"
-    >
-      <i class="bi bi-list" aria-hidden="true"></i>
-    </button>
-
-    <!-- Mobile Menu -->
-    <div id="mobileNav" class="mobile-nav" aria-hidden="true">
-      <div class="mobile-nav-wrapper">
-        <ul class="mobile-nav-menu">
-          <li>
-            <a href="index.html" data-page-target="home" data-en="Home" data-hi="होम">Home</a>
-          </li>
-          <li>
-            <a href="about.html" data-page-target="about" data-en="About" data-hi="हमारे बारे में">About</a>
-          </li>
-          <li>
-            <a href="collection.html" data-page-target="collection" data-en="Collection" data-hi="कलेक्शन">Collection</a>
-          </li>
-          <li>
-            <a href="cart.html" data-page-target="cart" data-en="Cart" data-hi="कार्ट">Cart</a>
-          </li>
-          <li>
-            <a href="wellness.html" data-page-target="wellness" data-en="Wellness" data-hi="स्वास्थ्य">Wellness</a>
-          </li>
-          <li>
-            <a href="gallery.html" data-page-target="gallery" data-en="Gallery" data-hi="गैलरी">Gallery</a>
-          </li>
-          <li>
-            <a href="contact.html" data-page-target="contact" data-en="Contact" data-hi="संपर्क">Contact</a>
-          </li>
-        </ul>
-        <div class="mobile-nav-buttons">
-          <a href="cart.html" class="btn-cart-indicator" id="mobileCartButton" aria-label="View cart">
-            <i class="bi bi-bag"></i>
-            <span class="cart-label" data-en="Cart" data-hi="कार्ट">Cart</span>
-            <span class="cart-count" id="mobileCartCount">0</span>
-          </a>
-          <a id="mobile-lang-toggle" class="btn-lang-toggle" href="#">
-            <span>हिं</span>
-          </a>
-          <a id="mobile-theme-toggle" class="btn-theme-toggle" href="#">
-            <i class="bi bi-sun"></i>
-          </a>
-          <div class="auth-wrapper">
-            <div id="authSignedOutMobile" class="auth-state auth-signed-out">
-              <button type="button" id="authLoginTriggerMobile" class="btn-get-started auth-login-btn-mobile">
+          <div id="authSignedInMobile" class="auth-state auth-signed-in" hidden>
+            <div class="auth-user-summary">
+              <div class="auth-user-chip">
                 <i class="bi bi-person-circle"></i>
-                <span>Login / Signup</span>
-              </button>
-              <p id="authStatusMessageMobile" class="auth-status-message" hidden></p>
-            </div>
-            <div id="authSignedInMobile" class="auth-state auth-signed-in" hidden>
-              <div class="auth-user-summary">
-                <div class="auth-user-chip">
-                  <i class="bi bi-person-circle"></i>
-                  <span id="authUserNameMobile" class="auth-user-name"></span>
-                </div>
-                <span id="authUserRoleMobile" class="auth-role-badge"></span>
+                <span id="authUserNameMobile" class="auth-user-name"></span>
               </div>
-              <button type="button" id="authLogoutButtonMobile" class="auth-logout-btn auth-logout-btn-mobile">
-                Log out
-              </button>
+              <span id="authUserRoleMobile" class="auth-role-badge"></span>
             </div>
+            <button type="button" id="authLogoutButtonMobile" class="auth-logout-btn auth-logout-btn-mobile">
+              Log out
+            </button>
           </div>
         </div>
       </div>

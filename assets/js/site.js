@@ -7,7 +7,6 @@
   const PREFILL_KEY = 'hb_preorder_prefill_v1';
   const PENDING_CART_KEY = 'hb_pending_cart_item_v1';
   const PRODUCT_ASSETS_KEY = 'hb_product_assets_v1';
-  const CART_STORAGE_KEY = 'hb_cart_state_v1';
   const CART_API_ENDPOINT = '/api/cart';
   const DEFAULT_PRODUCT_ASSETS = {
     'Van Amrit — Wild Honey': { img: 'assets/img/menu/menu-item-1.png' },
@@ -56,6 +55,14 @@
     return Array.from((context || document).querySelectorAll(selector));
   }
 
+  function logCartStep(message, details) {
+    if (details !== undefined) {
+      console.log('[HB Cart]', message, details);
+    } else {
+      console.log('[HB Cart]', message);
+    }
+  }
+
   function getCartIndicatorTargets() {
     return [
       {
@@ -92,6 +99,44 @@
     });
   }
 
+  function handleCartTriggerClick(event) {
+    if (!HBCart || typeof HBCart.syncFromServer !== 'function') {
+      logCartStep('Cart trigger ignored: cart manager unavailable');
+      return;
+    }
+    logCartStep('Cart trigger clicked', { target: (event && event.currentTarget && event.currentTarget.id) || 'unknown' });
+    const trigger = event && event.currentTarget ? event.currentTarget : null;
+    if (trigger) {
+      trigger.classList.add('cart-syncing');
+    }
+    HBCart.syncFromServer('icon-click')
+      .catch((error) => {
+        console.warn('[HB Cart] Failed to load cart on demand', error);
+        logCartStep('Cart trigger fetch failed', { error: error && error.message ? error.message : 'unknown error' });
+      })
+      .finally(() => {
+        if (trigger) {
+          trigger.classList.remove('cart-syncing');
+        }
+        logCartStep('Cart trigger fetch completed');
+      });
+  }
+
+  function initCartTriggers() {
+    getCartIndicatorTargets().forEach((target) => {
+      if (!target || !target.container) {
+        return;
+      }
+      const button = target.container;
+      if (button.dataset.hbCartTriggerBound === 'true') {
+        return;
+      }
+      button.dataset.hbCartTriggerBound = 'true';
+      button.addEventListener('click', handleCartTriggerClick);
+      logCartStep('Cart trigger bound', { id: button.id || 'unknown' });
+    });
+  }
+
   function createCartManager() {
     const subscribers = new Set();
     let lastEmittedCart = undefined;
@@ -100,35 +145,11 @@
     let remoteSyncDisabled = false;
 
     function loadStoredCart() {
-      try {
-        const raw = storage.getItem(CART_STORAGE_KEY);
-        if (!raw) {
-          return { items: [], updatedAt: null };
-        }
-        const parsed = JSON.parse(raw);
-        const sanitizedItems = sanitizeCartItems(parsed.items || []);
-        return {
-          items: sanitizedItems,
-          updatedAt: parsed.updatedAt || null,
-          uid: parsed.uid || '',
-          email: parsed.email || '',
-        };
-      } catch (error) {
-        try {
-          storage.removeItem(CART_STORAGE_KEY);
-        } catch (removeError) {
-          /* ignore */
-        }
-        return { items: [], updatedAt: null };
-      }
+      return { items: [], updatedAt: null, uid: '', email: '' };
     }
 
-    function saveStoredCart(cart) {
-      try {
-        storage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-      } catch (error) {
-        console.warn('[HB Cart] Unable to persist cart locally', error);
-      }
+    function saveStoredCart() {
+      /* client-side cart caching disabled */
     }
 
     function cloneCart(cart) {
@@ -156,6 +177,9 @@
         } catch (error) {
           console.warn('[HB Cart] Subscriber callback failed', error);
         }
+      });
+      logCartStep('Cart update emitted', {
+        itemCount: snapshot && Array.isArray(snapshot.items) ? snapshot.items.length : 0,
       });
       window.dispatchEvent(
         new CustomEvent('hb:cart:updated', {
@@ -448,14 +472,17 @@
       return cartState;
     }
 
-    async function syncFromServer() {
+    async function syncFromServer(reason) {
       if (!window.Auth || typeof window.Auth.apiFetch !== 'function') {
+        logCartStep('Cart fetch skipped: auth API unavailable');
         return cartState;
       }
       if (!shouldSync()) {
+        logCartStep('Cart fetch skipped: sync disabled or unauthenticated');
         return cartState;
       }
       try {
+        logCartStep('Cart fetch started', { reason: reason || 'unspecified' });
         const response = await window.Auth.apiFetch(CART_API_ENDPOINT, { method: 'GET' });
         const payload = response && typeof response === 'object' && response.cart ? response.cart : response;
         const items = sanitizeCartItems((payload && payload.items) || []);
@@ -464,6 +491,7 @@
           email: (payload && payload.email) || cartState.email || '',
           updatedAt: payload && payload.updatedAt ? payload.updatedAt : new Date().toISOString(),
         };
+        logCartStep('Cart fetch succeeded', { itemCount: items.length });
         return commitCart(items, meta, { skipSync: true });
       } catch (error) {
         if (isApiUnavailableError(error)) {
@@ -471,6 +499,7 @@
           return cartState;
         }
         console.warn('[HB Cart] Failed to fetch cart from server', error);
+        logCartStep('Cart fetch failed', { reason: error && error.message ? error.message : 'unknown error' });
         window.dispatchEvent(
           new CustomEvent('hb:cart:error', {
             detail: {
@@ -483,11 +512,6 @@
     }
 
     function clearLocal(options) {
-      try {
-        storage.removeItem(CART_STORAGE_KEY);
-      } catch (error) {
-        /* ignore */
-      }
       cartState = { items: [], updatedAt: null };
       if (options && options.emitNull) {
         emitCartUpdate(null);
@@ -595,6 +619,7 @@
     lastCart: undefined,
     statusTimer: null,
     eventsBound: false,
+    fetchPromise: null,
   };
 
   const cartCurrencyFormatter = new Intl.NumberFormat('en-IN', {
@@ -642,6 +667,7 @@
   function ensureCartElements() {
     const root = qs('#cartPageRoot');
     if (!root) {
+      logCartStep('Cart elements missing: #cartPageRoot not found');
       return false;
     }
     const elements = cartPageState.elements;
@@ -657,7 +683,11 @@
     elements.statusMessage = qs('#cartStatusMessage', root) || qs('#cartStatusMessage');
     elements.authPrompt = qs('#cartAuthPrompt', root);
     elements.authButton = qs('#cartSignInButton', root);
-    return Boolean(elements.itemsList && elements.subtotal && elements.total && elements.checkoutButton);
+    const ready = Boolean(elements.itemsList && elements.subtotal && elements.total && elements.checkoutButton);
+    if (!ready) {
+      logCartStep('Cart elements missing required nodes');
+    }
+    return ready;
   }
 
   function clearCartStatus() {
@@ -849,6 +879,7 @@
     const isAuthenticated = window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated();
     const items = cart && Array.isArray(cart.items) ? cart.items : [];
     cartPageState.lastCart = cart;
+    logCartStep('Rendering cart', { isAuthenticated, itemCount: items.length });
 
     if (elements.summaryCard) {
       elements.summaryCard.classList.remove('opacity-75', 'disabled');
@@ -871,6 +902,7 @@
       if (elements.authPrompt) {
         elements.authPrompt.classList.remove('d-none');
       }
+      logCartStep('Cart render blocked: user not authenticated');
       return;
     }
 
@@ -886,6 +918,7 @@
       if (elements.emptyState) {
         elements.emptyState.classList.remove('d-none');
       }
+      logCartStep('Cart render: showing empty state');
     } else {
       if (elements.emptyState) {
         elements.emptyState.classList.add('d-none');
@@ -895,6 +928,7 @@
           elements.itemsList.appendChild(buildCartItemElement(item, lang));
         });
       }
+      logCartStep('Cart render: populated items', { itemCount: items.length });
     }
 
     const totals = computeCartTotals(items);
@@ -914,6 +948,15 @@
         elements.checkoutButton.removeAttribute('aria-disabled');
       }
     }
+  }
+
+  function refreshCartAuthState() {
+    if (!isCartPageActive()) {
+      return;
+    }
+    const fallbackCart = cartPageState.lastCart !== undefined ? cartPageState.lastCart : null;
+    renderCart(fallbackCart);
+    fetchCartForPage('auth-change');
   }
 
   async function performCartIncrement(productId, size, delta) {
@@ -1093,7 +1136,37 @@
   }
 
   function handleCartUpdate(cart) {
+    logCartStep('handleCartUpdate invoked', {
+      itemCount: cart && Array.isArray(cart.items) ? cart.items.length : 0,
+    });
     renderCart(cart);
+  }
+
+  function fetchCartForPage(reason) {
+    if (cartPageState.fetchPromise) {
+      logCartStep('Cart page fetch already in progress', { reason });
+      return cartPageState.fetchPromise;
+    }
+    if (!HBCart || typeof HBCart.syncFromServer !== 'function') {
+      logCartStep('Cart page fetch skipped: cart manager unavailable');
+      return Promise.resolve(null);
+    }
+    const isAuthenticated = window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated();
+    if (!isAuthenticated) {
+      logCartStep('Cart page fetch skipped: user not authenticated');
+      return Promise.resolve(null);
+    }
+    const fetchReason = reason || 'cart-page';
+    logCartStep('Cart page fetch starting', { reason: fetchReason });
+    cartPageState.fetchPromise = HBCart.syncFromServer(fetchReason).catch((error) => {
+      console.warn('[HB Cart] Cart page fetch failed', error);
+      logCartStep('Cart page fetch failed', { reason: error && error.message ? error.message : 'unknown error' });
+      return null;
+    }).finally(() => {
+      logCartStep('Cart page fetch finished', { reason: fetchReason });
+      cartPageState.fetchPromise = null;
+    });
+    return cartPageState.fetchPromise;
   }
 
   function teardownCartPage() {
@@ -1116,6 +1189,7 @@
   }
 
   function initCartPage() {
+    logCartStep('initCartPage called', { isActive: isCartPageActive() });
     if (!isCartPageActive()) {
       if (cartPageState.initialized) {
         teardownCartPage();
@@ -1128,6 +1202,7 @@
     attachCartPageEvents();
     if (!cartPageState.unsubscribe && HBCart && typeof HBCart.subscribe === 'function') {
       cartPageState.unsubscribe = HBCart.subscribe(handleCartUpdate);
+      logCartStep('Cart page subscribed to cart manager');
     }
     cartPageState.initialized = true;
     if (cartPageState.lastCart !== undefined) {
@@ -1136,6 +1211,7 @@
       const isAuthenticated = window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated();
       renderCart(isAuthenticated ? { items: [] } : null);
     }
+    fetchCartForPage('cart-page-init');
   }
 
   window.addEventListener('hb:language:changed', () => {
@@ -2216,6 +2292,7 @@
     initLanguageToggle();
     initThemeToggle();
     initMobileNav();
+    initCartTriggers();
     globalsInitialized = true;
   }
 
@@ -2240,13 +2317,12 @@
   }
 
   window.addEventListener('hb:auth:signed-in', () => {
-    if (HBCart && typeof HBCart.syncFromServer === 'function') {
-      HBCart.syncFromServer();
-    }
+    refreshCartAuthState();
     processPendingCartItem();
   });
 
   window.addEventListener('hb:auth:signed-out', () => {
+    refreshCartAuthState();
     if (HBCart && typeof HBCart.clearLocal === 'function') {
       HBCart.clearLocal({ emitNull: true });
     }

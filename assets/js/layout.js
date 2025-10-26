@@ -23,18 +23,38 @@
     }
   }
 
-  function highlightActiveNav() {
-    const pageId = (document.body && document.body.getAttribute('data-page-id')) || '';
-    if (!pageId) {
+  function updateBreadcrumbTrail(activeLink) {
+    const breadcrumb = document.getElementById('hbBreadcrumbTrail');
+    if (!breadcrumb) {
       return;
     }
+    const base = breadcrumb.dataset.default || 'Home';
+    const activeLabel =
+      (activeLink && (activeLink.getAttribute('data-en') || activeLink.textContent || '').trim()) || '';
+    const label = activeLabel && activeLabel.toLowerCase() !== base.toLowerCase() ? `${base} > ${activeLabel}` : base;
+    breadcrumb.textContent = label;
+  }
 
+  function highlightActiveNav() {
+    const pageId = (document.body && document.body.getAttribute('data-page-id')) || '';
     const links = document.querySelectorAll('[data-page-target]');
-    links.forEach((link) => {
-      const target = link.getAttribute('data-page-target') || '';
-      const segments = target.split(',').map((item) => item.trim()).filter(Boolean);
-      link.classList.toggle('active', segments.includes(pageId));
-    });
+    let activeLink = null;
+
+    if (pageId) {
+      links.forEach((link) => {
+        const target = link.getAttribute('data-page-target') || '';
+        const segments = target.split(',').map((item) => item.trim()).filter(Boolean);
+        const isActive = segments.includes(pageId);
+        link.classList.toggle('active', isActive);
+        if (isActive && !activeLink) {
+          activeLink = link;
+        }
+      });
+    } else {
+      links.forEach((link) => link.classList.remove('active'));
+    }
+
+    updateBreadcrumbTrail(activeLink);
   }
 
   function init() {
