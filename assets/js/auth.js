@@ -618,6 +618,11 @@
         body: JSON.stringify(payload),
       });
     } catch (error) {
+      const message = error && error.message ? error.message.toString() : '';
+      if (/missing\s+firebase\s+service\s+account/i.test(message)) {
+        console.info('Login activity logging skipped: service account configuration is missing.');
+        return;
+      }
       console.warn('Failed to log login activity', error);
     }
   }

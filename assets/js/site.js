@@ -195,11 +195,9 @@
         return;
       }
       remoteSyncDisabled = true;
-      if (reason) {
-        console.info('[HB Cart] Remote cart sync disabled:', reason);
-      } else {
-        console.info('[HB Cart] Remote cart sync disabled: API unavailable');
-      }
+      const detail = reason || 'API unavailable';
+      console.info('[HB Cart] Remote cart sync disabled:', detail);
+      logCartStep('Remote cart sync disabled', { reason: detail });
     }
 
     function isApiUnavailableError(error) {
@@ -210,6 +208,9 @@
         return true;
       }
       const message = (error && error.message && error.message.toString()) || '';
+      if (error.status === 500 && /missing\s+firebase\s+service\s+account/i.test(message)) {
+        return true;
+      }
       return /cannot\s+get|not\s+found|failed to fetch/i.test(message);
     }
 

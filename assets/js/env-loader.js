@@ -18,8 +18,9 @@
     );
   }
 
-  var DEFAULT_SCRIPT_SOURCES = ['assets/js/env.local.js', 'assets/js/env.js'];
+  var DEFAULT_SCRIPT_SOURCES = ['assets/js/env.js'];
   if (isLikelyLocalHost(hostname)) {
+    DEFAULT_SCRIPT_SOURCES.unshift('assets/js/env.local.js');
     DEFAULT_SCRIPT_SOURCES.push('assets/js/env.sample.js');
   }
   var REMOTE_ENDPOINT =
@@ -193,7 +194,7 @@
     return new Promise(function (resolve, reject) {
       function tryNext() {
         if (index >= sources.length) {
-          reject(new Error('HBEnv: No local env scripts were found.'));
+          resolve(null);
           return;
         }
 
@@ -268,10 +269,13 @@
         }
         return loadLocalEnv()
           .catch(function () {
-            return loadRemoteEnv();
+            return null;
           })
-          .catch(function () {
-            return snapshotGlobals();
+          .then(function (env) {
+            if (env && typeof env === 'object' && Object.keys(env).length > 0) {
+              return env;
+            }
+            return loadRemoteEnv();
           });
       })
       .catch(function () {
