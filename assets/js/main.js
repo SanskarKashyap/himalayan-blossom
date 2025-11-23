@@ -6,7 +6,7 @@
 * License: https://bootstrapmade.com/license/
 */
 
-(function() {
+(function () {
   "use strict";
 
   const HBPage = window.HBPage || (window.HBPage = {});
@@ -27,45 +27,39 @@
   /**
    * Mobile nav toggle
    */
+  /**
+   * Mobile nav toggle
+   */
   const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
-  const mobileNavToggleIcon = mobileNavToggleBtn ? mobileNavToggleBtn.querySelector('i') : null;
-  const mobileNavPanel = document.querySelector('.mobile-nav');
+  const mobileNavDrawer = document.querySelector('.mobile-nav-drawer');
+  const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
+  const mobileNavCloseBtn = document.querySelector('.mobile-nav-close');
 
-  function setMobileNavState(isActive) {
-    const body = document.body;
-    body.classList.toggle('mobile-nav-active', isActive);
+  function toggleMobileNav(state) {
+    const isActive = typeof state === 'boolean' ? state : !mobileNavDrawer.classList.contains('active');
 
-    if (mobileNavPanel) {
-      mobileNavPanel.classList.toggle('active', isActive);
-      mobileNavPanel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
-    }
-
-    if (mobileNavToggleBtn) {
-      mobileNavToggleBtn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-    }
-
-    if (mobileNavToggleIcon) {
-      mobileNavToggleIcon.classList.toggle('bi-list', !isActive);
-      mobileNavToggleIcon.classList.toggle('bi-x', isActive);
-    }
+    mobileNavDrawer.classList.toggle('active', isActive);
+    mobileNavOverlay.classList.toggle('active', isActive);
+    document.body.style.overflow = isActive ? 'hidden' : '';
   }
-
-  function toggleMobileNav(forceState) {
-    const body = document.body;
-    const isActive = typeof forceState === 'boolean'
-      ? forceState
-      : !body.classList.contains('mobile-nav-active');
-
-    setMobileNavState(isActive);
-    return isActive;
-  }
-
-  HBPage.toggleMobileNav = toggleMobileNav;
 
   if (mobileNavToggleBtn) {
-    mobileNavToggleBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      toggleMobileNav();
+    mobileNavToggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleMobileNav(true);
+    });
+  }
+
+  if (mobileNavCloseBtn) {
+    mobileNavCloseBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleMobileNav(false);
+    });
+  }
+
+  if (mobileNavOverlay) {
+    mobileNavOverlay.addEventListener('click', () => {
+      toggleMobileNav(false);
     });
   }
 
@@ -84,7 +78,7 @@
    * Toggle mobile nav dropdowns
    */
   document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function(e) {
+    navmenu.addEventListener('click', function (e) {
       e.preventDefault();
       this.parentNode.classList.toggle('active');
       this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
@@ -156,7 +150,7 @@
    * Init swiper sliders
    */
   function initSwiper() {
-    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
+    document.querySelectorAll(".init-swiper").forEach(function (swiperElement) {
       if (swiperElement.dataset.hbSwiperInitialized === 'true') {
         return;
       }
@@ -180,7 +174,7 @@
   /**
    * Correct scrolling position upon page load for URLs containing hash links.
    */
-  window.addEventListener('load', function(e) {
+  window.addEventListener('load', function (e) {
     if (window.location.hash) {
       if (document.querySelector(window.location.hash)) {
         setTimeout(() => {
@@ -220,7 +214,7 @@
   /**
    * Lazy load Google Maps
    */
-  window.loadMap = function() {
+  window.loadMap = function () {
     const mapContainer = document.querySelector('.map-container');
     const iframe = document.createElement('iframe');
     iframe.style.cssText = 'border:0; width: 100%; height: 400px;';
