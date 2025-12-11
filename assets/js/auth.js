@@ -52,8 +52,8 @@
     },
     typeof window.APP_PREORDER_PRICING === 'object' && !Array.isArray(window.APP_PREORDER_PRICING)
       ? Object.fromEntries(
-          Object.entries(window.APP_PREORDER_PRICING).filter(([, value]) => typeof value === 'number')
-        )
+        Object.entries(window.APP_PREORDER_PRICING).filter(([, value]) => typeof value === 'number')
+      )
       : {}
   );
 
@@ -809,20 +809,20 @@
 
     try {
       const payload = {
-        amount,
+        // amount: amount, // Security: Do not send amount. Server calculates it.
+        variant,
+        size,
         currency: 'INR',
         notes: {
           customer_name: name,
           customer_email: email,
           phone,
           city,
-          variant,
-          size,
           message,
         },
       };
 
-      const response = await apiFetch('/payments/order/', {
+      const response = await apiFetch('/api/create-order', {
         method: 'POST',
         body: payload,
       });
@@ -900,7 +900,7 @@
         observers.add(callback);
         return () => observers.delete(callback);
       }
-      return () => {};
+      return () => { };
     },
   };
 
