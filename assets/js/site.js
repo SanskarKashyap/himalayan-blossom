@@ -325,8 +325,8 @@
       return {
         items: Array.isArray(cart.items)
           ? cart.items
-              .map((item) => (item && typeof item === 'object' ? Object.assign({}, item) : null))
-              .filter(Boolean)
+            .map((item) => (item && typeof item === 'object' ? Object.assign({}, item) : null))
+            .filter(Boolean)
           : [],
         updatedAt: cart.updatedAt,
         currency: cart.currency || CART_CURRENCY,
@@ -397,7 +397,7 @@
 
     function subscribe(callback) {
       if (typeof callback !== 'function') {
-        return () => {};
+        return () => { };
       }
       subscribers.add(callback);
       if (lastEmittedCart !== undefined) {
@@ -593,7 +593,7 @@
       const payload = serializeCartForFirestore(cart, resources);
       isApplyingRemoteSnapshot = true;
       try {
-        await docRef.set(payload, { merge: true });
+        await docRef.set(payload);
         logCartStep('Cart persisted to Firestore', { reason: reason || 'mutation', itemCount: cart.items.length });
       } finally {
         window.setTimeout(() => {
@@ -671,7 +671,7 @@
       }
       const mergedCart = mergeCarts(remoteCart, guestCart);
       try {
-        await docRef.set(serializeCartForFirestore(mergedCart, resources), { merge: true });
+        await docRef.set(serializeCartForFirestore(mergedCart, resources));
         markGuestCartMerged(guestCart);
         persistGuestCart(guestCart);
         logCartStep('Guest cart merged into Firestore cart', {
