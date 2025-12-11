@@ -73,6 +73,10 @@ body.dark-theme {
   --nav-hover-color: #d4af37;
   --header-background: rgba(23, 19, 41, 0.9);
   --drawer-background: #201a3d;
+  --default-color: #f2eefc;
+  --heading-color: #ffffff;
+  --surface-color: #201a3d;
+  --contrast-color: #ffffff;
 }
 
 :root {
@@ -210,7 +214,7 @@ a:hover {
   border-radius: 50%;
   border: 1px solid rgba(248, 245, 239, 0.35);
   background: rgba(248, 245, 239, 0.08);
-  color: var(--background-color);
+  color: var(--heading-color);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
 }
 
@@ -431,7 +435,8 @@ h6 {
 
   .navmenu a,
   .navmenu a:focus {
-    color: var(--nav-color);
+    color: #1f1a3d !important;
+    /* Force Dark Color for Light Mode with !important */
     padding: 10px 18px;
     font-size: 15px;
     font-family: var(--nav-font);
@@ -475,6 +480,15 @@ h6 {
   .navmenu .active::after {
     width: calc(100% - 36px);
   }
+
+  body.dark-theme .navmenu a,
+  body.dark-theme .navmenu a:focus {
+    color: #ffffff !important;
+  }
+}
+
+body.dark-theme .header .logo h1 {
+  color: #ffffff !important;
 }
 
 /*--------------------------------------------------------------
