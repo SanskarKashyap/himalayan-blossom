@@ -1,173 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Login — Himalayan Blossom</title>
-    <meta
-      name="description"
-      content="Sign in to your Himalayan Blossom account to manage pre-orders and access exclusive honey releases."
-    />
 
-    <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon" />
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Login — Himalayan Blossom</title>
+  <meta name="description"
+    content="Sign in to your Himalayan Blossom account to manage pre-orders and access exclusive honey releases." />
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon" />
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
 
-    <!-- Vendor CSS Files -->
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
-    <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
-    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet" />
-    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
-    <!-- Main CSS File -->
-    <link href="assets/css/main.css" rel="stylesheet" />
-    <script src="assets/js/env-loader.js"></script>
-    <script src="assets/js/app-config.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
-  </head>
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet" />
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
 
-  <body class="auth-page" data-page-id="auth-login">
-    <div id="hbHeaderHost" data-include="partials/navbar.html"></div>
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet" />
+  <script src="assets/js/env-loader.js"></script>
+  <script src="assets/js/app-config.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+</head>
 
-    <main class="main">
-      <section class="section auth-section light-background">
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-lg-5 col-md-8" data-aos="fade-up">
-              <div class="auth-card shadow-sm">
-                <h1 class="h3 mb-3 text-center">Welcome back</h1>
-                <p class="text-muted text-center mb-4">
-                  Sign in with your email to continue exploring Himalayan Blossom.
-                </p>
-                <div class="auth-status alert" data-auth-status hidden></div>
-                <form data-auth-form="login" novalidate>
-                  <div class="mb-3">
-                    <label class="form-label" for="loginEmail">Email</label>
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="loginEmail"
-                      name="email"
-                      placeholder="you@example.com"
-                      autocomplete="email"
-                      required
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="loginPassword">Password</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="loginPassword"
-                      name="password"
-                      placeholder="Enter your password"
-                      autocomplete="current-password"
-                      required
-                      minlength="6"
-                    />
-                  </div>
-                  <button type="submit" class="btn btn-primary w-100 auth-submit-btn">
-                    Sign in
-                  </button>
-                </form>
-                <p class="text-center mt-4 mb-0">
-                  New to Himalayan Blossom?
-                  <a href="signup.html" class="fw-semibold" data-no-spa="true">Create an account</a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+<body class="auth-page" data-page-id="auth-login">
+  <div id="hbHeaderHost" data-include="partials/navbar.html"></div>
 
-    <footer id="footer" class="footer dark-background">
+  <main class="main">
+    <section class="section auth-section light-background">
       <div class="container">
-        <div class="row gy-3">
-          <div class="col-lg-3 col-md-6 d-flex">
-            <i class="bi bi-geo-alt icon"></i>
-            <div class="address">
-              <h4>Address</h4>
-              <p>Sample Valley Apiaries</p>
-              <p>Kullu, Himachal Pradesh, India</p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 d-flex">
-            <i class="bi bi-telephone icon"></i>
-            <div>
-              <h4>Contact</h4>
-              <p>
-                <strong>Phone:</strong>
-                <span>+91 99308 15228</span><br />
-                <strong>Email:</strong>
-                <span>hello@himalayanblossom.com</span><br />
+        <div class="row justify-content-center">
+          <div class="col-lg-5 col-md-8" data-aos="fade-up">
+            <div class="auth-card shadow-sm">
+              <h1 class="h3 mb-3 text-center">Welcome back</h1>
+              <p class="text-muted text-center mb-4">
+                Sign in with your email to continue exploring Himalayan Blossom.
               </p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 d-flex">
-            <i class="bi bi-clock icon"></i>
-            <div>
-              <h4>Opening Hours</h4>
-              <p>
-                <strong>Mon-Sat:</strong>
-                <span>09:00 - 18:00</span><br />
-                <strong>Sunday</strong>:
-                <span>Closed</span>
+              <div class="auth-status alert" data-auth-status hidden></div>
+              <form data-auth-form="login" novalidate>
+                <div class="mb-3">
+                  <label class="form-label" for="loginEmail">Email</label>
+                  <input type="email" class="form-control" id="loginEmail" name="email" placeholder="you@example.com"
+                    autocomplete="email" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="loginPassword">Password</label>
+                  <input type="password" class="form-control" id="loginPassword" name="password"
+                    placeholder="Enter your password" autocomplete="current-password" required minlength="6" />
+                </div>
+                <button type="submit" class="btn btn-primary w-100 auth-submit-btn">
+                  Sign in
+                </button>
+              </form>
+              <p class="text-center mt-4 mb-0">
+                New to Himalayan Blossom?
+                <a href="signup.html" class="fw-semibold" data-no-spa="true">Create an account</a>
               </p>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6">
-            <h4>Follow Us</h4>
-            <div class="social-links d-flex">
-              <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-              <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-              <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-              <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
             </div>
           </div>
         </div>
       </div>
+    </section>
+  </main>
 
-      <div class="container copyright text-center mt-4">
-        <p>
-          © Copyright
-          <strong class="px-1 sitename">Himalayan Blossom</strong>
-          <span>All Rights Reserved</span>
-        </p>
-      </div>
-    </footer>
+  <div id="hbFooterHost" data-include="partials/footer.html"></div>
 
-    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
-      <i class="bi bi-arrow-up-short"></i>
-    </a>
-    <div id="preloader"></div>
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+  </a>
+  <div id="preloader"></div>
 
-    <!-- Vendor JS Files -->
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/aos/aos.js"></script>
-    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 
-    <!-- Main JS Files -->
-    <script src="assets/js/layout.js"></script>
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/auth-forms.js"></script>
-    <script src="assets/js/site.js"></script>
-    <script src="assets/js/router.js"></script>
-  </body>
+  <!-- Main JS Files -->
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/auth-forms.js"></script>
+  <script src="assets/js/site.js"></script>
+  <script src="assets/js/router.js"></script>
+</body>
+
 </html>

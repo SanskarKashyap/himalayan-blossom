@@ -1,410 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Pre-order Himalayan Blossom — Reserve Your Jar</title>
-    <meta
-      name="description"
-      content=" Nature’s Luxury, From the Himalayas to Your Home. Pure. Rare. Himalayan. Taste the Himalayas, Live the Purity.Hand-harvested Himalayan honey by Deen Dayal — pure, raw, and limited by nature. Pre-order exclusive batches and receive a tasting sample in luxury packaging."
-    />
-    <meta
-      name="keywords"
-      content="Himalayan honey, luxury honey, raw honey, Deen Dayal, pre-order honey"
-    />
 
-    <!-- Favicons -->
-    <link href="assets/img/favicon.png" rel="icon" />
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Pre-order Himalayan Blossom — Reserve Your Jar</title>
+  <meta name="description"
+    content=" Nature’s Luxury, From the Himalayas to Your Home. Pure. Rare. Himalayan. Taste the Himalayas, Live the Purity.Hand-harvested Himalayan honey by Deen Dayal — pure, raw, and limited by nature. Pre-order exclusive batches and receive a tasting sample in luxury packaging." />
+  <meta name="keywords" content="Himalayan honey, luxury honey, raw honey, Deen Dayal, pre-order honey" />
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Amatic+SC:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon" />
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
 
-    <!-- Vendor CSS Files -->
-    <link
-      href="assets/vendor/bootstrap/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="assets/vendor/bootstrap-icons/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
-    <link
-      href="assets/vendor/glightbox/css/glightbox.min.css"
-      rel="stylesheet"
-    />
-    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Amatic+SC:wght@400;700&display=swap"
+    rel="stylesheet" />
 
-    <!-- Main CSS File -->
-    <link href="assets/css/main.css" rel="stylesheet" />
-    <script src="assets/js/env-loader.js"></script>
-    <script src="assets/js/app-config.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet" />
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
 
-    <!-- =======================================================
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet" />
+  <script src="assets/js/env-loader.js"></script>
+  <script src="assets/js/app-config.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+
+  <!-- =======================================================
   * Template Name: Yummy (modified for Himalayan Blossom)
   ======================================================== -->
-  </head>
+</head>
 
-    <body class="preorder-page" data-page-id="preorder">
-    <div id="hbHeaderHost" data-include="partials/navbar.html"></div>
+<body class="preorder-page" data-page-id="preorder">
+  <div id="hbHeaderHost" data-include="partials/navbar.html"></div>
 
 
-    <main class="main">
+  <main class="main">
 
-      <!-- Pre-order Section (replaces Book A Table) -->
-      <section id="preorder" class="book-a-table section">
-        <!-- Section Title -->
-        <div class="container section-title" data-aos="fade-up">
-          <h2>Pre-order & Tasting Samples</h2>
-          <p>
-            <span>Reserve</span>
-            <span class="description-title">Your Limited Batch</span>
-          </p>
-        </div>
-        <!-- End Section Title -->
-
-        <div class="container">
-          <div class="text-center mb-4" data-aos="fade-up" data-aos-delay="50">
-            <h4>Your Pre-Order Includes a Free Sample Kit!</h4>
-            <p
-              data-en="Select your favorite honey below to pre-order. We'll automatically include a tasting kit with all eight varieties with your shipment, absolutely free."
-              data-hi="प्री-ऑर्डर के लिए नीचे अपना पसंदीदा शहद चुनें। हम आपकी शिपमेंट के साथ सभी आठ किस्मों के साथ एक टेस्टिंग किट आपोआप शामिल कर देंगे, बिल्कुल मुफ्त।"
-            >
-              Select your favorite honey below to pre-order. We'll automatically
-              include a tasting kit with all eight varieties with your shipment,
-              absolutely free.
-            </p>
-          </div>
-
-          <div class="row g-0" data-aos="fade-up" data-aos-delay="100">
-            <div
-              class="col-lg-4 reservation-img"
-              style="background-image: url(assets/img/reservation.jpg)"
-            ></div>
-
-            <div
-              class="col-lg-8 d-flex align-items-center reservation-form-bg"
-              data-aos="fade-up"
-              data-aos-delay="200"
-            >
-              <form onsubmit="handlePreorderSubmit(event)" class="php-email-form">
-                <div class="row gy-4">
-                  <div class="col-lg-6 col-md-6">
-                    <input
-                      type="text"
-                      id="prename"
-                      name="name"
-                      class="form-control"
-                      placeholder="Your Name"
-                      data-placeholder-en="Your Name"
-                      data-placeholder-hi="आपका नाम"
-                      required=""
-                    />
-                  </div>
-                  <div class="col-lg-6 col-md-6">
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="preemail"
-                      name="email"
-                      placeholder="Your Email"
-                      data-placeholder-en="Your Email"
-                      data-placeholder-hi="आपका ईमेल"
-                      required=""
-                    />
-                  </div>
-
-                  <div class="col-lg-6 col-md-6">
-                    <select
-                      class="form-control"
-                      name="product"
-                      required=""
-                      id="honeyvariant"
-                    >
-                      <option
-                        value=""
-                        data-en="Select Honey Variant"
-                        data-hi="शहद का प्रकार चुनें"
-                      >
-                        Select Honey Variant
-                      </option>
-                      <option
-                        value="Van Amrit — Wild Honey"
-                        data-en="Van Amrit — Wild Honey"
-                        data-hi="वन अमृत — जंगली शहद"
-                      >
-                        Van Amrit — Wild Honey
-                      </option>
-                      <option
-                        value="Shila Madhu — Honey Dew"
-                        data-en="Shila Madhu — Honey Dew"
-                        data-hi="शिला मधु — हनी ड्यू"
-                      >
-                        Shila Madhu — Honey Dew
-                      </option>
-                      <option
-                        value="Him Kanti — White Honey"
-                        data-en="Him Kanti — White Honey"
-                        data-hi="हिम कांति — सफेद शहद"
-                      >
-                        Him Kanti — White Honey
-                      </option>
-                      <option
-                        value="Kashtha Bal — Chestnut Honey"
-                        data-en="Kashtha Bal — Chestnut Honey"
-                        data-hi="काष्ठ बल — चेस्टनट शहद"
-                      >
-                        Kashtha Bal — Chestnut Honey
-                      </option>
-                      <option
-                        value="Him Saans — Thyme Honey"
-                        data-en="Him Saans — Thyme Honey"
-                        data-hi="हिम सांस — थाइम शहद"
-                      >
-                        Him Saans — Thyme Honey
-                      </option>
-                      <option
-                        value="Pachan Amrit — Ajwain Honey"
-                        data-en="Pachan Amrit — Ajwain Honey"
-                        data-hi="पाचन अमृत — अजवाइन शहद"
-                      >
-                        Pachan Amrit — Ajwain Honey
-                      </option>
-                      <option
-                        value="Gahana Madhu — Malty Honey"
-                        data-en="Gahana Madhu — Malty Honey"
-                        data-hi="गहना मधु — माल्टी शहद"
-                      >
-                        Gahana Madhu — Malty Honey
-                      </option>
-                      <option
-                        value="Sarson Tejas — Mustard Honey"
-                        data-en="Sarson Tejas — Mustard Honey"
-                        data-hi="सरसों तेजस — सरसों शहद"
-                      >
-                        Sarson Tejas — Mustard Honey
-                      </option>
-                    </select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6">
-                    <select
-                      class="form-control"
-                      name="size"
-                      required=""
-                      id="presize"
-                    >
-                      <option
-                        value=""
-                        data-en="Select Jar Size"
-                        data-hi="जार का आकार चुनें"
-                      >
-                        Select Jar Size
-                      </option>
-                      <option
-                        value="250 gram"
-                        data-en="250 gram"
-                        data-hi="250 ग्राम"
-                      >
-                        250 gram
-                      </option>
-                      <option
-                        value="500 gram"
-                        data-en="500 gram"
-                        data-hi="500 ग्राम"
-                      >
-                        500 gram
-                      </option>
-                      <option
-                        value="1000 gram"
-                        data-en="1000 gram"
-                        data-hi="1000 ग्राम"
-                      >
-                        1000 gram
-                      </option>
-                    </select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6">
-                    <input
-                      type="tel"
-                      class="form-control"
-                      name="phone"
-                      id="prephone"
-                      placeholder="Phone"
-                      data-placeholder-en="Phone"
-                      data-placeholder-hi="फोन"
-                      required=""
-                    />
-                  </div>
-
-                  <div class="col-lg-6 col-md-6">
-                    <input
-                      type="text"
-                      class="form-control"
-                      name="city"
-                      id="precity"
-                      placeholder="City / State"
-                      data-placeholder-en="City / State"
-                      data-placeholder-hi="शहर / राज्य"
-                      required=""
-                    />
-                  </div>
-                </div>
-
-                <div class="form-group mt-3">
-                  <textarea
-                    class="form-control"
-                    id="premessage"
-                    name="message"
-                    rows="4"
-                    placeholder="Any special instructions or gifting notes"
-                    data-placeholder-en="Any special instructions or gifting notes"
-                    data-placeholder-hi="कोई विशेष निर्देश या उपहार नोट्स"
-                  ></textarea>
-                </div>
-
-                <div class="text-center mt-3">
-                  <div
-                    class="loading"
-                    data-en="Loading"
-                    data-hi="लोड हो रहा है"
-                  >
-                    Loading
-                  </div>
-                  <div class="error-message"></div>
-                  <div
-                    class="sent-message"
-                    data-en="Thank you! Your pre-order has been received. We've included your FREE tasting kit with all eight honey varieties."
-                    data-hi="धन्यवाद! आपका प्री-ऑर्डर मिल गया है। हमने सभी आठ शहद किस्मों के साथ आपकी मुफ्त टेस्टिंग किट शामिल की है।"
-                  >
-                    Thank you! Your pre-order has been received. We've included
-                    your FREE tasting kit with all eight honey varieties.
-                  </div>
-                  <button
-                    type="submit"
-                    data-en="Reserve a Sample & Pre-order"
-                    data-hi="सैंपल आरक्षित करें और प्री-ऑर्डर करें"
-                  >
-                    Reserve a Sample & Pre-order
-                  </button>
-                </div>
-              </form>
-            </div>
-            <!-- End Reservation Form -->
-          </div>
-        </div>
-      </section>
-      <!-- /Pre-order Section -->
-
-      <!-- Gallery Section -->
-      
-      <!-- /Gallery Section -->
-
-      <!-- Contact Section -->
-      
-      <!-- /Contact Section -->
-    </main>
-
-    <footer id="footer" class="footer dark-background">
-      <div class="container">
-        <div class="row gy-3">
-          <div class="col-lg-3 col-md-6 d-flex">
-            <i class="bi bi-geo-alt icon"></i>
-            <div class="address">
-              <h4 data-en="Address" data-hi="पता">Address</h4>
-              <p>Sample Valley Apiaries</p>
-              <p>Kullu, Himachal Pradesh, India</p>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6 d-flex">
-            <i class="bi bi-telephone icon"></i>
-            <div>
-              <h4 data-en="Contact" data-hi="संपर्क">Contact</h4>
-              <p>
-                <strong data-en="Phone:" data-hi="फोन:">Phone:</strong>
-                <span>+91 99308 15228</span><br />
-                <strong data-en="Email:" data-hi="ईमेल:">Email:</strong>
-                <span>hello@himalayanblossom.com</span><br />
-              </p>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6 d-flex">
-            <i class="bi bi-clock icon"></i>
-            <div>
-              <h4 data-en="Opening Hours" data-hi="खुलने का समय">
-                Opening Hours
-              </h4>
-              <p>
-                <strong data-en="Mon-Sat:" data-hi="सोम-शनि:">Mon-Sat:</strong>
-                <span>09:00 - 18:00</span><br />
-                <strong data-en="Sunday" data-hi="रविवार">Sunday</strong>:
-                <span data-en="Closed" data-hi="बंद">Closed</span>
-              </p>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6">
-            <h4 data-en="Follow Us" data-hi="हमारा अनुसरण करें">Follow Us</h4>
-            <div class="social-links d-flex">
-              <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-              <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-              <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-              <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="container copyright text-center mt-4">
+    <!-- Pre-order Section (replaces Book A Table) -->
+    <section id="preorder" class="book-a-table section">
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Pre-order & Tasting Samples</h2>
         <p>
-          © <span data-en="Copyright" data-hi="कॉपीराइट">Copyright</span>
-          <strong class="px-1 sitename">Himalayan Blossom</strong>
-          <span data-en="All Rights Reserved" data-hi="सभी अधिकार सुरक्षित"
-            >All Rights Reserved</span
-          >
+          <span>Reserve</span>
+          <span class="description-title">Your Limited Batch</span>
         </p>
       </div>
-    </footer>
+      <!-- End Section Title -->
 
-    <!-- Scroll Top -->
-    <a
-      href="#"
-      id="scroll-top"
-      class="scroll-top d-flex align-items-center justify-content-center"
-      ><i class="bi bi-arrow-up-short"></i
-    ></a>
+      <div class="container">
+        <div class="text-center mb-4" data-aos="fade-up" data-aos-delay="50">
+          <h4>Your Pre-Order Includes a Free Sample Kit!</h4>
+          <p data-en="Select your favorite honey below to pre-order. We'll automatically include a tasting kit with all eight varieties with your shipment, absolutely free."
+            data-hi="प्री-ऑर्डर के लिए नीचे अपना पसंदीदा शहद चुनें। हम आपकी शिपमेंट के साथ सभी आठ किस्मों के साथ एक टेस्टिंग किट आपोआप शामिल कर देंगे, बिल्कुल मुफ्त।">
+            Select your favorite honey below to pre-order. We'll automatically
+            include a tasting kit with all eight varieties with your shipment,
+            absolutely free.
+          </p>
+        </div>
 
-    <!-- Preloader -->
-    <div id="preloader"></div>
+        <div class="row g-0" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-lg-4 reservation-img" style="background-image: url(assets/img/reservation.jpg)"></div>
 
-    <!-- Vendor JS Files -->
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+          <div class="col-lg-8 d-flex align-items-center reservation-form-bg" data-aos="fade-up" data-aos-delay="200">
+            <form onsubmit="handlePreorderSubmit(event)" class="php-email-form">
+              <div class="row gy-4">
+                <div class="col-lg-6 col-md-6">
+                  <input type="text" id="prename" name="name" class="form-control" placeholder="Your Name"
+                    data-placeholder-en="Your Name" data-placeholder-hi="आपका नाम" required="" />
+                </div>
+                <div class="col-lg-6 col-md-6">
+                  <input type="email" class="form-control" id="preemail" name="email" placeholder="Your Email"
+                    data-placeholder-en="Your Email" data-placeholder-hi="आपका ईमेल" required="" />
+                </div>
 
-    <script src="assets/vendor/aos/aos.js"></script>
-    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+                <div class="col-lg-6 col-md-6">
+                  <select class="form-control" name="product" required="" id="honeyvariant">
+                    <option value="" data-en="Select Honey Variant" data-hi="शहद का प्रकार चुनें">
+                      Select Honey Variant
+                    </option>
+                    <option value="Van Amrit — Wild Honey" data-en="Van Amrit — Wild Honey"
+                      data-hi="वन अमृत — जंगली शहद">
+                      Van Amrit — Wild Honey
+                    </option>
+                    <option value="Shila Madhu — Honey Dew" data-en="Shila Madhu — Honey Dew"
+                      data-hi="शिला मधु — हनी ड्यू">
+                      Shila Madhu — Honey Dew
+                    </option>
+                    <option value="Him Kanti — White Honey" data-en="Him Kanti — White Honey"
+                      data-hi="हिम कांति — सफेद शहद">
+                      Him Kanti — White Honey
+                    </option>
+                    <option value="Kashtha Bal — Chestnut Honey" data-en="Kashtha Bal — Chestnut Honey"
+                      data-hi="काष्ठ बल — चेस्टनट शहद">
+                      Kashtha Bal — Chestnut Honey
+                    </option>
+                    <option value="Him Saans — Thyme Honey" data-en="Him Saans — Thyme Honey"
+                      data-hi="हिम सांस — थाइम शहद">
+                      Him Saans — Thyme Honey
+                    </option>
+                    <option value="Pachan Amrit — Ajwain Honey" data-en="Pachan Amrit — Ajwain Honey"
+                      data-hi="पाचन अमृत — अजवाइन शहद">
+                      Pachan Amrit — Ajwain Honey
+                    </option>
+                    <option value="Gahana Madhu — Malty Honey" data-en="Gahana Madhu — Malty Honey"
+                      data-hi="गहना मधु — माल्टी शहद">
+                      Gahana Madhu — Malty Honey
+                    </option>
+                    <option value="Sarson Tejas — Mustard Honey" data-en="Sarson Tejas — Mustard Honey"
+                      data-hi="सरसों तेजस — सरसों शहद">
+                      Sarson Tejas — Mustard Honey
+                    </option>
+                  </select>
+                </div>
 
-    <!-- Main JS File -->
-    <script src="assets/js/layout.js"></script>
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/content.js"></script>
-    <script src="assets/js/site.js"></script>
-    <script src="assets/js/router.js"></script>
-  </body>
+                <div class="col-lg-6 col-md-6">
+                  <select class="form-control" name="size" required="" id="presize">
+                    <option value="" data-en="Select Jar Size" data-hi="जार का आकार चुनें">
+                      Select Jar Size
+                    </option>
+                    <option value="250 gram" data-en="250 gram" data-hi="250 ग्राम">
+                      250 gram
+                    </option>
+                    <option value="500 gram" data-en="500 gram" data-hi="500 ग्राम">
+                      500 gram
+                    </option>
+                    <option value="1000 gram" data-en="1000 gram" data-hi="1000 ग्राम">
+                      1000 gram
+                    </option>
+                  </select>
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                  <input type="tel" class="form-control" name="phone" id="prephone" placeholder="Phone"
+                    data-placeholder-en="Phone" data-placeholder-hi="फोन" required="" />
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                  <input type="text" class="form-control" name="city" id="precity" placeholder="City / State"
+                    data-placeholder-en="City / State" data-placeholder-hi="शहर / राज्य" required="" />
+                </div>
+              </div>
+
+              <div class="form-group mt-3">
+                <textarea class="form-control" id="premessage" name="message" rows="4"
+                  placeholder="Any special instructions or gifting notes"
+                  data-placeholder-en="Any special instructions or gifting notes"
+                  data-placeholder-hi="कोई विशेष निर्देश या उपहार नोट्स"></textarea>
+              </div>
+
+              <div class="text-center mt-3">
+                <div class="loading" data-en="Loading" data-hi="लोड हो रहा है">
+                  Loading
+                </div>
+                <div class="error-message"></div>
+                <div class="sent-message"
+                  data-en="Thank you! Your pre-order has been received. We've included your FREE tasting kit with all eight honey varieties."
+                  data-hi="धन्यवाद! आपका प्री-ऑर्डर मिल गया है। हमने सभी आठ शहद किस्मों के साथ आपकी मुफ्त टेस्टिंग किट शामिल की है।">
+                  Thank you! Your pre-order has been received. We've included
+                  your FREE tasting kit with all eight honey varieties.
+                </div>
+                <button type="submit" data-en="Reserve a Sample & Pre-order"
+                  data-hi="सैंपल आरक्षित करें और प्री-ऑर्डर करें">
+                  Reserve a Sample & Pre-order
+                </button>
+              </div>
+            </form>
+          </div>
+          <!-- End Reservation Form -->
+        </div>
+      </div>
+    </section>
+    <!-- /Pre-order Section -->
+
+    <!-- Gallery Section -->
+
+    <!-- /Gallery Section -->
+
+    <!-- Contact Section -->
+
+    <!-- /Contact Section -->
+  </main>
+
+  <div id="hbFooterHost" data-include="partials/footer.html"></div>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/content.js"></script>
+  <script src="assets/js/site.js"></script>
+  <script src="assets/js/router.js"></script>
+</body>
+
 </html>
