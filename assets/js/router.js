@@ -77,6 +77,24 @@
 
     newClasses.delete('mobile-nav-active');
     document.body.className = Array.from(newClasses).join(' ');
+
+    // Sync data attributes (specifically data-page-id)
+    const currentAttributes = Array.from(document.body.attributes);
+    const newAttributes = Array.from(newBody.attributes);
+
+    // Remove old data- attributes
+    currentAttributes.forEach(attr => {
+      if (attr.name.startsWith('data-')) {
+        document.body.removeAttribute(attr.name);
+      }
+    });
+
+    // Add new data- attributes
+    newAttributes.forEach(attr => {
+      if (attr.name.startsWith('data-')) {
+        document.body.setAttribute(attr.name, attr.value);
+      }
+    });
   }
 
   function closeMobileNav() {
@@ -109,18 +127,7 @@
     }
   }
 
-  function updateActiveNavigation(pathname) {
-    const allLinks = document.querySelectorAll('#navmenu a, .mobile-nav-menu a');
-    allLinks.forEach((link) => {
-      const linkUrl = new URL(link.href, window.location.href);
-      const isActive = normalizePathname(linkUrl) === pathname;
-      if (isActive) {
-        link.classList.add('active');
-      } else {
-        link.classList.remove('active');
-      }
-    });
-  }
+
 
   function dispatchPageChange(url) {
     document.dispatchEvent(new CustomEvent('hb:spa:pagechange', { detail: { url } }));
@@ -183,7 +190,9 @@
         window.history.pushState({ url: targetUrl.href }, '', targetUrl.href);
       }
 
-      updateActiveNavigation(normalizePathname(targetUrl));
+      if (window.HBLayout && typeof window.HBLayout.refresh === 'function') {
+        window.HBLayout.refresh();
+      }
       closeMobileNav();
       window.scrollTo({ top: 0, behavior: 'auto' });
 
@@ -221,7 +230,7 @@
     window.history.replaceState({ url: window.location.href }, '', window.location.href);
   }
 
-  updateActiveNavigation(normalizePathname(window.location));
+
 
   document.addEventListener('click', (event) => {
     const anchor = event.target.closest('a');
