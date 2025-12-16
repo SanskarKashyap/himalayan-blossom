@@ -35,7 +35,7 @@
   <script src="assets/js/env-loader.js"></script>
   <script src="assets/js/app-config.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+  <!-- Razorpay script removed -->
 </head>
 
 <body class="cart-page" data-page-id="cart">
@@ -94,10 +94,9 @@
                   <span class="fw-semibold" data-en="Total" data-hi="कुल">Total</span>
                   <span id="cartSummaryTotal" class="fw-semibold fs-5">₹0</span>
                 </div>
-                <button type="button" class="btn btn-primary w-100 mt-4" id="cartCheckoutButton" disabled
-                  data-en="Proceed to Checkout" data-hi="चेकआउट पर आगे बढ़ें">
-                  Proceed to Checkout
-                </button>
+                <div class="d-none">
+                  <!-- Checkout removed -->
+                </div>
                 <p id="cartSummaryHint" class="text-muted small mt-3 mb-0"
                   data-en="Adjust quantities or remove items at any time. Your cart stays in sync across devices."
                   data-hi="आप कभी भी मात्रा समायोजित या आइटम हटाकर सकते हैं। आपका कार्ट सभी उपकरणों पर सिंक रहता है।">

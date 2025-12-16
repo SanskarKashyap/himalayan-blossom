@@ -70,7 +70,7 @@
 
   let envReadyPromise = null;
   let firebaseReadyPromise = null;
-  let razorpayPromise = null;
+  // razorpayPromise removed
 
   function ensureEnvironmentReady() {
     if (envReadyPromise) {
@@ -684,207 +684,16 @@
     return { idle, loading, success, error };
   }
 
-  function resolvePreorderAmount(variant, size) {
-    const pricingConfig = typeof window.APP_PREORDER_PRICING === 'object' ? window.APP_PREORDER_PRICING : {};
-    const normalizedVariant = (variant || '').trim();
-    const normalizedSize = (size || '').trim();
+  // resolvePreorderAmount removed
 
-    let amount = null;
-    if (normalizedVariant && pricingConfig[normalizedVariant] && typeof pricingConfig[normalizedVariant] === 'object') {
-      const candidate = Number(pricingConfig[normalizedVariant][normalizedSize]);
-      if (Number.isFinite(candidate) && candidate > 0) {
-        amount = candidate;
-      }
-    }
-
-    if (!amount && normalizedSize) {
-      const candidate = Number(pricingConfig[normalizedSize]);
-      if (Number.isFinite(candidate) && candidate > 0) {
-        amount = candidate;
-      }
-    }
-
-    if (!amount && normalizedSize) {
-      const candidate = Number(DEFAULT_PRICING[normalizedSize]);
-      if (Number.isFinite(candidate) && candidate > 0) {
-        amount = candidate;
-      }
-    }
-
-    return amount;
-  }
-
-  function ensureRazorpayLoaded() {
-    if (window.Razorpay) {
-      return Promise.resolve(window.Razorpay);
-    }
-    if (razorpayPromise) {
-      return razorpayPromise;
-    }
-
-    razorpayPromise = new Promise((resolve, reject) => {
-      const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
-
-      const handleLoad = () => {
-        if (window.Razorpay) {
-          resolve(window.Razorpay);
-        } else {
-          reject(new Error('Razorpay SDK loaded but Razorpay is undefined.'));
-        }
-      };
-
-      const handleError = () => {
-        reject(new Error('Unable to load Razorpay SDK.'));
-      };
-
-      if (existingScript) {
-        existingScript.addEventListener('load', handleLoad, { once: true });
-        existingScript.addEventListener('error', handleError, { once: true });
-      } else {
-        const script = document.createElement('script');
-        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-        script.async = true;
-        script.onload = handleLoad;
-        script.onerror = handleError;
-        document.head.appendChild(script);
-      }
-
-      window.setTimeout(() => {
-        if (!window.Razorpay) {
-          reject(new Error('Timed out waiting for Razorpay SDK.'));
-        }
-      }, 10000);
-    }).finally(() => {
-      if (!window.Razorpay) {
-        razorpayPromise = null;
-      }
-    });
-
-    return razorpayPromise;
-  }
+  // Razorpay loader removed
 
   async function promptSignIn(options) {
     signInWithFirebase(options);
     throw new Error('Redirecting to sign-in.');
   }
 
-  async function handlePreorderSubmit(event) {
-    event.preventDefault();
-    const form = event.target instanceof HTMLFormElement ? event.target : null;
-    if (!form) {
-      return false;
-    }
-
-    const status = createFormStatusController(form);
-
-    if (!isAuthenticated()) {
-      status.error('Please sign in to reserve your batch.');
-      promptSignIn({ redirectTo: window.location.href }).catch(() => {
-        // Swallow prompt errors — message already displayed
-      });
-      return false;
-    }
-
-    const formData = new FormData(form);
-    const name = (formData.get('name') || '').toString().trim();
-    const email = (formData.get('email') || '').toString().trim();
-    const variant = (formData.get('product') || '').toString().trim();
-    const size = (formData.get('size') || '').toString().trim();
-    const phone = (formData.get('phone') || '').toString().trim();
-    const city = (formData.get('city') || '').toString().trim();
-    const message = (formData.get('message') || '').toString().trim();
-
-    if (!variant || !size) {
-      status.error('Please select a honey variant and jar size.');
-      return false;
-    }
-
-    const amount = resolvePreorderAmount(variant, size);
-    if (!amount) {
-      status.error('Pricing for the selected jar size is not configured.');
-      return false;
-    }
-
-    status.loading('Creating secure checkout...');
-
-    try {
-      const payload = {
-        // amount: amount, // Security: Do not send amount. Server calculates it.
-        variant,
-        size,
-        currency: 'INR',
-        notes: {
-          customer_name: name,
-          customer_email: email,
-          phone,
-          city,
-          message,
-        },
-      };
-
-      const response = await apiFetch('/api/create-order', {
-        method: 'POST',
-        body: payload,
-      });
-
-      status.idle();
-
-      const { order, razorpay_key_id: keyId } = response || {};
-      if (!order || !order.razorpay_order_id || !keyId) {
-        throw new Error('Incomplete payment response from server.');
-      }
-
-      dispatchPaymentEvent('order-created', { order });
-
-      await ensureRazorpayLoaded();
-
-      const amountPaise = Math.round(Number(order.amount || amount) * 100);
-
-      const razorpay = new window.Razorpay({
-        key: keyId,
-        amount: amountPaise,
-        currency: order.currency || 'INR',
-        name: 'Himalayan Blossom',
-        description: `Pre-order: ${variant} (${size})`,
-        order_id: order.razorpay_order_id,
-        prefill: {
-          name: name || getDisplayName(state.user) || 'Himalayan Blossom Patron',
-          email: email || state.user?.email || '',
-          contact: phone || '',
-        },
-        notes: order.notes || payload.notes,
-        theme: {
-          color: '#d4af37',
-        },
-        handler: function () {
-          status.success('Thank you! Your payment is underway. We will email the receipt shortly.');
-          form.reset();
-          dispatchPaymentEvent('payment-initiated', { order });
-        },
-        modal: {
-          ondismiss: function () {
-            status.idle();
-            dispatchPaymentEvent('payment-dismissed', { order });
-          },
-        },
-      });
-
-      razorpay.open();
-    } catch (error) {
-      status.error(error.message || 'Unable to initiate payment. Please try again.');
-      dispatchPaymentEvent('error', { message: error.message });
-    }
-
-    return false;
-  }
-
-  function dispatchPaymentEvent(eventName, detail) {
-    window.dispatchEvent(
-      new CustomEvent(`hb:payment:${eventName}`, {
-        detail: detail || {},
-      })
-    );
-  }
+  // handlePreorderSubmit and dispatchPaymentEvent removed
 
   const Auth = {
     isAuthenticated,
@@ -911,5 +720,5 @@
   }
 
   window.Auth = Auth;
-  window.handlePreorderSubmit = handlePreorderSubmit;
+  window.handlePreorderSubmit = null;
 })();

@@ -1041,12 +1041,12 @@
     elements.subtotal = qs('#cartSummarySubtotal', root);
     elements.total = qs('#cartSummaryTotal', root);
     elements.shipping = qs('#cartSummaryShipping', root);
-    elements.checkoutButton = qs('#cartCheckoutButton', root);
+    // elements.checkoutButton removed
     elements.summaryHint = qs('#cartSummaryHint', root);
     elements.statusMessage = qs('#cartStatusMessage', root) || qs('#cartStatusMessage');
     elements.authPrompt = qs('#cartAuthPrompt', root);
     elements.authButton = qs('#cartSignInButton', root);
-    const ready = Boolean(elements.itemsList && elements.subtotal && elements.total && elements.checkoutButton);
+    const ready = Boolean(elements.itemsList && elements.subtotal && elements.total);
     if (!ready) {
       logCartStep('Cart elements missing required nodes');
     }
@@ -1312,19 +1312,7 @@
     if (elements.total) {
       elements.total.textContent = formatCartTotal(totalValue);
     }
-    if (elements.checkoutButton) {
-      const disabled = !items.length;
-      elements.checkoutButton.disabled = disabled;
-      if (disabled) {
-        elements.checkoutButton.setAttribute('aria-disabled', 'true');
-      } else {
-        elements.checkoutButton.removeAttribute('aria-disabled');
-      }
-      elements.checkoutButton.dataset.requiresAuth = (!isAuthenticated).toString();
-      elements.checkoutButton.textContent = isAuthenticated
-        ? cartText('checkoutCta')
-        : cartText('checkoutCtaAuth');
-    }
+    // checkout button logic removed
   }
 
   function refreshCartAuthState() {
@@ -1464,31 +1452,7 @@
     }
   }
 
-  function handleCartCheckoutClick(event) {
-    if (event) {
-      event.preventDefault();
-    }
-    if (!cartPageState.lastCart || !Array.isArray(cartPageState.lastCart.items) || !cartPageState.lastCart.items.length) {
-      showCartStatus(cartText('checkoutDisabled'), 'warning');
-      return;
-    }
-    const isAuthenticated = window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated();
-    if (!isAuthenticated) {
-      showCartStatus(cartText('signInPrompt'), 'warning');
-      if (window.Auth && typeof window.Auth.signIn === 'function') {
-        window.Auth.signIn({ redirectTo: window.location.href }).catch(() => {
-          const loginUrl = new URL('login.html', window.location.origin);
-          loginUrl.searchParams.set('redirect', window.location.href);
-          window.location.assign(`${loginUrl.pathname}${loginUrl.search}${loginUrl.hash}`);
-        });
-      }
-      return;
-    }
-    showCartStatus(cartText('checkoutRedirect'), 'info');
-    window.setTimeout(() => {
-      window.location.assign('preorder.html');
-    }, 500);
-  }
+  // handleCartCheckoutClick removed
 
   function attachCartPageEvents() {
     if (!cartPageState.elements.root || cartPageState.eventsBound) {
@@ -1501,9 +1465,7 @@
     if (cartPageState.elements.authButton) {
       cartPageState.elements.authButton.addEventListener('click', handleCartSignInClick);
     }
-    if (cartPageState.elements.checkoutButton) {
-      cartPageState.elements.checkoutButton.addEventListener('click', handleCartCheckoutClick);
-    }
+    // checkout button listener attachment removed
     cartPageState.eventsBound = true;
   }
 
@@ -1518,9 +1480,7 @@
     if (cartPageState.elements.authButton) {
       cartPageState.elements.authButton.removeEventListener('click', handleCartSignInClick);
     }
-    if (cartPageState.elements.checkoutButton) {
-      cartPageState.elements.checkoutButton.removeEventListener('click', handleCartCheckoutClick);
-    }
+    // checkout button listener detachment removed
     cartPageState.eventsBound = false;
   }
 
