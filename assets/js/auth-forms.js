@@ -23,7 +23,7 @@
       if (url.origin !== window.location.origin) {
         return 'index.html';
       }
-      const path = url.pathname || '/';
+      return 'index.html'; // Always redirect to dashboard (home) as per requirements
       return path + (url.search || '') + (url.hash || '');
     } catch (error) {
       return 'index.html';
@@ -68,21 +68,19 @@
     }
     switch (error.code) {
       case 'auth/invalid-email':
-        return 'Please enter a valid email address.';
+      case 'auth/wrong-password':
+      case 'auth/user-not-found':
+        return 'Email or password is incorrect';
       case 'auth/user-disabled':
         return 'This account has been disabled. Contact support for assistance.';
-      case 'auth/user-not-found':
-        return 'We could not find an account with that email. Please sign up first.';
-      case 'auth/wrong-password':
-        return 'Incorrect password. Please try again.';
       case 'auth/too-many-requests':
         return 'Too many attempts. Please wait a moment and try again.';
       case 'auth/email-already-in-use':
-        return 'An account with this email already exists. Try signing in instead.';
+        return 'User already exists. Please sign in';
       case 'auth/weak-password':
         return 'Choose a stronger password with at least 6 characters.';
       default:
-        return error.message || 'Unable to complete the request.';
+        return 'Email or password is incorrect'; // Default fallback for safety
     }
   }
 
