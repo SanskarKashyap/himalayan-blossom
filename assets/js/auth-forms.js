@@ -169,9 +169,38 @@
     }
   }
 
+  async function handleGoogleLogin(event, statusElement) {
+    if (event) event.preventDefault();
+    const btn = event.currentTarget;
+
+    setStatus(statusElement, 'info', 'Connecting to Google...');
+    if (btn) btn.disabled = true;
+
+    try {
+      const resources = await window.Auth.ensureFirebaseReady();
+      await resources.auth.setPersistence(resources.firebase.auth.Auth.Persistence.LOCAL);
+
+      const provider = new resources.firebase.auth.GoogleAuthProvider();
+      await resources.auth.signInWithPopup(provider);
+
+      setStatus(statusElement, 'success', 'Signed in! Redirecting…');
+      redirectToTarget();
+    } catch (error) {
+      console.error('Google Auth Error:', error);
+      if (error.code === 'auth/popup-closed-by-user') {
+        setStatus(statusElement, 'info', ''); // Clear message or show mild info
+      } else {
+        setStatus(statusElement, 'error', mapAuthError(error));
+      }
+      if (btn) btn.disabled = false;
+    }
+  }
+
   function initAuthForms() {
     const loginForm = document.querySelector('form[data-auth-form="login"]');
     const signupForm = document.querySelector('form[data-auth-form="signup"]');
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const googleSignupBtn = document.getElementById('googleSignupBtn');
     const statusElement = document.querySelector('[data-auth-status]');
     const redirectTarget = resolveRedirectTarget();
 
@@ -202,6 +231,16 @@
     if (signupForm && !signupForm.dataset.hbBound) {
       signupForm.dataset.hbBound = 'true';
       signupForm.addEventListener('submit', (event) => handleSignupSubmit(event, statusElement));
+    }
+
+    if (googleLoginBtn && !googleLoginBtn.dataset.hbBound) {
+      googleLoginBtn.dataset.hbBound = 'true';
+      googleLoginBtn.addEventListener('click', (event) => handleGoogleLogin(event, statusElement));
+    }
+
+    if (googleSignupBtn && !googleSignupBtn.dataset.hbBound) {
+      googleSignupBtn.dataset.hbBound = 'true';
+      googleSignupBtn.addEventListener('click', (event) => handleGoogleLogin(event, statusElement));
     }
   }
 
