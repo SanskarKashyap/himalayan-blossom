@@ -46,9 +46,9 @@
 
   const DEFAULT_PRICING = Object.assign(
     {
-      '250 gram': 1199,
-      '500 gram': 1999,
-      '1000 gram': 3499,
+      '250 gram': 1,
+      '500 gram': 2,
+      '1000 gram': 3,
     },
     typeof window.APP_PREORDER_PRICING === 'object' && !Array.isArray(window.APP_PREORDER_PRICING)
       ? Object.fromEntries(

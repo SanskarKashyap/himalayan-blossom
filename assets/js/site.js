@@ -25,9 +25,9 @@
   };
 
   const DEFAULT_PRICING = {
-    '250 gram': 1199,
-    '500 gram': 1999,
-    '1000 gram': 3499,
+    '250 gram': 1,
+    '500 gram': 2,
+    '1000 gram': 3,
   };
 
   const state = {
@@ -2514,5 +2514,12 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  // Ensure checkout.js is available globally for SPA navigation to cart
+  if (!document.querySelector('script[src="assets/js/checkout.js"]')) {
+    const checkoutScript = document.createElement('script');
+    checkoutScript.src = 'assets/js/checkout.js';
+    document.head.appendChild(checkoutScript);
   }
 })();

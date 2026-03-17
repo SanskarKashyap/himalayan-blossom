@@ -129,4 +129,13 @@
         loadRazorpayScript();
     }
 
+    // Re-initialize on SPA navigation
+    document.addEventListener('hb:spa:pagechange', () => {
+        if (document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]')) {
+            initCheckout();
+        } else {
+            loadRazorpayScript();
+        }
+    });
+
 })();
