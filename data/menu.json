@@ -17,6 +17,11 @@
         "en": "The Family Shield — Daily immunity support for the whole family.",
         "hi": "पारिवारिक ढाल — पूरे परिवार के लिए दैनिक प्रतिरक्षा समर्थन।"
       },
+      "pricing": {
+        "250 gram": 1,
+        "500 gram": 2,
+        "1000 gram": 3
+      },
       "details": {
         "en": [
           "The Family Shield: Daily immunity support for the whole family.",
@@ -44,6 +49,11 @@
       "tagline": {
         "en": "The Post-Feast Fix — Soothes digestion and restores balance.",
         "hi": "दावत के बाद का उपाय — पाचन को शांत करता है और संतुलन बहाल करता है।"
+      },
+      "pricing": {
+        "250 gram": 1,
+        "500 gram": 2,
+        "1000 gram": 3
       },
       "details": {
         "en": [
@@ -73,6 +83,11 @@
         "en": "The Morning Soother — Gentle energy & throat relief.",
         "hi": "सुबह का आराम — सौम्य ऊर्जा और गले में राहत।"
       },
+      "pricing": {
+        "250 gram": 1,
+        "500 gram": 2,
+        "1000 gram": 3
+      },
       "details": {
         "en": [
           "The Morning Soother: Gentle energy & throat relief.",
@@ -100,6 +115,11 @@
       "tagline": {
         "en": "The Fatigue Fighter — Nutrient-rich support for low energy & anemia.",
         "hi": "थकान से लड़ने वाला — कम ऊर्जा और एनीमिया के लिए पोषक तत्वों से भरपूर समर्थन।"
+      },
+      "pricing": {
+        "250 gram": 1,
+        "500 gram": 2,
+        "1000 gram": 3
       },
       "details": {
         "en": [
@@ -129,6 +149,11 @@
         "en": "The Cough Quieter — Targeted relief for coughs & congestion.",
         "hi": "खांसी शांत करने वाला — खांसी और जमाव के लिए लक्षित राहत।"
       },
+      "pricing": {
+        "250 gram": 1,
+        "500 gram": 2,
+        "1000 gram": 3
+      },
       "details": {
         "en": [
           "The Cough Quieter: Targeted relief for coughs & congestion.",
@@ -156,6 +181,11 @@
       "tagline": {
         "en": "The Acidity Tamer — Soothe gas, bloating and acidity.",
         "hi": "एसिडिटी को नियंत्रित करने वाला — गैस, सूजन और एसिडिटी को शांत करें।"
+      },
+      "pricing": {
+        "250 gram": 1,
+        "500 gram": 2,
+        "1000 gram": 3
       },
       "details": {
         "en": [
@@ -185,6 +215,11 @@
         "en": "The Healthy Sweetener — A nutritious swap for everyday sweetening.",
         "hi": "स्वस्थ स्वीटनर — रोजमर्रा की मिठास के लिए एक पौष्टिक विकल्प।"
       },
+      "pricing": {
+        "250 gram": 1,
+        "500 gram": 2,
+        "1000 gram": 3
+      },
       "details": {
         "en": [
           "The Healthy Sweetener: A nutritious swap for everyday sweetening.",
@@ -212,6 +247,11 @@
       "tagline": {
         "en": "The First-Response — Quick support for colds and low energy.",
         "hi": "पहली प्रतिक्रिया — सर्दी और कम ऊर्जा के लिए त्वरित समर्थन।"
+      },
+      "pricing": {
+        "250 gram": 1,
+        "500 gram": 2,
+        "1000 gram": 3
       },
       "details": {
         "en": [

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>My Orders — Himalayan Blossom</title>
+  <meta name="description" content="View and track all your Himalayan Blossom honey orders." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon" />
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Vendor CSS -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
+
+  <!-- Main CSS -->
+  <link href="assets/css/main.css" rel="stylesheet" />
+  <script src="assets/js/env-loader.js"></script>
+  <script src="assets/js/app-config.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    .orders-empty {
+      text-align: center;
+      padding: 5rem 2rem;
+    }
+    .orders-empty .empty-icon {
+      font-size: 5rem;
+      color: color-mix(in srgb, var(--accent-color) 40%, transparent 60%);
+      margin-bottom: 1.5rem;
+    }
+    .orders-empty h3 {
+      font-family: var(--heading-font);
+      color: var(--heading-color);
+      margin-bottom: 0.8rem;
+    }
+    .orders-empty p { color: color-mix(in srgb, var(--default-color) 60%, transparent); }
+
+    .order-card {
+      background: var(--surface-color);
+      border: 1px solid color-mix(in srgb, var(--accent-color) 18%, transparent 82%);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      margin-bottom: 1.5rem;
+    }
+    .order-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 44px rgba(0,0,0,0.1);
+    }
+    .order-card-header {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 1.2rem 1.5rem;
+      background: color-mix(in srgb, var(--accent-color) 6%, var(--surface-color) 94%);
+      border-bottom: 1px solid color-mix(in srgb, var(--accent-color) 12%, transparent 88%);
+    }
+    .order-card-header .order-id {
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      background: color-mix(in srgb, var(--accent-color) 12%, transparent 88%);
+      border: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent 70%);
+      border-radius: 999px;
+      padding: 3px 12px;
+    }
+    .order-card-header .order-date {
+      font-size: 0.82rem;
+      color: color-mix(in srgb, var(--default-color) 55%, transparent);
+    }
+    .order-card-header .order-total {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--heading-color);
+      margin-left: auto;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-radius: 999px;
+      padding: 4px 14px;
+    }
+    .status-badge.confirmed    { background: #e9f8ee; color: #28a745; }
+    .status-badge.processing   { background: #fff3cd; color: #856404; }
+    .status-badge.shipped      { background: #cfe2ff; color: #0a58ca; }
+    .status-badge.out_for_delivery { background: #d1e7dd; color: #0f5132; }
+    .status-badge.delivered    { background: #d1e7dd; color: #0f5132; }
+    .status-badge.cancelled    { background: #f8d7da; color: #842029; }
+    .status-badge.default      { background: color-mix(in srgb, var(--accent-color) 12%, transparent); color: var(--accent-color); }
+
+    .order-card-body { padding: 1.2rem 1.5rem; }
+
+    .order-items-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+    .order-item-thumb {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: color-mix(in srgb, var(--accent-color) 5%, var(--surface-color) 95%);
+      border: 1px solid color-mix(in srgb, var(--accent-color) 15%, transparent 85%);
+      border-radius: 12px;
+      padding: 8px 14px 8px 8px;
+    }
+    .order-item-thumb img {
+      width: 44px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .order-item-thumb .item-details .name {
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--heading-color);
+      line-height: 1.2;
+    }
+    .order-item-thumb .item-details .meta {
+      font-size: 0.74rem;
+      color: color-mix(in srgb, var(--default-color) 55%, transparent);
+    }
+
+    /* Progress tracker */
+    .order-progress {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 1rem 0 0.5rem;
+      overflow-x: auto;
+    }
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      flex: 1;
+      min-width: 70px;
+    }
+    .progress-step .dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      border: 2px solid color-mix(in srgb, var(--accent-color) 35%, transparent 65%);
+      background: var(--surface-color);
+      color: color-mix(in srgb, var(--default-color) 40%, transparent);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+    .progress-step.done .dot {
+      background: #28a745;
+      border-color: #28a745;
+      color: #fff;
+    }
+    .progress-step.active .dot {
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+      color: var(--contrast-color);
+      box-shadow: 0 4px 14px rgba(212,175,55,0.45);
+    }
+    .progress-step .label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: color-mix(in srgb, var(--default-color) 50%, transparent);
+      text-align: center;
+      line-height: 1.2;
+    }
+    .progress-step.active .label, .progress-step.done .label {
+      color: var(--heading-color);
+    }
+    .progress-line {
+      flex: 1;
+      height: 2px;
+      background: color-mix(in srgb, var(--accent-color) 20%, transparent 80%);
+      margin-bottom: 20px;
+    }
+    .progress-line.done { background: #28a745; }
+
+    .order-card-footer {
+      padding: 0.9rem 1.5rem;
+      border-top: 1px solid color-mix(in srgb, var(--accent-color) 10%, transparent 90%);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .btn-track {
+      background: var(--accent-color);
+      border: none;
+      border-radius: 999px;
+      padding: 7px 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--contrast-color);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-track:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(212,175,55,0.35);
+      color: var(--contrast-color);
+    }
+    .btn-whatsapp {
+      background: #25D366;
+      border: none;
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-whatsapp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+      color: #fff;
+    }
+
+    .sign-in-prompt {
+      text-align: center;
+      padding: 4rem 1rem;
+    }
+    .sign-in-prompt .prompt-icon {
+      font-size: 4rem;
+      color: color-mix(in srgb, var(--accent-color) 45%, transparent);
+      margin-bottom: 1.2rem;
+    }
+
+    .orders-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+    .orders-header h1 {
+      font-family: var(--heading-font);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      color: var(--heading-color);
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body class="my-orders-page" data-page-id="my-orders">
+  <div id="hbHeaderHost" data-include="partials/navbar.html"></div>
+
+  <main class="main">
+    <section class="section light-background">
+      <div class="container" data-aos="fade-up">
+
+        <!-- Sign-in prompt for guests -->
+        <div id="ordersSignInPrompt" class="sign-in-prompt d-none">
+          <div class="prompt-icon"><i class="bi bi-person-circle"></i></div>
+          <h2 style="font-family:var(--heading-font);color:var(--heading-color);">Sign In to View Orders</h2>
+          <p class="text-muted mb-4">Please sign in to see your order history and track deliveries.</p>
+          <button id="ordersSignInBtn" class="btn-track" style="font-size:1rem;padding:12px 28px">
+            <i class="bi bi-google"></i> Sign In with Google
+          </button>
+        </div>
+
+        <!-- Orders content -->
+        <div id="ordersContent" class="d-none">
+          <div class="orders-header">
+            <h1><i class="bi bi-bag-check me-2" style="color:var(--accent-color)"></i>My Orders</h1>
+            <a href="collection.html" class="btn-track" style="background:transparent;border:2px solid var(--accent-color);color:var(--heading-color)">
+              <i class="bi bi-shop"></i> Shop More
+            </a>
+          </div>
+
+          <!-- Loading -->
+          <div id="ordersLoading" class="text-center py-5">
+            <div class="spinner-border text-warning mb-3" style="width:2.5rem;height:2.5rem"></div>
+            <p class="text-muted">Loading your orders…</p>
+          </div>
+
+          <!-- Empty -->
+          <div id="ordersEmpty" class="orders-empty d-none">
+            <div class="empty-icon"><i class="bi bi-bag-x"></i></div>
+            <h3>No Orders Yet</h3>
+            <p>You haven't placed any orders yet. Explore our collection of rare Himalayan honeys!</p>
+            <a href="collection.html" class="btn-track mt-2 d-inline-flex" style="font-size:1rem;padding:12px 32px">
+              <i class="bi bi-arrow-right-circle"></i> Shop Now
+            </a>
+          </div>
+
+          <!-- Order list -->
+          <div id="ordersList"></div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <div id="hbFooterHost" data-include="partials/footer.html"></div>
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+  </a>
+  <div id="preloader"></div>
+
+  <!-- Vendor JS -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+
+  <!-- Main JS -->
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/site.js"></script>
+  <script src="assets/js/content.js"></script>
+  <script src="assets/js/router.js"></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const formatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 });
+      const CART_PRICE_SCALE = 100;
+
+      const STATUS_STEPS = ['confirmed', 'processing', 'shipped', 'out_for_delivery', 'delivered'];
+      const STATUS_LABELS = {
+        confirmed: 'Order Placed',
+        processing: 'Packing',
+        shipped: 'Shipped',
+        out_for_delivery: 'Out for Delivery',
+        delivered: 'Delivered',
+      };
+      const STATUS_ICONS = {
+        confirmed: 'bi-check2',
+        processing: 'bi-box-seam',
+        shipped: 'bi-truck',
+        out_for_delivery: 'bi-geo-alt',
+        delivered: 'bi-house-check',
+        cancelled: 'bi-x-circle',
+        default: 'bi-clock',
+      };
+
+      function getStatusBadgeClass(status) {
+        const known = ['confirmed', 'processing', 'shipped', 'out_for_delivery', 'delivered', 'cancelled'];
+        return known.includes(status) ? status : 'default';
+      }
+
+      function formatDate(iso) {
+        try {
+          const d = new Date(iso);
+          return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        } catch (e) { return iso || '—'; }
+      }
+
+      function buildProgressBar(currentStatus) {
+        const currentIndex = STATUS_STEPS.indexOf(currentStatus);
+        let html = '<div class="order-progress">';
+        STATUS_STEPS.forEach((step, idx) => {
+          const isDone = currentIndex > idx;
+          const isActive = currentIndex === idx;
+          const cls = isDone ? 'done' : isActive ? 'active' : '';
+          const icon = STATUS_ICONS[step] || 'bi-circle';
+          html += `
+            <div class="progress-step ${cls}">
+              <div class="dot"><i class="bi ${icon}"></i></div>
+              <span class="label">${STATUS_LABELS[step] || step}</span>
+            </div>
+          `;
+          if (idx < STATUS_STEPS.length - 1) {
+            html += `<div class="progress-line ${isDone ? 'done' : ''}"></div>`;
+          }
+        });
+        html += '</div>';
+        return html;
+      }
+
+      function buildOrderCard(order) {
+        const items = Array.isArray(order.items)
+          ? order.items
+          : (order.items && typeof order.items === 'object' ? Object.values(order.items) : []);
+
+        const status = order.order_status || 'confirmed';
+        const badgeCls = getStatusBadgeClass(status);
+        const statusLabel = STATUS_LABELS[status] || status.charAt(0).toUpperCase() + status.slice(1);
+
+        const itemsHtml = items.slice(0, 4).map((item) => {
+          const img = item.image ? `<img src="${item.image}" alt="${item.name || item.product || ''}" />` : '';
+          return `
+            <div class="order-item-thumb">
+              ${img}
+              <div class="item-details">
+                <div class="name">${item.name || item.product || 'Honey'}</div>
+                <div class="meta">${item.size || ''} &times; ${item.qty || item.quantity || 1}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const extraItems = items.length > 4 ? `<div class="order-item-thumb"><div class="item-details"><div class="name">+${items.length - 4} more</div></div></div>` : '';
+
+        const address = order.shipping_address;
+        const addressHtml = address && address.city
+          ? `<span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>${[address.addressLine1, address.city, address.state, address.pinCode].filter(Boolean).join(', ')}</span>`
+          : '';
+
+        const total = order.amount
+          ? formatter.format(order.amount)
+          : (order.amountPaise ? formatter.format(order.amountPaise / CART_PRICE_SCALE) : '—');
+
+        const whatsappMsg = encodeURIComponent(`Hi! I'd like to track my Himalayan Blossom order: ${order.razorpay_order_id || order.id || ''}`);
+        const trackingHtml = order.tracking_number
+          ? `<a href="${order.tracking_url || '#'}" target="_blank" class="btn-track"><i class="bi bi-truck"></i> Track Shipment</a>`
+          : `<a href="https://wa.me/919930815228?text=${whatsappMsg}" target="_blank" class="btn-whatsapp"><i class="bi bi-whatsapp"></i> Ask for Update</a>`;
+
+        return `
+          <div class="order-card" data-aos="fade-up">
+            <div class="order-card-header">
+              <span class="order-id">${order.razorpay_order_id || order.id || 'N/A'}</span>
+              <span class="order-date">${formatDate(order.createdAt)}</span>
+              <span class="status-badge ${badgeCls}"><i class="bi ${STATUS_ICONS[status] || 'bi-clock'}"></i> ${statusLabel}</span>
+              <span class="order-total">${total}</span>
+            </div>
+            <div class="order-card-body">
+              <div class="order-items-row">${itemsHtml}${extraItems}</div>
+              ${addressHtml}
+              ${buildProgressBar(status)}
+            </div>
+            <div class="order-card-footer">
+              ${trackingHtml}
+              <a href="order-confirmation.html?order_id=${encodeURIComponent(order.razorpay_order_id || '')}&payment_id=${encodeURIComponent(order.razorpay_payment_id || '')}" class="btn-track" style="background:transparent;border:1.5px solid var(--accent-color);color:var(--heading-color)">
+                <i class="bi bi-receipt"></i> View Receipt
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderOrders(orders) {
+        const listEl = document.getElementById('ordersList');
+        const emptyEl = document.getElementById('ordersEmpty');
+        const loadingEl = document.getElementById('ordersLoading');
+
+        if (loadingEl) loadingEl.classList.add('d-none');
+
+        if (!orders || orders.length === 0) {
+          if (emptyEl) emptyEl.classList.remove('d-none');
+          return;
+        }
+
+        if (emptyEl) emptyEl.classList.add('d-none');
+        if (listEl) {
+          listEl.innerHTML = orders.map(buildOrderCard).join('');
+          // Re-trigger AOS for dynamically injected cards
+          if (window.AOS) window.AOS.refresh();
+        }
+      }
+
+      async function loadOrders(uid) {
+        if (!window.Auth || typeof window.Auth.ensureFirebaseReady !== 'function') {
+          renderOrders([]);
+          return;
+        }
+
+        try {
+          const { firestore } = await window.Auth.ensureFirebaseReady();
+          if (!firestore) {
+            renderOrders([]);
+            return;
+          }
+
+          const snap = await firestore
+            .collection('users')
+            .doc(uid)
+            .collection('orders')
+            .orderBy('createdAt', 'desc')
+            .limit(50)
+            .get();
+
+          const orders = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          renderOrders(orders);
+        } catch (err) {
+          console.error('[MyOrders] Failed to load orders:', err);
+          renderOrders([]);
+        }
+      }
+
+      function initPage() {
+        const signInPrompt = document.getElementById('ordersSignInPrompt');
+        const ordersContent = document.getElementById('ordersContent');
+
+        function onAuth(uid) {
+          if (signInPrompt) signInPrompt.classList.add('d-none');
+          if (ordersContent) ordersContent.classList.remove('d-none');
+          loadOrders(uid);
+        }
+
+        function onGuest() {
+          if (signInPrompt) signInPrompt.classList.remove('d-none');
+          if (ordersContent) ordersContent.classList.add('d-none');
+        }
+
+        // Check current auth state
+        const authReady = () => {
+          if (window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated()) {
+            const user = window.Auth.getUser ? window.Auth.getUser() : null;
+            if (user && user.uid) onAuth(user.uid);
+            else onGuest();
+          } else {
+            onGuest();
+          }
+        };
+
+        window.addEventListener('hb:auth:signed-in', (e) => {
+          const user = e && e.detail && e.detail.user;
+          if (user && user.uid) onAuth(user.uid);
+        });
+
+        window.addEventListener('hb:auth:signed-out', onGuest);
+
+        // Sign in button
+        const signInBtn = document.getElementById('ordersSignInBtn');
+        if (signInBtn) {
+          signInBtn.addEventListener('click', () => {
+            if (window.Auth && typeof window.Auth.signIn === 'function') {
+              window.Auth.signIn({ redirectTo: window.location.href }).catch(() => {
+                const url = new URL('login.html', window.location.origin);
+                url.searchParams.set('redirect', window.location.href);
+                window.location.assign(url.pathname + url.search);
+              });
+            } else {
+              const url = new URL('login.html', window.location.origin);
+              url.searchParams.set('redirect', window.location.href);
+              window.location.assign(url.pathname + url.search);
+            }
+          });
+        }
+
+        // Auth may already be resolved
+        if (window.Auth && typeof window.Auth.isAuthenticated === 'function') {
+          authReady();
+        } else {
+          window.addEventListener('hb:auth:ready', authReady, { once: true });
+          // Fallback
+          setTimeout(authReady, 2500);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', initPage);
+    })();
+  </script>
+</body>
+
+</html>

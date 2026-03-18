@@ -14,7 +14,11 @@
     }
 
     window.APP_API_BASE_URL =
-      env.APP_API_BASE_URL || window.APP_API_BASE_URL || 'http://localhost:5500/api';
+      env.APP_API_BASE_URL || window.APP_API_BASE_URL ||
+      // Auto-detect: use current origin so it works on any port (3000, 5500, vercel, etc.)
+      (typeof window !== 'undefined' && window.location
+        ? window.location.origin + '/api'
+        : 'http://localhost:3000/api');
 
     window.APP_GOOGLE_CLIENT_ID =
       window.APP_GOOGLE_CLIENT_ID || env.APP_GOOGLE_CLIENT_ID || '';

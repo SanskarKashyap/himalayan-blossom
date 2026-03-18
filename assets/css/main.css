@@ -2328,6 +2328,34 @@ section,
   min-height: 56px;
 }
 
+/* Fix 1: Price badge on product cards */
+.product-price-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: color-mix(in srgb, var(--accent-color) 14%, transparent 86%);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent 60%);
+  border-radius: 999px;
+  padding: 5px 16px;
+  margin: 0 auto 4px;
+  width: fit-content;
+}
+
+.product-price-badge .price-from {
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--default-color) 65%, transparent 35%);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.product-price-badge .price-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  font-family: var(--heading-font);
+}
+
 .menu .menu-item .price {
   font-size: 1.25rem;
   font-weight: 600;
@@ -2509,6 +2537,7 @@ section,
 .preorder-modal .size-option {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
   padding: 0.9rem 1.1rem;
   border-radius: 14px;
@@ -2516,6 +2545,15 @@ section,
   background: color-mix(in srgb, var(--surface-color) 94%, var(--accent-color) 6%);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Fix 2: Price label inside size option */
+.preorder-modal .size-option .size-price {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-left: auto;
+  font-family: var(--heading-font);
 }
 
 .preorder-modal .size-option:hover {

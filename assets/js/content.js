@@ -157,12 +157,19 @@
       const descEn = detailsEn.join('<br>');
       const descHi = detailsHi.join('<br>');
 
+      // Pricing
+      const pricing = (product.pricing && typeof product.pricing === 'object') ? product.pricing : {};
+      const pricingJson = JSON.stringify(pricing);
+      const priceValues = Object.values(pricing).filter((v) => typeof v === 'number' && v > 0);
+      const minPrice = priceValues.length ? Math.min(...priceValues) : null;
+
       card.setAttribute('data-title', titleEn);
       card.setAttribute('data-title-hi', titleHi);
       card.setAttribute('data-product-id', product.id || slugify(titleEn));
       card.setAttribute('data-img', product.image ? product.image.src || '' : '');
       card.setAttribute('data-desc', descEn);
       card.setAttribute('data-desc-hi', descHi);
+      card.setAttribute('data-pricing', pricingJson);
       card.setAttribute('data-aos-delay', String((index % 3) * 100 + 100));
 
       if (image && product.image) {
@@ -176,6 +183,14 @@
 
       setLocaleText(heading, product.title || {});
       setLocaleText(tagline, product.tagline || {});
+
+      // Inject price badge after tagline
+      if (minPrice !== null && tagline) {
+        const priceBadge = document.createElement('div');
+        priceBadge.className = 'product-price-badge';
+        priceBadge.innerHTML = `<span class="price-from" data-en="from" data-hi="से">from</span> <span class="price-value">&#8377;${minPrice.toLocaleString('en-IN')}</span>`;
+        tagline.insertAdjacentElement('afterend', priceBadge);
+      }
 
       container.appendChild(fragment);
     });

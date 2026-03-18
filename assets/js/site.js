@@ -30,6 +30,7 @@
     '1000 gram': 3,
   };
 
+
   const state = {
     language: storage.getItem('language') || 'en',
     theme: storage.getItem('theme') || 'light',
@@ -2188,6 +2189,54 @@
 
     resetModal();
 
+    // Helper: Show price per size in the modal labels
+    function updateSizePricingLabels(pricingData) {
+      sizeInputs.forEach((input) => {
+        const sizeKey = input.value;
+        const label = input.closest('label');
+        if (!label) return;
+        let priceEl = label.querySelector('.size-price');
+        if (!priceEl) {
+          priceEl = document.createElement('span');
+          priceEl.className = 'size-price';
+          label.appendChild(priceEl);
+        }
+        const price = pricingData && pricingData[sizeKey];
+        if (typeof price === 'number' && price > 0) {
+          priceEl.textContent = `\u20B9${price.toLocaleString('en-IN')}`;
+        } else {
+          priceEl.textContent = '';
+        }
+      });
+    }
+
+    function updateModalPriceDisplay() {
+      const currentItem = getActiveItem();
+      let pricingData = {};
+      if (currentItem) {
+        try {
+          pricingData = JSON.parse(currentItem.getAttribute('data-pricing') || '{}');
+        } catch (e) { /* ignore */ }
+      }
+      updateSizePricingLabels(pricingData);
+
+      // Update confirm button with total price
+      const selected = sizeInputs.find((r) => r.checked);
+      if (selected && confirmBtn) {
+        const price = pricingData[selected.value];
+        if (typeof price === 'number' && price > 0) {
+          confirmBtn.textContent = `Add to Cart — \u20B9${price.toLocaleString('en-IN')}`;
+          confirmBtn.setAttribute('data-en', `Add to Cart — \u20B9${price.toLocaleString('en-IN')}`);
+        } else {
+          confirmBtn.textContent = 'Add to Cart';
+          confirmBtn.setAttribute('data-en', 'Add to Cart');
+        }
+      } else if (confirmBtn) {
+        confirmBtn.textContent = 'Add to Cart';
+        confirmBtn.setAttribute('data-en', 'Add to Cart');
+      }
+    }
+
     const preorderButtons = qsa('.menu-item a[href="#preorder"]');
 
     preorderButtons.forEach((button) => {
@@ -2234,6 +2283,8 @@
         modal.style.display = 'flex';
         ensureEscapeHandler();
         updateModalThemes();
+        // Show prices for this product's sizes
+        updateModalPriceDisplay();
       });
     });
 
@@ -2245,6 +2296,8 @@
       input.addEventListener('change', () => {
         const isAnyChecked = sizeInputs.some((radio) => radio.checked);
         confirmBtn.disabled = !isAnyChecked;
+        // Update modal price display when size changes
+        updateModalPriceDisplay();
       });
     });
 
@@ -2257,7 +2310,18 @@
           return;
         }
         const sizeValue = selected.value;
-        const price = resolvePriceForSize(sizeValue);
+        // Resolve price from product's own pricing data first
+        let price = null;
+        try {
+          const pricingData = JSON.parse(currentItem.getAttribute('data-pricing') || '{}');
+          const productPrice = pricingData[sizeValue];
+          if (typeof productPrice === 'number' && productPrice > 0) {
+            price = productPrice;
+          }
+        } catch (e) { /* ignore */ }
+        if (price === null) {
+          price = resolvePriceForSize(sizeValue);
+        }
         if (!Number.isFinite(price) || price <= 0) {
           showCatalogCartFeedback(cartText('unknownPrice'), 'error');
           return;

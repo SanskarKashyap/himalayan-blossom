@@ -38,9 +38,18 @@ const createVercelHandler = (handler) => async (req, res) => {
 app.post('/api/create-order', createVercelHandler(createOrder));
 app.post('/api/verify-payment', createVercelHandler(verifyPayment));
 
-// Root route (optional)
+// Serve the site's static files from the project root so you can test
+// all pages at http://localhost:3000 without needing a separate Live Server.
+app.use(express.static(path.join(__dirname, '.')));
+
+// Serve index.html for the root
 app.get('/', (req, res) => {
-    res.send('Local Development Server is Running. API at /api');
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// 404 fallback for unmatched routes
+app.use((req, res) => {
+    res.status(404).send('Not Found');
 });
 
 app.listen(PORT, () => {

@@ -27,7 +27,7 @@ module.exports = async function (req, res) {
     }
 
     // 2. Validate Input
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body || {};
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, shipping_address } = req.body || {};
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
         return send(res, 400, { error: 'Missing payment details' });
     }
@@ -76,7 +76,10 @@ module.exports = async function (req, res) {
             items: items,
             paymentStatus: 'paid',
             paymentMethod: 'razorpay',
-            createdAt: new Date().toISOString()
+            order_status: 'confirmed',          // Fix 7: order tracking status
+            shipping_address: shipping_address || null,  // Fix 3: delivery address
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
         };
 
         // Transaction to ensure atomicity
