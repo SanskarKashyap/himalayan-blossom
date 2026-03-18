@@ -87,7 +87,7 @@
 
       const address = order.shipping_address;
       const addressHtml = address && address.city
-        ? `<span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>${[address.addressLine1, address.city, address.state, address.pinCode].filter(Boolean).join(', ')}</span>`
+        ? `<span class="small" style="color:color-mix(in srgb, var(--default-color) 65%, transparent)"><i class="bi bi-geo-alt me-1"></i>${[address.addressLine1, address.city, address.state, address.pinCode].filter(Boolean).join(', ')}</span>`
         : '';
 
       const total = order.amount
@@ -408,26 +408,41 @@
 
     function tryLoadFromFirestore(uid) {
       if (!window.Auth || typeof window.Auth.ensureFirebaseReady !== 'function') return;
+
+      const searchParams = new URLSearchParams(window.location.search);
+      const urlOrderId = searchParams.get('order_id') || searchParams.get('razorpay_order_id');
+
       window.Auth.ensureFirebaseReady()
         .then(({ firestore }) => {
           if (!firestore) return;
-          return firestore
-            .collection('users')
-            .doc(uid)
-            .collection('orders')
-            .orderBy('createdAt', 'desc')
-            .limit(1)
-            .get()
-            .then((snap) => {
-              if (snap.empty) return;
-              const doc = snap.docs[0];
-              const data = doc.data();
-              if (data.items) renderItems(Object.values(data.items));
-              const totalEl = document.getElementById('confirmationTotal');
-              if (totalEl && data.amount) totalEl.textContent = formatter.format(data.amount);
-              const payIdEl = document.getElementById('paymentId');
-              if (payIdEl && data.razorpay_payment_id) payIdEl.textContent = data.razorpay_payment_id;
+
+          let query = firestore.collection('users').doc(uid).collection('orders');
+
+          if (urlOrderId) {
+            query = query.doc(urlOrderId).get().then(doc => {
+              if (!doc.exists) return { empty: true };
+              return { empty: false, docs: [doc] };
             });
+          } else {
+            query = query.orderBy('createdAt', 'desc').limit(1).get();
+          }
+
+          return query.then((snap) => {
+            if (snap.empty) return;
+            const doc = snap.docs[0];
+            const data = doc.data();
+
+            if (data.items) renderItems(Object.values(data.items));
+            if (data.shipping_address) renderAddress(data.shipping_address);
+
+            const totalEl = document.getElementById('confirmationTotal');
+            if (totalEl && data.amount) totalEl.textContent = formatter.format(data.amount);
+
+            const payIdEl = document.getElementById('paymentId');
+            if (payIdEl && data.razorpay_payment_id) payIdEl.textContent = data.razorpay_payment_id;
+            
+            showSection('confirmationContent');
+          });
         })
         .catch((err) => console.warn('[Confirmation] Could not load from Firestore', err));
     }
@@ -445,6 +460,19 @@
     }
 
     loadOrderFromURL();
+
+    const checkFirebaseOrder = () => {
+      if (window.Auth && typeof window.Auth.isAuthenticated === 'function' && window.Auth.isAuthenticated()) {
+        const user = window.Auth.getUser ? window.Auth.getUser() : null;
+        if (user && user.uid) tryLoadFromFirestore(user.uid);
+      }
+    };
+
+    if (window.Auth && typeof window.Auth.isAuthenticated === 'function') {
+      checkFirebaseOrder();
+    } else {
+      window.addEventListener('hb:auth:ready', checkFirebaseOrder, { once: true });
+    }
 
     window.addEventListener('hb:auth:signed-in', (e) => {
       if (document.body.dataset.pageId !== 'order-confirmation') return;
