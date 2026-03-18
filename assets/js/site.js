@@ -2586,4 +2586,11 @@
     checkoutScript.src = 'assets/js/checkout.js';
     document.head.appendChild(checkoutScript);
   }
+
+  // Ensure orders.js is available globally for SPA navigation to orders and confirmation
+  if (!document.querySelector('script[src="assets/js/orders.js"]')) {
+    const ordersScript = document.createElement('script');
+    ordersScript.src = 'assets/js/orders.js';
+    document.head.appendChild(ordersScript);
+  }
 })();

@@ -57,9 +57,9 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end animate slideIn" aria-labelledby="authDropdown">
             <li><span class="dropdown-header" id="authUserRoleDesktop">Role</span></li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="my-orders.html"><i class="bi bi-box-seam me-2"></i>My Orders</a></li>
+            <li><hr class="dropdown-divider"></li>
             <li><button class="dropdown-item text-danger" id="authLogoutButtonDesktop"><i
                   class="bi bi-box-arrow-right me-2"></i>Logout</button></li>
           </ul>
@@ -108,11 +108,14 @@
           </div>
           <div>
             <div id="authUserNameMobile" class="fw-bold">User</div>
-            <div id="authUserRoleMobile" class="small text-muted">Role</div>
+            <div id="authUserRoleMobile" class="small text-muted mb-2">Role</div>
+            <a href="my-orders.html" class="btn btn-sm btn-outline-primary rounded-pill mb-1">
+              <i class="bi bi-box-seam me-1"></i> My Orders
+            </a>
           </div>
         </div>
         <button type="button" id="authLogoutButtonMobile"
-          class="btn btn-outline-danger w-100 rounded-pill">Logout</button>
+          class="btn btn-outline-danger w-100 rounded-pill mt-2">Logout</button>
       </div>
     </div>
   </div>
