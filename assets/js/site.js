@@ -993,7 +993,7 @@
   });
 
   function isCartPageActive() {
-    return document.body && document.body.getAttribute('data-page-id') === 'cart';
+    return !!document.getElementById('cartPageRoot');
   }
 
   function getCartLanguage() {
@@ -2357,6 +2357,11 @@
             const localizedTitle = state.language === 'hi' && titleHi ? titleHi : titleEn;
             showCatalogCartFeedback(`${localizedTitle} (${sizeValue}) added to your cart.`, 'success');
             hideModal();
+            const cartDrawerEl = document.getElementById('cartDrawer');
+            if (cartDrawerEl && window.bootstrap && window.bootstrap.Offcanvas) {
+              const bsOffcanvas = window.bootstrap.Offcanvas.getInstance(cartDrawerEl) || new window.bootstrap.Offcanvas(cartDrawerEl);
+              bsOffcanvas.show();
+            }
           })
           .catch((error) => {
             const message = error && error.message ? error.message : cartText('updateError');

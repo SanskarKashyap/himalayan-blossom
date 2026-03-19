@@ -31,7 +31,7 @@
         </a>
       </div>
 
-      <a href="cart.html" class="hb-icon-link position-relative me-3" aria-label="View cart">
+      <a href="#cartDrawer" data-bs-toggle="offcanvas" role="button" aria-controls="cartDrawer" id="headerCartButton" class="hb-icon-link position-relative me-3" aria-label="View cart">
         <i class="bi bi-bag"></i>
         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-accent"
           id="headerCartCount" style="font-size: 0.6rem; padding: 0.25em 0.4em;">0</span>
@@ -94,7 +94,7 @@
       <li><a href="wellness.html" data-page-target="wellness">Wellness</a></li>
       <li><a href="gallery.html" data-page-target="gallery">Gallery</a></li>
       <li><a href="contact.html" data-page-target="contact">Contact</a></li>
-      <li><a href="cart.html" data-page-target="cart">Cart</a></li>
+      <li><a href="#cartDrawer" data-bs-toggle="offcanvas" role="button" aria-controls="cartDrawer" id="mobileCartButton" onclick="document.querySelector('.mobile-nav-close').click()">Cart <span id="mobileCartCount" class="badge rounded-pill bg-accent ms-2">0</span></a></li>
     </ul>
 
     <div class="mobile-auth-section mt-4 pt-4 border-top">
@@ -118,6 +118,56 @@
         <button type="button" id="authLogoutButtonMobile"
           class="btn btn-outline-danger w-100 rounded-pill mt-2">Logout</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cart Drawer (Offcanvas) -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartDrawer" aria-labelledby="cartDrawerLabel" style="width: 400px; max-width: 100vw;">
+  <div class="offcanvas-header bg-light border-bottom">
+    <h5 class="offcanvas-title fw-bold mb-0" id="cartDrawerLabel" data-en="Your Cart" data-hi="आपका कार्ट">Your Cart</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column p-0" id="cartPageRoot">
+    <div class="px-3 pt-3 pb-0">
+      <div id="cartStatusMessage" class="alert d-none mb-3 py-2" role="alert" style="font-size: 0.9rem;"></div>
+      <div id="cartAuthPrompt" class="alert alert-warning d-none text-center mb-0 py-2" role="status" style="font-size: 0.9rem;">
+        <p class="mb-2" data-en="Sign in to sync your cart." data-hi="सिंक करने के लिए साइन इन करें।">Sign in to sync your cart.</p>
+        <button type="button" class="btn btn-primary btn-sm" id="cartSignInButton" data-en="Sign in" data-hi="साइन इन करें">Sign in</button>
+      </div>
+    </div>
+
+    <div class="flex-grow-1 overflow-auto p-3 bg-white">
+      <div id="cartEmptyState" class="alert d-none text-center mb-0" role="status" style="background-color: transparent; border: 1px dashed #ccc;">
+        <i class="bi bi-basket2 text-muted" style="font-size: 2rem;"></i>
+        <p class="mt-2 mb-0" data-en="Your cart is empty." data-hi="आपका कार्ट खाली है।">Your cart is empty.</p>
+      </div>
+      <div id="cartItemsList" class="cart-items-list h-100"></div>
+    </div>
+    
+    <div id="cartSummaryCard" class="bg-light p-3 border-top mt-auto shadow-sm" style="z-index: 10;">
+      <div class="d-flex justify-content-between mb-2 small text-muted">
+        <span data-en="Subtotal" data-hi="उप-योग">Subtotal</span>
+        <span id="cartSummarySubtotal">₹0</span>
+      </div>
+      <div class="d-flex justify-content-between mb-2 small text-muted">
+        <span data-en="Shipping" data-hi="शिपिंग">Shipping</span>
+        <span id="cartSummaryShipping" data-en="Free" data-hi="निःशुल्क">Free</span>
+      </div>
+      <hr class="my-2" />
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="fw-semibold" data-en="Total" data-hi="कुल">Total</span>
+        <span id="cartSummaryTotal" class="fw-bold fs-5 text-dark">₹0</span>
+      </div>
+      
+      <div id="cartPaymentError" class="alert alert-danger mb-3 d-none small py-2 rounded-3" role="alert"></div>
+
+      <a id="paySecurelyBtn" href="checkout-address.html" class="btn btn-primary w-100 py-3 fw-semibold d-flex justify-content-center align-items-center gap-2 rounded-pill shadow-sm">
+        <span data-en="Checkout Now" data-hi="अभी चेकआउट करें">Checkout Now</span>
+        <i class="bi bi-arrow-right"></i>
+      </a>
+      
+      <p id="cartSummaryHint" class="text-muted small mt-3 mb-0 text-center" style="font-size: 0.75rem;">Your cart stays in sync.</p>
     </div>
   </div>
 </div>
