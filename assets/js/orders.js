@@ -419,10 +419,7 @@
           let query = firestore.collection('users').doc(uid).collection('orders');
 
           if (urlOrderId) {
-            query = query.doc(urlOrderId).get().then(doc => {
-              if (!doc.exists) return { empty: true };
-              return { empty: false, docs: [doc] };
-            });
+            query = query.where('razorpay_order_id', '==', urlOrderId).limit(1).get();
           } else {
             query = query.orderBy('createdAt', 'desc').limit(1).get();
           }
@@ -440,6 +437,17 @@
 
             const payIdEl = document.getElementById('paymentId');
             if (payIdEl && data.razorpay_payment_id) payIdEl.textContent = data.razorpay_payment_id;
+
+            const dateEl = document.getElementById('orderDate');
+            if (dateEl && data.createdAt) {
+              const d = new Date(data.createdAt);
+              if (!isNaN(d.getTime())) {
+                dateEl.textContent = d.toLocaleDateString('en-IN', {
+                  day: 'numeric', month: 'long', year: 'numeric',
+                  hour: '2-digit', minute: '2-digit'
+                });
+              }
+            }
             
             showSection('confirmationContent');
           });
