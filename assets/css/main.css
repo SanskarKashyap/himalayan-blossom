@@ -1225,20 +1225,20 @@ body.dark-theme .auth-status.alert {
 /* Mobile Navigation */
 @media (max-width: 1199px) {
   .mobile-nav-toggle {
-    color: var(--background-color);
+    color: var(--heading-color);
     font-size: 28px;
     line-height: 0;
     margin-right: 10px;
     cursor: pointer;
     transition: color 0.3s ease, background 0.3s ease, transform 0.3s ease;
-    background: rgba(248, 245, 239, 0.08);
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
     border-radius: 50%;
     padding: 10px;
-    border: 1px solid rgba(248, 245, 239, 0.35);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 20%, transparent);
   }
 
   .mobile-nav-toggle:hover {
-    background: rgba(248, 245, 239, 0.18);
+    background: color-mix(in srgb, var(--accent-color) 15%, transparent);
     transform: translateY(-2px);
   }
 
