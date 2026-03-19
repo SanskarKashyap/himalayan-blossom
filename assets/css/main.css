@@ -1224,11 +1224,18 @@ body.dark-theme .auth-status.alert {
 
 /* Mobile Navigation */
 @media (max-width: 1199px) {
+  .mobile-logo-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+  }
+
   .mobile-nav-toggle {
     color: var(--heading-color);
     font-size: 28px;
     line-height: 0;
-    margin-right: 10px;
+    margin: 0;
     cursor: pointer;
     transition: color 0.3s ease, background 0.3s ease, transform 0.3s ease;
     background: color-mix(in srgb, var(--accent-color) 8%, transparent);

@@ -48,6 +48,23 @@
 
   <main class="main">
 
+    <!-- Hero Section -->
+    <section id="hero-wellness" class="hero section light-background" style="padding: 100px 0 60px; text-align: center; border-bottom: 1px solid color-mix(in srgb, var(--default-color) 10%, transparent);">
+      <div class="container" data-aos="zoom-in" data-aos-delay="100">
+        <div class="icon-wrapper mb-4" style="font-size: 3rem; color: var(--accent-color);">
+          <i class="bi bi-flower1"></i>
+        </div>
+        <h1 style="font-family: var(--heading-font); color: var(--heading-color); font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 20px;">Holistic Himalayan Wellness</h1>
+        <p style="color: var(--default-color); font-size: 1.15rem; max-width: 600px; margin: 0 auto 30px; line-height: 1.6;">
+          Discover the profound healing properties of our rare, wild-harvested honey. A daily ritual to nourish your mind, body, and spirit.
+        </p>
+        <div class="d-inline-flex gap-3">
+          <a href="#rituals" class="btn-primary-hb px-4 py-2" style="border-radius: 50px;">Explore Rituals</a>
+          <a href="#testimonials" class="btn-outline-hb px-4 py-2" style="border-radius: 50px;">Read Stories</a>
+        </div>
+      </div>
+    </section>
+
     <!-- Rituals Section -->
     <section id="rituals" class="section">
       <div class="container section-title" data-aos="fade-up">
@@ -70,6 +87,92 @@
           </div>
         </div>
       </template>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials section light-background" style="border-top: 1px solid color-mix(in srgb, var(--default-color) 10%, transparent);">
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Testimonials</h2>
+        <p>What Our <span class="description-title">Customers Say</span></p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+              {
+                "loop": true,
+                "speed": 600,
+                "autoplay": {
+                  "delay": 5000
+                },
+                "slidesPerView": "auto",
+                "pagination": {
+                  "el": ".swiper-pagination",
+                  "type": "bullets",
+                  "clickable": true
+                }
+              }
+            </script>
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="row gy-4 justify-content-center">
+                  <div class="col-lg-6">
+                    <div class="testimonial-content">
+                      <p>
+                        <i class="bi bi-quote quote-icon-left"></i>
+                        <span>“Van Amrit gave my family the best winter we’ve had
+                          — fewer coughs and a sweeter morning ritual.”</span>
+                        <i class="bi bi-quote quote-icon-right"></i>
+                      </p>
+                      <h3>Asha Verma</h3>
+                      <h4>Home Chef</h4>
+                      <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                          class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <img src="assets/img/testimonials/testimonials-1.jpg" class="img-fluid testimonial-img"
+                      alt="Customer Asha Verma" />
+                  </div>
+                </div>
+              </div>
+            </div><!-- End testimonial item -->
+
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="row gy-4 justify-content-center">
+                  <div class="col-lg-6">
+                    <div class="testimonial-content">
+                      <p>
+                        <i class="bi bi-quote quote-icon-left"></i>
+                        <span>“The packaging felt like a gift. Tasting sample
+                          convinced me — we ordered the full jar
+                          immediately.”</span>
+                        <i class="bi bi-quote quote-icon-right"></i>
+                      </p>
+                      <h3>Rohit Sen</h3>
+                      <h4>Wellness Coach</h4>
+                      <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                          class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <img src="assets/img/testimonials/testimonials-2.jpg" class="img-fluid testimonial-img"
+                      alt="Customer Rohit Sen" />
+                  </div>
+                </div>
+              </div>
+            </div><!-- End testimonial item -->
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
     </section>
 
   </main>
